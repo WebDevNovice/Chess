@@ -10,8 +10,14 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
+//    This is the constructor
+
+    private ChessGame.TeamColor teamColor;
+    private ChessPiece.PieceType type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.teamColor = pieceColor;
+        this.type = type;
     }
 
     /**
@@ -30,14 +36,15 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return this.teamColor;
     }
 
     /**
      * @return which type of chess piece this piece is
+     * Jake - Look into enum for java
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return this.type;
     }
 
     /**
@@ -45,9 +52,12 @@ public class ChessPiece {
      * Does not take into account moves that are illegal due to leaving the king in
      * danger
      *
+     * we will probably need learn about if statements for Java
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         return new ArrayList<>();
     }
+
+
 }
