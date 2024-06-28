@@ -56,7 +56,26 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return new ArrayList<>();
+        return pieceMoveCalc(board, myPosition);
+    }
+    private Collection<ChessMove> pieceMoveCalc(ChessBoard board, ChessPosition myPosition) {
+        PieceType pieceType = getPieceType();
+        switch (pieceType) {
+            case KING:
+//                I want to feed the KingMoveCalc here
+                return (Collection<ChessMove>) new KingMoveCalc(board, myPosition);
+            case QUEEN:
+                return (Collection<ChessMove>) new QueenMoveCalc(board, myPosition);
+            case BISHOP:
+                return (Collection<ChessMove>) new BishopMoveCalc(board, myPosition);
+            case KNIGHT:
+                return (Collection<ChessMove>) new KnightMoveCalc(board, myPosition);
+            case ROOK:
+                return (Collection<ChessMove>) new RookMoveCalc(board, myPosition);
+            case PAWN:
+                return (Collection<ChessMove>) new PawnMoveCalc(board, myPosition);
+        }
+        return java.util.List.of();
     }
 
 

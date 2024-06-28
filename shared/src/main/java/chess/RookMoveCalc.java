@@ -1,11 +1,11 @@
 package chess;
 
-public class QueenMoveCalc {
+public class RookMoveCalc {
 
     private final ChessPosition myPosition;
     private final ChessBoard board;
 
-    public QueenMoveCalc(ChessBoard board, ChessPosition myPosition) {
+    public RookMoveCalc(ChessBoard board, ChessPosition myPosition) {
         this.board = board;
         this.myPosition = myPosition;
     }
