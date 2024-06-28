@@ -1,9 +1,15 @@
 package chess;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
+ *
+ * Jake maybe let's create a "start game method" then with the reset game,
+ * we can then kill the board and pieces and then just call that method
  */
 public class ChessBoard {
     private ChessPiece[][] squares;
@@ -33,11 +39,29 @@ public class ChessBoard {
         return squares[position.getRow()][position.getColumn()];
     }
 
+    public ChessPiece[][] getSquares() {
+        return squares;
+    }
+
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
         throw new RuntimeException("Not implemented");
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessBoard that = (ChessBoard) o;
+        return Objects.deepEquals(squares, that.squares);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(squares);
     }
 }

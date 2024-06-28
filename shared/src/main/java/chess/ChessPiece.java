@@ -63,7 +63,7 @@ public class ChessPiece {
         switch (pieceType) {
             case KING:
 //                I want to feed the KingMoveCalc here
-                return (Collection<ChessMove>) new KingMoveCalc(board, myPosition);
+                return new KingMoveCalc(board, myPosition).getValidMoves();
             case QUEEN:
                 return (Collection<ChessMove>) new QueenMoveCalc(board, myPosition);
             case BISHOP:
