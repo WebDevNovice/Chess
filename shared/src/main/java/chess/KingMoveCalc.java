@@ -38,27 +38,23 @@ public class KingMoveCalc {
             this.colChange = colChange;
         }
     }
-    public List<ChessPosition> getValidMoves() {
-        List<ChessPosition> ValidMoves;
+    public List<ChessMove> getValidMoves() {
+        List<ChessMove> ValidMoves;
         ValidMoves = new ArrayList<>();
 
         for (KingPieceMove move : KingPieceMove.values()) {
-//            These next two lines of code update the row and column by the enum values for each
-//            possible move a king could make
             int newRow = myPosition.getRow() + move.rowChange;
             int newCol = myPosition.getColumn() + move.colChange;
             ChessPosition newPosition = new ChessPosition(newRow, newCol);
-/**
- * So I think this should be checking if it is in bounds. I wound if I could check this on the board
- */
-            if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
-                if(board.getPiece(newPosition) != null){
-                    ValidMoves.add(newPosition);
-                    System.out.println(newPosition);
-                }
-//                say they put an invalid line in
+            ChessMove newMove = new ChessMove(myPosition,newPosition,null);
+            if (newRow >= 1 && newRow < 9 && newCol >= 1 && newCol < 9) { // Bounds Check
+                if(board.getPiece(newPosition) == null){
+                    ValidMoves.add(newMove);
+                } else if (board.getPiece(newPosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                    ValidMoves.add(newMove);
                 }
             }
-        return ValidMoves;
         }
+        return ValidMoves;
+    }
 }

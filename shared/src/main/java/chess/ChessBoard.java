@@ -15,7 +15,7 @@ public class ChessBoard {
     private ChessPiece[][] squares;
     public ChessBoard() {
 
-        squares = new ChessPiece[8][8];
+        squares = new ChessPiece[9][9];
     }
 
     /**
@@ -39,9 +39,6 @@ public class ChessBoard {
         return squares[position.getRow()][position.getColumn()];
     }
 
-    public ChessPiece[][] getSquares() {
-        return squares;
-    }
 
     /**
      * Sets the board to the default starting board

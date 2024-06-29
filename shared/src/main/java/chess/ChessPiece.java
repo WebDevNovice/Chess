@@ -1,7 +1,8 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -51,29 +52,44 @@ public class ChessPiece {
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
      * danger
-     *
+     * <p>
      * we will probably need learn about if statements for Java
+     *
      * @return Collection of valid moves
      */
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+    public List<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         return pieceMoveCalc(board, myPosition);
     }
-    private Collection<ChessMove> pieceMoveCalc(ChessBoard board, ChessPosition myPosition) {
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that = (ChessPiece) o;
+        return teamColor == that.teamColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(teamColor, type);
+    }
+
+    private List<ChessMove> pieceMoveCalc(ChessBoard board, ChessPosition myPosition) {
         PieceType pieceType = getPieceType();
         switch (pieceType) {
             case KING:
-//                I want to feed the KingMoveCalc here
-                return new KingMoveCalc(board, myPosition).getValidMoves();
-            case QUEEN:
-                return (Collection<ChessMove>) new QueenMoveCalc(board, myPosition);
-            case BISHOP:
-                return (Collection<ChessMove>) new BishopMoveCalc(board, myPosition);
-            case KNIGHT:
-                return (Collection<ChessMove>) new KnightMoveCalc(board, myPosition);
-            case ROOK:
-                return (Collection<ChessMove>) new RookMoveCalc(board, myPosition);
-            case PAWN:
-                return (Collection<ChessMove>) new PawnMoveCalc(board, myPosition);
+                KingMoveCalc kingMoveCalc = new KingMoveCalc(board, myPosition);
+                return kingMoveCalc.getValidMoves();
+//            case QUEEN:
+//                return (List<ChessPosition>) new QueenMoveCalc(board, myPosition);
+//            case BISHOP:
+//                return (List<ChessPosition>) new BishopMoveCalc(board, myPosition);
+//            case KNIGHT:
+//                return (List<ChessPosition>) new KnightMoveCalc(board, myPosition);
+//            case ROOK:
+//                return (List<ChessPosition>) new RookMoveCalc(board, myPosition);
+//            case PAWN:
+//                return (List<ChessPosition>) new PawnMoveCalc(board, myPosition);
         }
         return java.util.List.of();
     }
