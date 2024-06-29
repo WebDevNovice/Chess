@@ -84,8 +84,9 @@ public class ChessPiece {
 //                return (List<ChessPosition>) new QueenMoveCalc(board, myPosition);
 //            case BISHOP:
 //                return (List<ChessPosition>) new BishopMoveCalc(board, myPosition);
-//            case KNIGHT:
-//                return (List<ChessPosition>) new KnightMoveCalc(board, myPosition);
+            case KNIGHT:
+                KnightMoveCalc KnightMoveCalc = new KnightMoveCalc(board, myPosition);
+                return KnightMoveCalc.getValidMoves();
 //            case ROOK:
 //                return (List<ChessPosition>) new RookMoveCalc(board, myPosition);
 //            case PAWN:
