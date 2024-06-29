@@ -80,15 +80,18 @@ public class ChessPiece {
             case KING:
                 KingMoveCalc kingMoveCalc = new KingMoveCalc(board, myPosition);
                 return kingMoveCalc.getValidMoves();
-//            case QUEEN:
-//                return (List<ChessPosition>) new QueenMoveCalc(board, myPosition);
-//            case BISHOP:
-//                return (List<ChessPosition>) new BishopMoveCalc(board, myPosition);
+            case QUEEN:
+                QueenMoveCalc queenMoveCalc = new QueenMoveCalc(board, myPosition);
+                return queenMoveCalc.getValidMoves();
+            case BISHOP:
+                BishopMoveCalc bishopMoveCalc = new BishopMoveCalc(board, myPosition);
+                return bishopMoveCalc.getValidMoves();
             case KNIGHT:
                 KnightMoveCalc KnightMoveCalc = new KnightMoveCalc(board, myPosition);
                 return KnightMoveCalc.getValidMoves();
-//            case ROOK:
-//                return (List<ChessPosition>) new RookMoveCalc(board, myPosition);
+            case ROOK:
+                RookMoveCalc rookMoveCalc = new RookMoveCalc(board, myPosition);
+                return rookMoveCalc.getValidMoves();
 //            case PAWN:
 //                return (List<ChessPosition>) new PawnMoveCalc(board, myPosition);
         }
