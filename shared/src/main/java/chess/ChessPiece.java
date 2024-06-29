@@ -100,8 +100,9 @@ public class ChessPiece {
             case ROOK:
                 RookMoveCalc rookMoveCalc = new RookMoveCalc(board, myPosition);
                 return rookMoveCalc.getValidMoves();
-//            case PAWN:
-//                return (List<ChessPosition>) new PawnMoveCalc(board, myPosition);
+            case PAWN:
+                PawnMoveCalc pawnMoveCalc = new PawnMoveCalc(board, myPosition);
+                return pawnMoveCalc.getValidMoves();
         }
         return java.util.List.of();
     }

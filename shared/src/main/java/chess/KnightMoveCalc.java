@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * So this needs to store and array of positions
@@ -39,20 +38,6 @@ public class KnightMoveCalc {
             this.colChange = colChange;
         }
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        KnightMoveCalc that = (KnightMoveCalc) o;
-        return Objects.equals(myPosition, that.myPosition) && Objects.equals(board, that.board);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(myPosition, board);
-    }
-
     public List<ChessMove> getValidMoves() {
         List<ChessMove> ValidMoves;
         ValidMoves = new ArrayList<>();

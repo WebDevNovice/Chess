@@ -51,7 +51,7 @@ public class PawnMoveCalc {
         }
     }
 
-    private void not_starting_position(ChessPosition newPosition, List<ChessMove> ValidMoves){
+    private void check_in_front(ChessPosition newPosition, List<ChessMove> ValidMoves){
         ChessMove newMove = new ChessMove(myPosition,newPosition,null);
         if(board.getPiece(newPosition) == null){//is the target square empty?
             ValidMoves.add(newMove); // yes, well add it to the possible move list
@@ -63,18 +63,49 @@ public class PawnMoveCalc {
         }
     }
 
+    private boolean check_starting_position(ChessPosition myPosition){
+        return ((board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.WHITE) && myPosition.getRow() == 1) ||
+                (board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.BLACK) && myPosition.getRow() == 6));
+    }
+
+    private void special_starting_move(ChessPosition newPosition, List<ChessMove> ValidMoves){
+        int newCol = newPosition.getColumn() + 1;
+        ChessPosition targetPosition = new ChessPosition(newPosition.getRow(), newCol);
+        ChessMove newMove = new ChessMove(myPosition,targetPosition,null);
+        if(board.getPiece(targetPosition) == null){//is the target square empty?
+            ValidMoves.add(newMove); // yes, well add it to the possible move list
+        }
+    }
+
+    private boolean promotion_check(ChessPosition newPosition){
+        return ((board.getPiece(newPosition).getTeamColor().equals(ChessGame.TeamColor.WHITE) && newPosition.getRow() == 7) ||
+                (board.getPiece(newPosition).getTeamColor().equals(ChessGame.TeamColor.BLACK) && newPosition.getRow() == 0));
+    }
+
     public List<ChessMove> getValidMoves() {
         List<ChessMove> ValidMoves;
         ValidMoves = new ArrayList<>();
 
         for (PawnPieceMove move : PawnPieceMove.values()) {
+
             int newRow = myPosition.getRow() + move.rowChange; //this helps to check the target square
             int newCol = myPosition.getColumn() + move.colChange; //this helps to check the target square
             ChessPosition newPosition = new ChessPosition(newRow, newCol); //this helps to check the target square
             ChessMove newMove = new ChessMove(myPosition,newPosition,null); //this is creating a potential move to add to a list *NOTE* Still need to handle promotion
-            if (newRow >= 1 && newRow < 9 && newCol >= 1 && newCol < 9) { // Bounds Check
-                //here we should check if is it the starting position or not
-                not_starting_position(newPosition, ValidMoves); //this handles the case where it is not the starting case (might be able to rename and reuse it somewhere down the line)
+
+            if (newRow >= 1 && newRow < 9 && newCol >= 1 && newCol < 9) { // Bounds Check (COULD BE A SOURCE OF BAD CODE)
+
+                if (check_starting_position(myPosition)){
+
+                    check_in_front(newPosition, ValidMoves); //this handles looks at everything in front of the pawn for potential movement or captures
+                    special_starting_move(myPosition, ValidMoves);
+
+                }else if (promotion_check(newPosition)){
+
+                }
+                else {
+                    check_capture_left(newPosition, ValidMoves);
+                }
             }
         }
         return ValidMoves;

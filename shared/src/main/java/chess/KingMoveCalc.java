@@ -50,7 +50,7 @@ public class KingMoveCalc {
             int newCol = myPosition.getColumn() + move.colChange;
             ChessPosition newPosition = new ChessPosition(newRow, newCol);
             ChessMove newMove = new ChessMove(myPosition,newPosition,null);
-            if (newRow >= 1 && newRow < 9 && newCol >= 1 && newCol < 9) { // Bounds Check
+            if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) { // Bounds Check
                 if(board.getPiece(newPosition) == null){
                     ValidMoves.add(newMove);
                 } else if (board.getPiece(newPosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {

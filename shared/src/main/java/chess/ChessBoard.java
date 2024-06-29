@@ -52,62 +52,62 @@ public class ChessBoard {
         }
     }
 
-    private void place_new_black_pawns(ChessPiece pawn) {
-        for (int i = 1; i < 9; i++) {
-            squares[2][i] = pawn;
+    private void place_new_white_pawns(ChessPiece pawn) {
+        for (int i = 0; i < 8; i++) {
+            squares[1][i] = pawn;
         }
     }
 
-    private void place_new_white_pawns(ChessPiece pawn) {
-        for (int i = 1; i < 9; i++) {
-            squares[7][i] = pawn;
+    private void place_new_black_pawns(ChessPiece pawn) {
+        for (int i = 0; i < 8; i++) {
+            squares[6][i] = pawn;
         }
     }
 
     private void place_new_black_rook(ChessPiece rook) {
-        squares[1][1] = rook;
-        squares[1][8] = rook;
+        squares[7][0] = rook;
+        squares[7][7] = rook;
     }
 
     private void place_new_white_rook(ChessPiece rook) {
-        squares[8][1] = rook;
-        squares[8][8] = rook;
+        squares[0][0] = rook;
+        squares[0][7] = rook;
     }
 
     private void place_new_black_knight(ChessPiece knight) {
-        squares[1][2] = knight;
-        squares[1][7] = knight;
+        squares[7][1] = knight;
+        squares[7][6] = knight;
     }
 
     private void place_new_white_knight(ChessPiece knight) {
-        squares[8][2] = knight;
-        squares[8][7] = knight;
+        squares[0][1] = knight;
+        squares[0][6] = knight;
     }
 
     private void place_new_black_bishop(ChessPiece bishop) {
-        squares[1][3] = bishop;
-        squares[1][6] = bishop;
+        squares[7][2] = bishop;
+        squares[7][5] = bishop;
     }
 
     private void place_new_white_bishop(ChessPiece bishop) {
-        squares[8][3] = bishop;
-        squares[8][6] = bishop;
+        squares[0][2] = bishop;
+        squares[0][5] = bishop;
     }
 
     private void place_new_black_queen(ChessPiece queen) {
-        squares[1][4] = queen;
+        squares[7][3] = queen;
     }
 
     private void place_new_white_queen(ChessPiece queen) {
-        squares[8][4] = queen;
+        squares[0][3] = queen;
     }
 
     private void place_new_black_king(ChessPiece king) {
-        squares[1][5] = king;
+        squares[7][4] = king;
     }
 
     private void place_new_white_king(ChessPiece king) {
-        squares[8][5] = king;
+        squares[0][4] = king;
     }
 
 
@@ -147,7 +147,7 @@ public class ChessBoard {
         ChessPiece WHITEQUEEN = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
         ChessPiece WHITEKING = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
 
-        place_new_black_pawns(BLACKPAWN); //switch black and white
+        place_new_black_pawns(BLACKPAWN);
         place_new_white_pawns(WHITEPAWN);
 
         place_new_black_rook(BLACKROOK);
