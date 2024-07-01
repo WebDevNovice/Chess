@@ -75,9 +75,18 @@ public class PawnMoveCalc {
                 (board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.BLACK) && myPosition.getRow() == 7)); //black's home row should be 7
     }
 
-    private void special_starting_move(ChessPosition newPosition, List<ChessMove> ValidMoves){
-        int newCol = newPosition.getColumn() + 1;
-        ChessPosition targetPosition = new ChessPosition(newPosition.getRow(), newCol);
+    private void special_starting_move_white(ChessPosition newPosition, List<ChessMove> ValidMoves){
+        int newRow = newPosition.getRow() + 2;
+        ChessPosition targetPosition = new ChessPosition(newRow, newPosition.getColumn());
+        ChessMove newMove = new ChessMove(myPosition,targetPosition,null);
+        if(board.getPiece(targetPosition) == null){//is the target square empty?
+            ValidMoves.add(newMove); // yes, well add it to the possible move list
+        }
+    }
+
+    private void special_starting_move_black(ChessPosition newPosition, List<ChessMove> ValidMoves){
+        int newRow = newPosition.getRow() - 2;
+        ChessPosition targetPosition = new ChessPosition(newRow, newPosition.getColumn());
         ChessMove newMove = new ChessMove(myPosition,targetPosition,null);
         if(board.getPiece(targetPosition) == null){//is the target square empty?
             ValidMoves.add(newMove); // yes, well add it to the possible move list
@@ -100,8 +109,11 @@ public class PawnMoveCalc {
             if (check_starting_position(myPosition)) { //this is checking if I am in the starting col based on white or black pawns
 
                 check_in_front(newPosition, ValidMoves); //this handles looks at everything in front of the pawn for potential movement or captures
-                special_starting_move(myPosition, ValidMoves); //this should let me move two spaces in front of me (if possible)
-
+                if (board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
+                    special_starting_move_white(myPosition, ValidMoves); //this should let me move two spaces in front of me (if possible)
+                }else{
+                    special_starting_move_black(myPosition, ValidMoves);
+                }
 //                  }else if (promotion_check(newPosition)){
 //
             } else {
