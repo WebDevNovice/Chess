@@ -22,7 +22,8 @@ public class PawnMoveCalc {
     }
 
     public enum PawnPieceMove {
-        UP(-1,0);
+        WhiteForward(1,0),
+        BlackForward(-1,0);
 
         private int rowChange;
         private int colChange;
@@ -37,7 +38,10 @@ public class PawnMoveCalc {
         int newCol = target_position.getColumn() + 1; //shift the col right
         ChessPosition newPosition = new ChessPosition(target_position.getRow(), newCol);
         ChessMove newMove = new ChessMove(myPosition,newPosition,null);
-        if(board.getPiece(newPosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()){
+        if(board.getPiece(newPosition) == null) {
+            return;
+        }
+        else if(board.getPiece(newPosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()){
             ValidMoves.add(newMove);
         }
     }
@@ -46,7 +50,10 @@ public class PawnMoveCalc {
         int newCol = target_position.getColumn() - 1; //shift the col left
         ChessPosition newPosition = new ChessPosition(target_position.getRow(), newCol);
         ChessMove newMove = new ChessMove(myPosition,newPosition,null);
-        if(board.getPiece(newPosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()){
+        if(board.getPiece(newPosition) == null) {
+            return;
+        }
+        else if(board.getPiece(newPosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()){
             ValidMoves.add(newMove);
         }
     }
@@ -64,8 +71,8 @@ public class PawnMoveCalc {
     }
 
     private boolean check_starting_position(ChessPosition myPosition){
-        return ((board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.WHITE) && myPosition.getRow() == 1) ||
-                (board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.BLACK) && myPosition.getRow() == 6));
+        return ((board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.WHITE) && myPosition.getRow() == 2) || //white's home row should be 2
+                (board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.BLACK) && myPosition.getRow() == 7)); //black's home row should be 7
     }
 
     private void special_starting_move(ChessPosition newPosition, List<ChessMove> ValidMoves){
@@ -78,36 +85,64 @@ public class PawnMoveCalc {
     }
 
     private boolean promotion_check(ChessPosition newPosition){
-        return ((board.getPiece(newPosition).getTeamColor().equals(ChessGame.TeamColor.WHITE) && newPosition.getRow() == 7) ||
-                (board.getPiece(newPosition).getTeamColor().equals(ChessGame.TeamColor.BLACK) && newPosition.getRow() == 0));
+        return ((board.getPiece(newPosition).getTeamColor().equals(ChessGame.TeamColor.WHITE) && newPosition.getRow() == 8) ||
+                (board.getPiece(newPosition).getTeamColor().equals(ChessGame.TeamColor.BLACK) && newPosition.getRow() == 1));
+    }
+
+    private void pawnMovement(PawnPieceMove move, List<ChessMove> ValidMoves){
+        int newRow = myPosition.getRow() + move.rowChange; //this helps to check the target square
+        int newCol = myPosition.getColumn() + move.colChange; //this helps to check the target square
+        ChessPosition newPosition = new ChessPosition(newRow, newCol); //this helps to check the target square
+        ChessMove newMove = new ChessMove(myPosition, newPosition, null); //this is creating a potential move to add to a list *NOTE* Still need to handle promotion
+
+        if (newRow >= 1 && newRow < 9 && newCol >= 1 && newCol < 9) { // Bounds Check (COULD BE A SOURCE OF BAD CODE)
+
+            if (check_starting_position(myPosition)) { //this is checking if I am in the starting col based on white or black pawns
+
+                check_in_front(newPosition, ValidMoves); //this handles looks at everything in front of the pawn for potential movement or captures
+                special_starting_move(myPosition, ValidMoves); //this should let me move two spaces in front of me (if possible)
+
+//                  }else if (promotion_check(newPosition)){
+//
+            } else {
+                check_in_front(newPosition, ValidMoves);
+            }
+        }
     }
 
     public List<ChessMove> getValidMoves() {
         List<ChessMove> ValidMoves;
         ValidMoves = new ArrayList<>();
 
-        for (PawnPieceMove move : PawnPieceMove.values()) {
-
-            int newRow = myPosition.getRow() + move.rowChange; //this helps to check the target square
-            int newCol = myPosition.getColumn() + move.colChange; //this helps to check the target square
-            ChessPosition newPosition = new ChessPosition(newRow, newCol); //this helps to check the target square
-            ChessMove newMove = new ChessMove(myPosition,newPosition,null); //this is creating a potential move to add to a list *NOTE* Still need to handle promotion
-
-            if (newRow >= 1 && newRow < 9 && newCol >= 1 && newCol < 9) { // Bounds Check (COULD BE A SOURCE OF BAD CODE)
-
-                if (check_starting_position(myPosition)){
-
-                    check_in_front(newPosition, ValidMoves); //this handles looks at everything in front of the pawn for potential movement or captures
-                    special_starting_move(myPosition, ValidMoves);
-
-                }else if (promotion_check(newPosition)){
-
-                }
-                else {
-                    check_capture_left(newPosition, ValidMoves);
-                }
-            }
+        if (board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
+            PawnPieceMove move = PawnPieceMove.WhiteForward;
+            pawnMovement(move, ValidMoves);
+        }else{
+            PawnPieceMove move = PawnPieceMove.BlackForward;
+            pawnMovement(move, ValidMoves);
         }
         return ValidMoves;
     }
+
+    @Override
+    public String toString() {
+        return "PawnMoveCalc{" +
+                "myPosition=" + myPosition +
+                ", board=" + board +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PawnMoveCalc that = (PawnMoveCalc) o;
+        return Objects.equals(myPosition, that.myPosition) && Objects.equals(board, that.board);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(myPosition, board);
+    }
+
 }
