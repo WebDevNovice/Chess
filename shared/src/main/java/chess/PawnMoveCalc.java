@@ -34,6 +34,7 @@ public class PawnMoveCalc {
         }
     }
 
+
     private void check_capture_right(ChessPosition target_position, List<ChessMove> ValidMoves){
         int newCol = target_position.getColumn() + 1; //shift the col right
         ChessPosition newPosition = new ChessPosition(target_position.getRow(), newCol);
@@ -77,25 +78,58 @@ public class PawnMoveCalc {
 
     private void special_starting_move_white(ChessPosition newPosition, List<ChessMove> ValidMoves){
         int newRow = newPosition.getRow() + 2;
+        int infrontRow = newPosition.getRow() + 1;
         ChessPosition targetPosition = new ChessPosition(newRow, newPosition.getColumn());
+        ChessPosition infrontPosition = new ChessPosition(infrontRow, newPosition.getColumn());
         ChessMove newMove = new ChessMove(myPosition,targetPosition,null);
-        if(board.getPiece(targetPosition) == null){//is the target square empty?
-            ValidMoves.add(newMove); // yes, well add it to the possible move list
+        if(board.getPiece(infrontPosition) == null) {
+            if(board.getPiece(targetPosition) == null){//is the target square empty?
+                ValidMoves.add(newMove); // yes, well add it to the possible move list
+            }
         }
     }
 
     private void special_starting_move_black(ChessPosition newPosition, List<ChessMove> ValidMoves){
         int newRow = newPosition.getRow() - 2;
+        int infrontRow = newPosition.getRow() - 1;
         ChessPosition targetPosition = new ChessPosition(newRow, newPosition.getColumn());
+        ChessPosition infrontPosition = new ChessPosition(infrontRow, newPosition.getColumn());
         ChessMove newMove = new ChessMove(myPosition,targetPosition,null);
-        if(board.getPiece(targetPosition) == null){//is the target square empty?
-            ValidMoves.add(newMove); // yes, well add it to the possible move list
+        if(board.getPiece(infrontPosition) == null) {
+            if(board.getPiece(targetPosition) == null){//is the target square empty?
+                ValidMoves.add(newMove); // yes, well add it to the possible move list
+            }
         }
     }
 
     private boolean promotion_check(ChessPosition newPosition){
-        return ((board.getPiece(newPosition).getTeamColor().equals(ChessGame.TeamColor.WHITE) && newPosition.getRow() == 8) ||
-                (board.getPiece(newPosition).getTeamColor().equals(ChessGame.TeamColor.BLACK) && newPosition.getRow() == 1));
+        return ((board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.WHITE) && newPosition.getRow() == 8) ||
+                (board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.BLACK) && newPosition.getRow() == 1));
+    }
+
+    private void promotion_move(ChessPosition newPosition, List<ChessMove> ValidMoves){
+        for (ChessPiece.PieceType type: ChessPiece.PieceType.values()){//for each type of promotion piece, do the following
+            if(!type.equals(ChessPiece.PieceType.KING) && !type.equals(ChessPiece.PieceType.PAWN)){//Skips King and Pawn types
+                if(board.getPiece(newPosition) == null){ //this checks the space right in front if it is empty
+                    ChessMove newMove = new ChessMove(myPosition,newPosition,type); //this creates a new valid move
+                    ValidMoves.add(newMove); //this adds it to our valid moves list
+                }
+                ChessPosition capturePosition = new ChessPosition(newPosition.getRow(), newPosition.getColumn()+1);//this change check for a capture
+                if(board.getPiece(capturePosition) != null){//this will check if the capture square is empty
+                    if(board.getPiece(capturePosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()){//this will check if it is an oppenent piece
+                        ChessMove newMove = new ChessMove(myPosition,capturePosition,type);//if yes, it will
+                        ValidMoves.add(newMove);
+                    }
+                }
+                capturePosition = new ChessPosition(newPosition.getRow(), newPosition.getColumn()-1);
+                if(board.getPiece(capturePosition) != null){
+                    if(board.getPiece(capturePosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()){
+                        ChessMove newMove = new ChessMove(myPosition,capturePosition,type);
+                        ValidMoves.add(newMove);
+                    }
+                }
+            }
+        }
     }
 
     private void pawnMovement(PawnPieceMove move, List<ChessMove> ValidMoves){
@@ -114,8 +148,10 @@ public class PawnMoveCalc {
                 }else{
                     special_starting_move_black(myPosition, ValidMoves);
                 }
-//                  }else if (promotion_check(newPosition)){
-//
+
+            } else if (promotion_check(newPosition)){
+                promotion_move(newPosition, ValidMoves);
+
             } else {
                 check_in_front(newPosition, ValidMoves);
             }

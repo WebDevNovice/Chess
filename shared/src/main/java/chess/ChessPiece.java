@@ -29,19 +29,6 @@ public class ChessPiece {
                 '}';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ChessPiece piece = (ChessPiece) o;
-        return teamColor == piece.teamColor && type == piece.type;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(teamColor, type);
-    }
-
     /**
      * The various different chess piece options
      */
@@ -107,5 +94,16 @@ public class ChessPiece {
         return java.util.List.of();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece piece = (ChessPiece) o;
+        return teamColor == piece.teamColor && type == piece.type;
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(teamColor, type);
+    }
 }
