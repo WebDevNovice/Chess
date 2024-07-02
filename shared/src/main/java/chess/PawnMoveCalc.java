@@ -37,25 +37,27 @@ public class PawnMoveCalc {
 
     private void check_capture_right(ChessPosition target_position, List<ChessMove> ValidMoves){
         int newCol = target_position.getColumn() + 1; //shift the col right
-        ChessPosition newPosition = new ChessPosition(target_position.getRow(), newCol);
-        ChessMove newMove = new ChessMove(myPosition,newPosition,null);
-        if(board.getPiece(newPosition) == null) {
-            return;
-        }
-        else if(board.getPiece(newPosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()){
-            ValidMoves.add(newMove);
+        if (target_position.getRow() >= 1 && target_position.getRow() < 9 && newCol >= 1 && newCol < 9) {
+            ChessPosition newPosition = new ChessPosition(target_position.getRow(), newCol);
+            ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+            if (board.getPiece(newPosition) != null) {
+                if (board.getPiece(newPosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                    ValidMoves.add(newMove);
+                }
+            }
         }
     }
 
-    private void check_capture_left(ChessPosition target_position, List<ChessMove> ValidMoves){
+    private void check_capture_left(ChessPosition target_position, List<ChessMove> ValidMoves) {
         int newCol = target_position.getColumn() - 1; //shift the col left
-        ChessPosition newPosition = new ChessPosition(target_position.getRow(), newCol);
-        ChessMove newMove = new ChessMove(myPosition,newPosition,null);
-        if(board.getPiece(newPosition) == null) {
-            return;
-        }
-        else if(board.getPiece(newPosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()){
-            ValidMoves.add(newMove);
+        if (target_position.getRow() >= 1 && target_position.getRow() < 9 && newCol >= 1 && newCol < 9) {
+            ChessPosition newPosition = new ChessPosition(target_position.getRow(), newCol);
+            ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+            if (board.getPiece(newPosition) != null) {
+                if (board.getPiece(newPosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                    ValidMoves.add(newMove);
+                }
+            }
         }
     }
 
