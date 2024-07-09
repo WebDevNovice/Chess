@@ -9,19 +9,20 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
-    public TeamColor teamColor;
-    public ChessBoard chessBoard;
+    private ChessBoard chessBoard;
+    private TeamColor teamTurn;
 
-    public ChessGame(TeamColor teamColor, ChessBoard chessBoard) {
-        this.teamColor = teamColor;
-        this.chessBoard = chessBoard;
+    public ChessGame() {
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        return teamColor;
+        if (teamTurn == null) {
+            teamTurn = TeamColor.WHITE;
+        }
+        return teamTurn;
     }
 
     /**
@@ -30,7 +31,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        teamTurn = team;
     }
 
     /**
@@ -49,7 +50,10 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        if (chessBoard.getPiece(startPosition) == null){
+            return null;
+        }
+        return chessBoard.getPiece(startPosition).pieceMoves(chessBoard, startPosition);
     }
 
     /**
@@ -59,7 +63,35 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        try {
+            Collection<ChessMove> possibleMoves = validMoves(move.getStartPosition());
+            if (chessBoard.getPiece(move.getStartPosition()).getTeamColor().equals(getTeamTurn())){
+                if (possibleMoves != null) {
+                    for (ChessMove possibleMove : possibleMoves) {
+                        if (possibleMove.equals(move)) {
+                            if (chessBoard.getPiece(move.getEndPosition()).getTeamColor() == TeamColor.WHITE) {
+                                chessBoard.addPiece(move.getEndPosition(), chessBoard.getPiece(move.getStartPosition()));
+                                chessBoard.addPiece(move.getStartPosition(), null);
+                                setTeamTurn(TeamColor.BLACK);
+
+                                Collection<ChessMove> newMoves = validMoves(move.getEndPosition());
+                                if (newMoves != null) {
+                                    for (ChessMove newMove : newMoves) {
+                                        if (chessBoard.getPiece(newMove.getEndPosition()).getPieceType() == ChessPiece.PieceType.KING) {
+                                            isInCheck(chessBoard.getPiece(newMove.getEndPosition()).getTeamColor());
+                                        }
+                                    }
+                                }
+                            } else {
+                                setTeamTurn(TeamColor.WHITE);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -69,7 +101,9 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (teamColor == teamTurn){
+        }
+        return false;
     }
 
     /**
@@ -99,7 +133,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        this.chessBoard = board;
     }
 
     /**
@@ -108,6 +142,10 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
+        if (chessBoard == null) {
+            chessBoard = new ChessBoard();
+            chessBoard.resetBoard();
+        }
         return chessBoard;
     }
 }

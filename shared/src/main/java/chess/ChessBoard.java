@@ -12,10 +12,10 @@ import java.util.Objects;
  * we can then kill the board and pieces and then just call that method
  */
 public class ChessBoard {
-    private ChessPiece[][] squares;
+    private ChessPiece[][] squares;//this is an 2D array of chess pieces
     public ChessBoard() {
 
-        squares = new ChessPiece[8][8];
+        squares = new ChessPiece[8][8]; //8x8 chess board
     }
 
     /**
@@ -111,25 +111,6 @@ public class ChessBoard {
     }
 
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ChessBoard that = (ChessBoard) o;
-        return Objects.deepEquals(squares, that.squares);
-    }
-
-    @Override
-    public int hashCode() {
-        return Arrays.deepHashCode(squares);
-    }
-
-    @Override
-    public String toString() {
-        return "ChessBoard{" +
-                "squares=" + Arrays.deepToString(squares) +
-                '}';
-    }
 
     public void resetBoard() {
         boardWipe();
@@ -164,6 +145,25 @@ public class ChessBoard {
 
         place_new_black_queen(BLACKQUEEN);
         place_new_white_queen(WHITEQUEEN);
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessBoard that = (ChessBoard) o;
+        return Objects.deepEquals(squares, that.squares);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(squares);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessBoard{" +
+                "squares=" + Arrays.deepToString(squares) +
+                '}';
     }
 
 

@@ -21,14 +21,6 @@ public class ChessPiece {
         this.type = type;
     }
 
-    @Override
-    public String toString() {
-        return "ChessPiece{" +
-                "teamColor=" + teamColor +
-                ", type=" + type +
-                '}';
-    }
-
     /**
      * The various different chess piece options
      */
@@ -105,5 +97,13 @@ public class ChessPiece {
     @Override
     public int hashCode() {
         return Objects.hash(teamColor, type);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "teamColor=" + teamColor +
+                ", type=" + type +
+                '}';
     }
 }
