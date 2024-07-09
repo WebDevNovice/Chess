@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -40,7 +41,7 @@ public class ChessGame {
      */
     public enum TeamColor {
         WHITE,
-        BLACK
+        BLACK;
     }
 
     /**
@@ -66,24 +67,37 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         try {
             Collection<ChessMove> possibleMoves = validMoves(move.getStartPosition());
-            if (chessBoard.getPiece(move.getStartPosition()).getTeamColor().equals(getTeamTurn())){
-                if (possibleMoves != null) {
-                    for (ChessMove possibleMove : possibleMoves) {
-                        if (possibleMove.equals(move)) {
-                            chessBoard.addPiece(move.getEndPosition(), chessBoard.getPiece(move.getStartPosition()));
-                            chessBoard.addPiece(move.getStartPosition(), null);
-                            if (chessBoard.getPiece(move.getEndPosition()).getTeamColor() == TeamColor.WHITE) {
-                                setTeamTurn(TeamColor.BLACK);
-                            } else {
-                                setTeamTurn(TeamColor.WHITE);
+            ChessPiece startPiece = chessBoard.getPiece(move.getStartPosition());
+            if (startPiece != null && startPiece.getTeamColor() == teamTurn) {
+                    if (!possibleMoves.isEmpty()) {
+                        for (ChessMove possibleMove : possibleMoves) {
+                            if (possibleMove.equals(move)) {
+                                if (move.getPromotionPiece() == null){
+                                chessBoard.addPiece(move.getEndPosition(), chessBoard.getPiece(move.getStartPosition()));
+                                }
+                                else {
+                                    ChessPiece promotionPiece = new ChessPiece(teamTurn, move.getPromotionPiece());
+                                    chessBoard.addPiece(move.getEndPosition(), promotionPiece);
+                                }
+
+                                chessBoard.addPiece(move.getStartPosition(), null);
+
+                                if (getTeamTurn() == TeamColor.WHITE) {
+                                    setTeamTurn(TeamColor.BLACK);
+                                    break;
+                                } else {
+                                    setTeamTurn(TeamColor.WHITE);
+                                    break;
+                                }
                             }
+                            //                        isInCheck(teamTurn);
                         }
-                        isInCheck(teamTurn);
                     }
-                }
+                }else {
+                throw new InvalidMoveException();
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new InvalidMoveException();
         }
     }
 
@@ -98,14 +112,19 @@ public class ChessGame {
         for (int i = 0; i < 8; i++){
             for (int j = 0; j < 8; j++){
                 ChessPosition position = new ChessPosition(i, j);
-                if (chessBoard.getPiece(position).getPieceType() != null){
-                    Collection<ChessMove> possibleMoves = validMoves(position);
-                    for (ChessMove possibleMove : possibleMoves) {
-                        if (chessBoard.getPiece(possibleMove.getEndPosition()).getPieceType().equals(ChessPiece.PieceType.KING)//is the capture piece a king?
-                            && chessBoard.getPiece(possibleMove.getStartPosition()).getTeamColor() != teamColor //is the piece capturing on the opposite team as the King?
-                            && chessBoard.getPiece(possibleMove.getEndPosition()).getTeamColor() == teamColor) {
+                if (chessBoard.getPiece(position) == null) {
+                    continue;
+                }
+                else{
+                    if (chessBoard.getPiece(position).getPieceType() != null) {
+                        Collection<ChessMove> possibleMoves = validMoves(position);
+                        for (ChessMove possibleMove : possibleMoves) {
+                            if (chessBoard.getPiece(possibleMove.getEndPosition()).getPieceType().equals(ChessPiece.PieceType.KING)//is the capture piece a king?
+                                    && chessBoard.getPiece(possibleMove.getStartPosition()).getTeamColor() != teamColor //is the piece capturing on the opposite team as the King?
+                                    && chessBoard.getPiece(possibleMove.getEndPosition()).getTeamColor() == teamColor) {
                                 result = true;
                                 kingInCheckPosition = possibleMove.getEndPosition();
+                            }
                         }
                     }
                 }
@@ -180,4 +199,6 @@ public class ChessGame {
         }
         return chessBoard;
     }
+
+
 }
