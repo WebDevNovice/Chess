@@ -62,6 +62,7 @@ public class ChessGame {
         //I should implement to see if a move would result in a check for that color's team
         validMoves = chessBoard.getPiece(startPosition).pieceMoves(chessBoard, startPosition);
         ChessPiece capturedPiece = null;
+        ChessPiece promotedPawn = null;
 
         if (!validMoves.isEmpty()) {
             for (ChessMove move : validMoves) {
@@ -77,29 +78,40 @@ public class ChessGame {
                 else { //Pawn promotion route
 
                     if (chessBoard.getPiece(move.getEndPosition())==null){ //checking if the promotion spot is empty
-                        ChessPiece promotionPiece = new ChessPiece(teamTurn, move.getPromotionPiece());
+                        promotedPawn = chessBoard.getPiece(move.getStartPosition());
+                        ChessPiece promotionPiece = new ChessPiece(promotedPawn.getTeamColor(), move.getPromotionPiece());
                         chessBoard.addPiece(move.getEndPosition(), promotionPiece);
                     }
                     else {
+                        promotedPawn = chessBoard.getPiece(move.getStartPosition());
                         capturedPiece = chessBoard.getPiece(move.getEndPosition());//this saves what piece was captured
-                        ChessPiece promotionPiece = new ChessPiece(teamTurn, move.getPromotionPiece());
+                        ChessPiece promotionPiece = new ChessPiece(promotedPawn.getTeamColor(), move.getPromotionPiece());
                         chessBoard.addPiece(move.getEndPosition(), promotionPiece);
                     }
-                    capturedPiece = chessBoard.getPiece(move.getEndPosition()); //this saves the captured piece for future return
-                    ChessPiece promotionPiece = new ChessPiece(teamTurn, move.getPromotionPiece()); //creates the promotion piece
-                    chessBoard.addPiece(move.getEndPosition(), promotionPiece);//captures the opposing teams piece
                 }
 
                 chessBoard.addPiece(move.getStartPosition(), null); //this leaves old location as blank
 
                 if (isInCheck(chessBoard.getPiece(move.getEndPosition()).getTeamColor())) { //checking if when i moved, did I leave my King in check
                     badMoves.add(move); //if I did leave it in check, I add it to this list
-                    chessBoard.addPiece(move.getStartPosition(), chessBoard.getPiece(move.getEndPosition()));//reset the board to how it was
-                    chessBoard.addPiece(move.getEndPosition(), capturedPiece);//return the captured piece if there was one, if there wasn't, null is placed
+                    if (move.getPromotionPiece() != null) {
+                        chessBoard.addPiece(move.getStartPosition(), promotedPawn);//reset the board to how it was
+                        chessBoard.addPiece(move.getEndPosition(), capturedPiece);//return the captured piece if there was one, if there wasn't, null is placed
+                    }
+                    else{
+                        chessBoard.addPiece(move.getStartPosition(), chessBoard.getPiece(move.getEndPosition()));//reset the board to how it was
+                        chessBoard.addPiece(move.getEndPosition(), capturedPiece);//return the captured piece if there was one, if there wasn't, null is placed
+                    }
                     capturedPiece = null;
                 }else{
-                    chessBoard.addPiece(move.getStartPosition(), chessBoard.getPiece(move.getEndPosition()));//reset the last move
-                    chessBoard.addPiece(move.getEndPosition(), capturedPiece);//return the condition of the square before the move
+                    if (move.getPromotionPiece() != null) {
+                        chessBoard.addPiece(move.getStartPosition(), promotedPawn);//reset the board to how it was
+                        chessBoard.addPiece(move.getEndPosition(), capturedPiece);//return the captured piece if there was one, if there wasn't, null is placed
+                    }
+                    else{
+                        chessBoard.addPiece(move.getStartPosition(), chessBoard.getPiece(move.getEndPosition()));//reset the board to how it was
+                        chessBoard.addPiece(move.getEndPosition(), capturedPiece);//return the captured piece if there was one, if there wasn't, null is placed
+                    }
                     capturedPiece = null;
                 }
             }
