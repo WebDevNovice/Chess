@@ -18,6 +18,10 @@ public class ChessBoard {
         squares = new ChessPiece[8][8]; //8x8 chess board
     }
 
+    public ChessBoard (ChessBoard boardDeepCopy){
+        squares = Arrays.copyOf(boardDeepCopy.squares, boardDeepCopy.squares.length);
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
@@ -38,7 +42,6 @@ public class ChessBoard {
     public ChessPiece getPiece(ChessPosition position) {
         return squares[position.getRow()-1][position.getColumn()-1];
     }
-
 
     /**
      * Sets the board to the default starting board
@@ -146,6 +149,15 @@ public class ChessBoard {
         place_new_black_queen(BLACKQUEEN);
         place_new_white_queen(WHITEQUEEN);
     }
+
+    private void copyCurrentBoard(ChessBoard newBoard) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                newBoard.squares[i][j] = squares[i][j];
+            }
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

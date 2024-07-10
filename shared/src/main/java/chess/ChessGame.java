@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -52,10 +53,61 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        Collection<ChessMove> badMoves = new ArrayList<>();
+
         if (chessBoard.getPiece(startPosition) == null){
             return null;
         }
-        return chessBoard.getPiece(startPosition).pieceMoves(chessBoard, startPosition);
+        //I should implement to see if a move would result in a check for that color's team
+        validMoves = chessBoard.getPiece(startPosition).pieceMoves(chessBoard, startPosition);
+        ChessPiece capturedPiece = null;
+
+        if (!validMoves.isEmpty()) {
+            for (ChessMove move : validMoves) {
+                if (move.getPromotionPiece() == null){ //check to make sure it's not a pawn promoting
+                    if (chessBoard.getPiece(move.getEndPosition())==null){ //checking if final position is empty
+                        chessBoard.addPiece(move.getEndPosition(), chessBoard.getPiece(move.getStartPosition())); // if yes, we don't need to worry about keeping track of the capture piece
+                    }
+                    else {
+                        capturedPiece = chessBoard.getPiece(move.getEndPosition()); // if it is occupied, then we should store the captured piece for when we need to return it
+                        chessBoard.addPiece(move.getEndPosition(), chessBoard.getPiece(move.getStartPosition())); // We then "capture" the old piece
+                    }
+                }
+                else { //Pawn promotion route
+
+                    if (chessBoard.getPiece(move.getEndPosition())==null){ //checking if the promotion spot is empty
+                        ChessPiece promotionPiece = new ChessPiece(teamTurn, move.getPromotionPiece());
+                        chessBoard.addPiece(move.getEndPosition(), promotionPiece);
+                    }
+                    else {
+                        capturedPiece = chessBoard.getPiece(move.getEndPosition());
+                        ChessPiece promotionPiece = new ChessPiece(teamTurn, move.getPromotionPiece());
+                        chessBoard.addPiece(move.getEndPosition(), promotionPiece);
+                    }
+                    capturedPiece = chessBoard.getPiece(move.getEndPosition());
+                    ChessPiece promotionPiece = new ChessPiece(teamTurn, move.getPromotionPiece());
+                    chessBoard.addPiece(move.getEndPosition(), promotionPiece);
+                }
+
+                chessBoard.addPiece(move.getStartPosition(), null);
+
+                if (isInCheck(chessBoard.getPiece(move.getEndPosition()).getTeamColor())) {
+                    badMoves.add(move);
+                    chessBoard.addPiece(move.getStartPosition(), chessBoard.getPiece(move.getStartPosition()));
+                    chessBoard.addPiece(move.getEndPosition(), capturedPiece);
+                }else{
+                    chessBoard.addPiece(move.getStartPosition(), chessBoard.getPiece(move.getStartPosition()));
+                    chessBoard.addPiece(move.getEndPosition(), capturedPiece);
+                }
+            }
+        }
+            for (ChessMove move: badMoves){
+                if (validMoves.contains(move)){
+                    validMoves.remove(move);
+                }
+            }
+        return validMoves;
     }
 
     /**
@@ -109,27 +161,28 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         boolean result = false;
-        for (int i = 0; i < 8; i++){
-            for (int j = 0; j < 8; j++){
+        for (int i = 1; i <= 8; i++){
+            for (int j = 1; j <= 8; j++){ //this is going over ever square on the board looking for pieces
                 ChessPosition position = new ChessPosition(i, j);
                 if (chessBoard.getPiece(position) == null) {
                     continue;
                 }
                 else{
-                    if (chessBoard.getPiece(position).getPieceType() != null) {
-                        Collection<ChessMove> possibleMoves = validMoves(position);
+                    Collection<ChessMove> possibleMoves = chessBoard.getPiece(position).pieceMoves(chessBoard, position);
                         for (ChessMove possibleMove : possibleMoves) {
-                            if (chessBoard.getPiece(possibleMove.getEndPosition()).getPieceType().equals(ChessPiece.PieceType.KING)//is the capture piece a king?
-                                    && chessBoard.getPiece(possibleMove.getStartPosition()).getTeamColor() != teamColor //is the piece capturing on the opposite team as the King?
-                                    && chessBoard.getPiece(possibleMove.getEndPosition()).getTeamColor() == teamColor) {
-                                result = true;
-                                kingInCheckPosition = possibleMove.getEndPosition();
+                            if (chessBoard.getPiece(possibleMove.getEndPosition())!=null){
+                                if (chessBoard.getPiece(possibleMove.getEndPosition()).getPieceType().equals(ChessPiece.PieceType.KING)//is the capture piece a king?
+                                        && chessBoard.getPiece(possibleMove.getStartPosition()).getTeamColor() != teamColor //is the piece capturing on the opposite team as the King?
+                                        && chessBoard.getPiece(possibleMove.getEndPosition()).getTeamColor() == teamColor) {
+                                    result = true;
+                                    kingInCheckPosition = possibleMove.getEndPosition();
+                                    return result;
+                                }
                             }
                         }
                     }
                 }
             }
-        }
         return result;
     }
 
