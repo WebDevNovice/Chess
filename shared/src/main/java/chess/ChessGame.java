@@ -70,7 +70,7 @@ public class ChessGame {
                         chessBoard.addPiece(move.getEndPosition(), chessBoard.getPiece(move.getStartPosition())); // if yes, we don't need to worry about keeping track of the capture piece
                     }
                     else {
-                        capturedPiece = chessBoard.getPiece(move.getEndPosition()); // if it is occupied, then we should store the captured piece for when we need to return it
+                        capturedPiece = chessBoard.getPiece(move.getEndPosition()); // this saves the captured piece to be returned later
                         chessBoard.addPiece(move.getEndPosition(), chessBoard.getPiece(move.getStartPosition())); // We then "capture" the old piece
                     }
                 }
@@ -81,31 +81,31 @@ public class ChessGame {
                         chessBoard.addPiece(move.getEndPosition(), promotionPiece);
                     }
                     else {
-                        capturedPiece = chessBoard.getPiece(move.getEndPosition());
+                        capturedPiece = chessBoard.getPiece(move.getEndPosition());//this saves what piece was captured
                         ChessPiece promotionPiece = new ChessPiece(teamTurn, move.getPromotionPiece());
                         chessBoard.addPiece(move.getEndPosition(), promotionPiece);
                     }
-                    capturedPiece = chessBoard.getPiece(move.getEndPosition());
-                    ChessPiece promotionPiece = new ChessPiece(teamTurn, move.getPromotionPiece());
-                    chessBoard.addPiece(move.getEndPosition(), promotionPiece);
+                    capturedPiece = chessBoard.getPiece(move.getEndPosition()); //this saves the captured piece for future return
+                    ChessPiece promotionPiece = new ChessPiece(teamTurn, move.getPromotionPiece()); //creates the promotion piece
+                    chessBoard.addPiece(move.getEndPosition(), promotionPiece);//captures the opposing teams piece
                 }
 
-                chessBoard.addPiece(move.getStartPosition(), null);
+                chessBoard.addPiece(move.getStartPosition(), null); //this leaves old location as blank
 
-                if (isInCheck(chessBoard.getPiece(move.getEndPosition()).getTeamColor())) {
-                    badMoves.add(move);
-                    chessBoard.addPiece(move.getStartPosition(), chessBoard.getPiece(move.getStartPosition()));
-                    chessBoard.addPiece(move.getEndPosition(), capturedPiece);
+                if (isInCheck(chessBoard.getPiece(move.getEndPosition()).getTeamColor())) { //checking if when i moved, did I leave my King in check
+                    badMoves.add(move); //if I did leave it in check, I add it to this list
+                    chessBoard.addPiece(move.getStartPosition(), chessBoard.getPiece(move.getEndPosition()));//reset the board to how it was
+                    chessBoard.addPiece(move.getEndPosition(), capturedPiece);//return the captured piece if there was one, if there wasn't, null is placed
+                    capturedPiece = null;
                 }else{
-                    chessBoard.addPiece(move.getStartPosition(), chessBoard.getPiece(move.getStartPosition()));
-                    chessBoard.addPiece(move.getEndPosition(), capturedPiece);
+                    chessBoard.addPiece(move.getStartPosition(), chessBoard.getPiece(move.getEndPosition()));//reset the last move
+                    chessBoard.addPiece(move.getEndPosition(), capturedPiece);//return the condition of the square before the move
+                    capturedPiece = null;
                 }
             }
         }
-            for (ChessMove move: badMoves){
-                if (validMoves.contains(move)){
-                    validMoves.remove(move);
-                }
+            for (ChessMove move: badMoves){//this removes all the bad moves from our valid moves test
+                validMoves.remove(move);
             }
         return validMoves;
     }
