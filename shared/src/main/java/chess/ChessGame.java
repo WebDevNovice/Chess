@@ -11,7 +11,7 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private ChessBoard chessBoard;
+    private ChessBoard chessBoard = new ChessBoard();
     private TeamColor teamTurn;
     private ChessPosition kingInCheckPosition;
 
@@ -205,31 +205,32 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        boolean result = true;
-        if (isInCheck(teamColor)) {
+        if (!isInCheck(teamColor)) {
+            return false;
+        }
+        else {
             Collection<ChessMove> possibleMoves = validMoves(kingInCheckPosition);
-            for (ChessMove possibleMove : possibleMoves) {
-                ChessBoard newBoard = chessBoard;
-                if(isInCheck(teamColor)){
-                    result = false;
+            if (!possibleMoves.isEmpty()) {
+                return false;
+            }
+
+            for (int i =1; i <= 8; i++){
+                for (int j = 1; j <= 8; j++){
+                    ChessPosition position = new ChessPosition(i, j);
+                    if (chessBoard.getPiece(position) == null) {
+                        continue;
+                    }
+                    if (chessBoard.getPiece(position).getTeamColor() == teamColor) {
+                        Collection<ChessMove> allyPotentialMoves = new ArrayList<>();
+                        allyPotentialMoves = validMoves(position);
+                        if (!allyPotentialMoves.isEmpty()) {
+                            return false;
+                        }
+                    }
                 }
             }
         }
-        return result;
-//            for (int i = 0; i < 8; i++){
-//                for (int j = 0; j < 8; j++){
-//                    ChessPosition position = new ChessPosition(i, j);
-//                    if (chessBoard.getPiece(position).getPieceType() != null){
-//                        if (chessBoard.getPiece(position).getPieceType().equals(ChessPiece.PieceType.KING)) {
-//                            Collection<ChessMove> possibleMoves = validMoves(position);
-//                            for (ChessMove possibleMove : possibleMoves) {
-//                                if ()
-//                            }
-//                        }
-//                        }
-//                    }
-//                    }
-//        }
+        return true;
     }
 
     /**
@@ -249,7 +250,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        this.chessBoard = board;
+            chessBoard = board;
     }
 
     /**
@@ -262,6 +263,7 @@ public class ChessGame {
             chessBoard = new ChessBoard();
             chessBoard.resetBoard();
         }
+        chessBoard.resetBoard();
         return chessBoard;
     }
 
