@@ -15,6 +15,7 @@ public class ChessGame {
     private ChessPosition kingInCheckPosition;
 
     public ChessGame() {
+        chessBoard.resetBoard();
     }
 
     /**
