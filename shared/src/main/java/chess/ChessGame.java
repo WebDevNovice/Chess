@@ -16,6 +16,7 @@ public class ChessGame {
 
     public ChessGame() {
         chessBoard.resetBoard();
+        getTeamTurn();
     }
 
     /**
@@ -130,10 +131,19 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         try {
+            if (isInCheck(chessBoard.getPiece(move.getStartPosition()).getTeamColor())){
+                throw new InvalidMoveException();
+            }
             Collection<ChessMove> possibleMoves = validMoves(move.getStartPosition());
+            if (possibleMoves.isEmpty()) {
+                throw new InvalidMoveException();
+            }
             ChessPiece startPiece = chessBoard.getPiece(move.getStartPosition());
             if (startPiece != null && startPiece.getTeamColor() == teamTurn) {
                     if (!possibleMoves.isEmpty()) {
+                        if (!possibleMoves.contains(move)) {
+                            throw new InvalidMoveException();
+                        }
                         for (ChessMove possibleMove : possibleMoves) {
                             if (possibleMove.equals(move)) {
                                 if (move.getPromotionPiece() == null){
@@ -154,7 +164,6 @@ public class ChessGame {
                                     break;
                                 }
                             }
-                            //                        isInCheck(teamTurn);
                         }
                     }
                 }else {
@@ -241,6 +250,9 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        if (isInCheckmate(teamColor)) {
+            return false;
+        }
         for (int i =1; i <= 8; i++){
             for (int j = 1; j <= 8; j++){
                 ChessPosition position = new ChessPosition(i, j);
@@ -277,10 +289,8 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         if (chessBoard == null) {
-            chessBoard = new ChessBoard();
-            chessBoard.resetBoard();
+            return null;
         }
-        chessBoard.resetBoard();
         return chessBoard;
     }
 
