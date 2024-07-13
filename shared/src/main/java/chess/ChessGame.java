@@ -46,6 +46,45 @@ public class ChessGame {
         BLACK;
     }
 
+    private ArrayList<ChessPiece> handleValidMovesNotEmpty(ChessMove move, ChessPiece capturedPiece, ChessPiece promotedPawn) {
+        ArrayList<ChessPiece> pieceCollection = new ArrayList<>();
+            if (move.getPromotionPiece() == null){ //check to make sure it's not a pawn promoting
+                if (chessBoard.getPiece(move.getEndPosition())==null){ //checking if final position is empty
+                    chessBoard.addPiece(move.getEndPosition(), chessBoard.getPiece(move.getStartPosition())); // if yes, we don't need to worry about keeping track of the capture piece
+                }
+                else {
+                    capturedPiece = chessBoard.getPiece(move.getEndPosition()); // this saves the captured piece to be returned later
+                    chessBoard.addPiece(move.getEndPosition(), chessBoard.getPiece(move.getStartPosition())); // We then "capture" the old piece
+                }
+            }
+            else { //Pawn promotion route
+
+                if (chessBoard.getPiece(move.getEndPosition())==null){ //checking if the promotion spot is empty
+                    promotedPawn = chessBoard.getPiece(move.getStartPosition());
+                    ChessPiece promotionPiece = new ChessPiece(promotedPawn.getTeamColor(), move.getPromotionPiece());
+                    chessBoard.addPiece(move.getEndPosition(), promotionPiece);
+                }
+                else {
+                    promotedPawn = chessBoard.getPiece(move.getStartPosition());
+                    capturedPiece = chessBoard.getPiece(move.getEndPosition());//this saves what piece was captured
+                    ChessPiece promotionPiece = new ChessPiece(promotedPawn.getTeamColor(), move.getPromotionPiece());
+                    chessBoard.addPiece(move.getEndPosition(), promotionPiece);
+                }
+            }
+        pieceCollection.add(capturedPiece);
+        pieceCollection.add(promotedPawn);
+        return pieceCollection;
+    }
+
+    private void resetBoard (ChessPiece promotedPawn, ChessPiece capturedPiece, ChessMove move) {
+        if (move.getPromotionPiece() != null) {
+            chessBoard.addPiece(move.getStartPosition(), promotedPawn);//reset the board to how it was
+            chessBoard.addPiece(move.getEndPosition(), capturedPiece);//return the captured piece if there was one, if there wasn't, null is placed
+        } else {
+            chessBoard.addPiece(move.getStartPosition(), chessBoard.getPiece(move.getEndPosition()));//reset the board to how it was
+            chessBoard.addPiece(move.getEndPosition(), capturedPiece);//return the captured piece if there was one, if there wasn't, null is placed
+        }
+    }
     /**
      * Gets a valid moves for a piece at the given location
      *
@@ -53,6 +92,8 @@ public class ChessGame {
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
+
+
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
         Collection<ChessMove> badMoves = new ArrayList<>();
@@ -60,66 +101,34 @@ public class ChessGame {
         if (chessBoard.getPiece(startPosition) == null){
             return null;
         }
-        //I should implement to see if a move would result in a check for that color's team
+        //I should implement to see if a move would result in a check for that color's own team
         validMoves = chessBoard.getPiece(startPosition).pieceMoves(chessBoard, startPosition);
         ChessPiece capturedPiece = null;
         ChessPiece promotedPawn = null;
 
         if (!validMoves.isEmpty()) {
-            for (ChessMove move : validMoves) {
-                if (move.getPromotionPiece() == null){ //check to make sure it's not a pawn promoting
-                    if (chessBoard.getPiece(move.getEndPosition())==null){ //checking if final position is empty
-                        chessBoard.addPiece(move.getEndPosition(), chessBoard.getPiece(move.getStartPosition())); // if yes, we don't need to worry about keeping track of the capture piece
-                    }
-                    else {
-                        capturedPiece = chessBoard.getPiece(move.getEndPosition()); // this saves the captured piece to be returned later
-                        chessBoard.addPiece(move.getEndPosition(), chessBoard.getPiece(move.getStartPosition())); // We then "capture" the old piece
-                    }
-                }
-                else { //Pawn promotion route
 
-                    if (chessBoard.getPiece(move.getEndPosition())==null){ //checking if the promotion spot is empty
-                        promotedPawn = chessBoard.getPiece(move.getStartPosition());
-                        ChessPiece promotionPiece = new ChessPiece(promotedPawn.getTeamColor(), move.getPromotionPiece());
-                        chessBoard.addPiece(move.getEndPosition(), promotionPiece);
-                    }
-                    else {
-                        promotedPawn = chessBoard.getPiece(move.getStartPosition());
-                        capturedPiece = chessBoard.getPiece(move.getEndPosition());//this saves what piece was captured
-                        ChessPiece promotionPiece = new ChessPiece(promotedPawn.getTeamColor(), move.getPromotionPiece());
-                        chessBoard.addPiece(move.getEndPosition(), promotionPiece);
-                    }
-                }
+            for (ChessMove move : validMoves) {
+                ArrayList<ChessPiece> pieceCollection;
+                pieceCollection = handleValidMovesNotEmpty(move, capturedPiece, promotedPawn);
+                capturedPiece = pieceCollection.get(0);
+                promotedPawn = pieceCollection.get(1);
 
                 chessBoard.addPiece(move.getStartPosition(), null); //this leaves old location as blank
 
                 if (isInCheck(chessBoard.getPiece(move.getEndPosition()).getTeamColor())) { //checking if when i moved, did I leave my King in check
                     badMoves.add(move); //if I did leave it in check, I add it to this list
-                    if (move.getPromotionPiece() != null) {
-                        chessBoard.addPiece(move.getStartPosition(), promotedPawn);//reset the board to how it was
-                        chessBoard.addPiece(move.getEndPosition(), capturedPiece);//return the captured piece if there was one, if there wasn't, null is placed
-                    }
-                    else{
-                        chessBoard.addPiece(move.getStartPosition(), chessBoard.getPiece(move.getEndPosition()));//reset the board to how it was
-                        chessBoard.addPiece(move.getEndPosition(), capturedPiece);//return the captured piece if there was one, if there wasn't, null is placed
-                    }
-                    capturedPiece = null;
-                }else{
-                    if (move.getPromotionPiece() != null) {
-                        chessBoard.addPiece(move.getStartPosition(), promotedPawn);//reset the board to how it was
-                        chessBoard.addPiece(move.getEndPosition(), capturedPiece);//return the captured piece if there was one, if there wasn't, null is placed
-                    }
-                    else{
-                        chessBoard.addPiece(move.getStartPosition(), chessBoard.getPiece(move.getEndPosition()));//reset the board to how it was
-                        chessBoard.addPiece(move.getEndPosition(), capturedPiece);//return the captured piece if there was one, if there wasn't, null is placed
-                    }
-                    capturedPiece = null;
+                    resetBoard(promotedPawn, capturedPiece, move);
+                } else {
+                    resetBoard(promotedPawn, capturedPiece, move);
                 }
+                capturedPiece = null;
             }
-        }
-            for (ChessMove move: badMoves){//this removes all the bad moves from our valid moves test
+
+            for (ChessMove move : badMoves) {//this removes all the bad moves from our valid moves test
                 validMoves.remove(move);
             }
+        }
         return validMoves;
     }
 
