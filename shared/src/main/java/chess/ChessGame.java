@@ -302,6 +302,4 @@ public class ChessGame {
         }
         return chessBoard;
     }
-
-
 }
