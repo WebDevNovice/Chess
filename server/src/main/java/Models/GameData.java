@@ -5,24 +5,19 @@ import chess.ChessGame;
 public class GameData {
     public int gameID = 1;
 
-    private int uniqueID;
     private String whiteUsername;
     private String blackUsername;
     private String gameName;
     private ChessGame game;
 
     GameData(String whiteUsername, String blackUsername, String gameName, ChessGame game) {
-        setUniqueID();
         setWhiteUsername(whiteUsername);
         setBlackUsername(blackUsername);
         setGameName(gameName);
         setGame(game);
     }
 
-    private void setUniqueID() {
-        GameIDGenerator uniqueIDGenerator = new GameIDGenerator();
-        this.uniqueID = uniqueIDGenerator.uniqueID;
-    }
+
 
     private void setWhiteUsername(String whiteUsername) {
         if (whiteUsername != null) {
@@ -79,11 +74,4 @@ public class GameData {
         return game;
     }
 
-    private class GameIDGenerator{
-        private int uniqueID;
-        GameIDGenerator(){
-            this.uniqueID = GameData.this.gameID++;
-            GameData.this.uniqueID++;
-        }
-    }
 }
