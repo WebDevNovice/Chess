@@ -1,9 +1,13 @@
 package dataaccess;
 
+import Models.AuthData;
+import Models.UserData;
 import dataaccess.RamMemory.AuthDAO_RAM;
 
-public interface AuthDAO_interface <T> {
-    T createAuth(T authData);
-    T getAuth(T authData);
-    void deleteAuth(T authData);
+import java.util.Collection;
+
+public interface AuthDAO_interface {
+    AuthData createAuth(UserData user);
+    AuthData getAuth(AuthData authToken);
+    void deleteAuth(UserData username);
 }

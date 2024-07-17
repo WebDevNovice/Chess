@@ -1,10 +1,10 @@
 package dataaccess;
 
-import dataaccess.RamMemory.UserDAO_RAM;
+import Models.AuthData;
+import Models.UserData;
 
-public interface UserDao_interface <T> {
-    T createUser(T user);
-    T getUser(T user);
-    Boolean findUser(T user);
-    void deleteUser(T user);
+public interface UserDao_interface{
+    AuthData createUser(UserData userData);
+    AuthData getUser(UserData userData);
+    void deleteUser(UserData userData);
 }

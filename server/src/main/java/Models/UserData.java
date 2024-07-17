@@ -5,7 +5,7 @@ public class UserData {
     private String password;
     private String email;
 
-    UserData(String username, String password, String email) {
+   public UserData(String username, String password, String email) {
         setUsername(username);
         setPassword(password);
         setEmail(email);
@@ -23,15 +23,15 @@ public class UserData {
         this.email = email;
     }
 
-    String getUsername() {
-        return username;
+    public String getUsername() {
+        return this.username;
     }
 
     String getPassword() {
-        return password;
+        return this.password;
     }
 
     String getEmail() {
-        return email;
+        return this.email;
     }
 }
