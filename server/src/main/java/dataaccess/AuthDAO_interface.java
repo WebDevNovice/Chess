@@ -7,7 +7,7 @@ import dataaccess.RamMemory.AuthDAO_RAM;
 import java.util.Collection;
 
 public interface AuthDAO_interface {
-    AuthData createAuth(UserData user);
-    AuthData getAuth(AuthData authToken);
-    void deleteAuth(UserData username);
+    AuthData createAuth(UserData user) throws DataAccessException;
+    AuthData getAuth(AuthData authToken) throws DataAccessException;
+    void deleteAuth(UserData username) throws DataAccessException;
 }
