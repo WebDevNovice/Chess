@@ -26,12 +26,16 @@ public class AuthDAO_RAM implements AuthDAO_interface {
     }
 
     @Override
-    public AuthData getAuth(AuthData authToken) {
+    public AuthData getAuthData(AuthData authData) {
+        for (AuthData aData : authDatabase) {
+            if (aData.equals(authData)){
+                return aData;
+            }
+        }
         return null;
     }
 
     @Override
     public void deleteAuth(UserData username) {
-
     }
 }

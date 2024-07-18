@@ -5,6 +5,6 @@ import Models.UserData;
 
 public interface UserDao_interface{
     AuthData createUser(UserData userData) throws DataAccessException;
-    boolean getUser() throws DataAccessException;
+    UserData getUser(UserData user) throws DataAccessException;
     void deleteUser(UserData userData) throws DataAccessException;
 }

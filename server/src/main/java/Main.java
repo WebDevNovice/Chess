@@ -1,3 +1,4 @@
+import Services.UserServices;
 import chess.*;
 import server.Server;
 
@@ -18,6 +19,8 @@ public class Main {
             if (args.length >= 1) {
                 port = Integer.parseInt(args[0]);
             }
+
+            var server = new Server().run(port);
 
             System.out.printf("Server started on port %d%n", port);
             return;
