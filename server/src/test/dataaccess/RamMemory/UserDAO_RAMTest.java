@@ -38,7 +38,7 @@ class UserDAO_RAMTest {
     }
 
     @Test
-    void isUserInDatabaseUserTrue() throws DataAccessException {
+    void getUser() throws DataAccessException {
         UserData test = new UserData("Jake", "12345", null);
         UserDAO_RAM userDAORam = new UserDAO_RAM();
         UserData correct = new UserData("Jake","12345","jacobgbullock3@gmail.com");
@@ -46,6 +46,16 @@ class UserDAO_RAMTest {
     }
 
     @Test
-    void deleteUser() {
+    void getUser_ThrowsUsernameNotFoundError() throws DataAccessException {
+        UserDAO_RAM userDAORam = new UserDAO_RAM();
+        UserData test = new UserData("Billy", "12345", null);
+        Assertions.assertThrows(DataAccessException.class, () -> userDAORam.getUser(test));
+    }
+
+    @Test
+    void deleteUser() throws DataAccessException {
+        AuthData authToken = new AuthData("Jake", "1101101");
+        UserDAO_RAM userDAORam = new UserDAO_RAM();
+        assertNull(userDAORam.deleteUser(authToken));
     }
 }

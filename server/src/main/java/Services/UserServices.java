@@ -25,8 +25,8 @@ public class UserServices {
         }
     }
 
-    public UserData createUser(UserData user) {
-        return null;
+    public AuthData Register(UserData user) throws DataAccessException {
+        return userDao.createUser(user);
     }
 
     public AuthData login(UserData user) throws DataAccessException {
@@ -34,12 +34,8 @@ public class UserServices {
             return authDao.createAuth(registeredUser);
     }
 
-    public UserData deleteUser(UserData user) {
-        return null;
-    }
-
-    public AuthData createAuth() {
-        return null;
+    public Object logout(AuthData authToken) throws DataAccessException {
+        return userDao.deleteUser(authToken);
     }
 
 }

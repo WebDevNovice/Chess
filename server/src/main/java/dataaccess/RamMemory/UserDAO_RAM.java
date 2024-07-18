@@ -3,22 +3,16 @@ package dataaccess.RamMemory;
 
 import Models.AuthData;
 import Models.UserData;
-import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
 import dataaccess.UserDao_interface;
-import jdk.jshell.spi.ExecutionControl;
 
-import java.io.FileNotFoundException;
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Objects;
+
 
 public class UserDAO_RAM implements UserDao_interface {
 
    Collection<UserData> userDatabase;
-
 
     public UserDAO_RAM() throws DataAccessException {
         this.userDatabase = new ArrayList<>();
@@ -28,6 +22,57 @@ public class UserDAO_RAM implements UserDao_interface {
         UserData test = new UserData(my_name, my_password,my_email);
         userDatabase.add(test);
     }
+
+
+    @Override
+    public AuthData createUser(UserData userData) throws DataAccessException {
+        AuthData authData;
+        for (UserData user : userDatabase) {
+
+            if (!isUsernameInDatabase(userData, user)) {
+
+                if (isUserDataComplete(userData)) {
+
+                    userDatabase.add(userData);
+                    authData = new AuthDAO_RAM().createAuth(userData);
+                    return authData;
+                }
+                incompleteDataHandler(userData);
+            }
+            throw new DataAccessException("User " + userData.getUsername() + " already exists");
+        }
+        throw new DataAccessException("Data Entry Failure");
+    }
+
+    @Override
+    public UserData getUser(UserData userData) throws DataAccessException{
+        for (UserData user : userDatabase) {
+
+            if (userData.getUsername() == null) {
+                throw new DataAccessException("Username is empty");
+            }
+
+            if (isUsernameInDatabase(userData, user)) {
+
+                if (arePasswordsSame(user, userData)) {
+                    return user;
+                }
+            }
+        }
+        throw new DataAccessException("User does not exist");
+    }
+
+    @Override
+    public Object deleteUser(AuthData authData) throws DataAccessException {
+        for (UserData user : userDatabase) {
+            if (user.getUsername().equals(authData.getUsername())) {
+                userDatabase.remove(user);
+                return null;
+            }
+        }
+        throw new DataAccessException("User does not exist");
+    }
+
 
     private boolean isUserDataComplete(UserData userData){
         if (userData.getUsername() == null || userData.getUsername().equals("")){
@@ -58,55 +103,15 @@ public class UserDAO_RAM implements UserDao_interface {
         return newUser.getUsername().equals(storedUser.getUsername());
     }
 
-    @Override
-    public AuthData createUser(UserData userData) throws DataAccessException {
-        AuthData authData;
-        for (UserData user : userDatabase) {
-
-            if (!isUsernameInDatabase(userData, user)) {
-
-                if (isUserDataComplete(userData)) {
-
-                    userDatabase.add(userData);
-                    authData = new AuthDAO_RAM().createAuth(userData);
-                    return authData;
-                }
-                incompleteDataHandler(userData);
-            }
-            throw new DataAccessException("User " + userData.getUsername() + " already exists");
+    private boolean arePasswordsSame(UserData storedUser, UserData newUser) throws DataAccessException {
+        if (newUser.getPassword() == null) {
+            throw new DataAccessException("Password is empty");
         }
-        throw new DataAccessException("Data Entry Failure");
-    }
-
-
-    @Override
-    public UserData getUser(UserData userData) throws DataAccessException{
-        for (UserData user : userDatabase) {
-
-            if (userData.getUsername() == null) {
-                throw new DataAccessException("Username is empty");
-            }
-
-            if (isUsernameInDatabase(userData, user)) {
-                if (userData.getPassword() == null) {
-                    throw new DataAccessException("Password is empty");
-                }
-                if (!userData.getPassword().equals(user.getPassword())) {
-                    throw new DataAccessException("Passwords do not match");
-                }
-                return user;
-            }
+        if (!storedUser.getPassword().equals(newUser.getPassword())) {
+            throw new DataAccessException("Passwords do not match");
         }
-        throw new DataAccessException("User does not exist");
+        return true;
     }
-
-    @Override
-    public void deleteUser(UserData userData) throws DataAccessException {
-
-    }
-
-
-    //use main to create the reference of the hashMap
 
 }
 
