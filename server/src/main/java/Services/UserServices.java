@@ -35,7 +35,7 @@ public class UserServices {
     }
 
     public Object logout(AuthData authToken) throws DataAccessException {
-        return userDao.deleteUser(authToken);
+        return authDao.deleteAuth(authToken);
     }
 
 }

@@ -8,16 +8,29 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserDAO_RAMTest {
 
+    private static AuthDAO_RAM authDAO_RAM;
+    private UserDAO_RAM userDAORam;
+
+    @BeforeAll
+    static void setupAll() {
+        authDAO_RAM = new AuthDAO_RAM();
+    }
+
+    @BeforeEach
+    void setup() throws DataAccessException {
+        userDAORam = new UserDAO_RAM();
+    }
 
     @Test
     void createUser_ReturnsCorrectUsername() throws DataAccessException {
         UserData user = new UserData("Jacob", "123456", "pglinebacker20@gmail.com");
-        UserDAO_RAM userDAORam = new UserDAO_RAM();
-        AuthDAO_RAM authDAO_RAM = new AuthDAO_RAM();
         AuthData authData = authDAO_RAM.createAuth(user);
         String username = userDAORam.createUser(user).getUsername();
         Assertions.assertEquals(authData.getUsername(), username);
@@ -26,36 +39,32 @@ class UserDAO_RAMTest {
     @Test
     void createUser_ThrowsIncompleteUserError() throws DataAccessException {
         UserData user = new UserData("Jacob", "123456", "");
-        UserDAO_RAM userDAORam = new UserDAO_RAM();
         Assertions.assertThrows(DataAccessException.class, () -> userDAORam.createUser(user));
     }
 
     @Test
     void createUser_ThrowsUsernameAlreadyExistError() throws DataAccessException {
         UserData user = new UserData("Jake", "123456", "pglinebacker20@gmail.com");
-        UserDAO_RAM userDAORam = new UserDAO_RAM();
         Assertions.assertThrows(DataAccessException.class, () -> userDAORam.createUser(user));
     }
 
     @Test
     void getUser() throws DataAccessException {
         UserData test = new UserData("Jake", "12345", null);
-        UserDAO_RAM userDAORam = new UserDAO_RAM();
-        UserData correct = new UserData("Jake","12345","jacobgbullock3@gmail.com");
+        UserData correct = new UserData("Jake", "12345", "jacobgbullock3@gmail.com");
         Assertions.assertEquals(correct, userDAORam.getUser(test));
     }
 
     @Test
     void getUser_ThrowsUsernameNotFoundError() throws DataAccessException {
-        UserDAO_RAM userDAORam = new UserDAO_RAM();
         UserData test = new UserData("Billy", "12345", null);
         Assertions.assertThrows(DataAccessException.class, () -> userDAORam.getUser(test));
     }
 
     @Test
-    void deleteUser() throws DataAccessException {
-        AuthData authToken = new AuthData("Jake", "1101101");
-        UserDAO_RAM userDAORam = new UserDAO_RAM();
-        assertNull(userDAORam.deleteUser(authToken));
+    void clear() throws DataAccessException {
+        Collection<UserData> empty = new ArrayList<>();
+        userDAORam.clearUserDatabase();
+        assertEquals(empty, userDAORam.getAllUsers());
     }
 }

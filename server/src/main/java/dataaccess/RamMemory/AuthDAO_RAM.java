@@ -3,6 +3,7 @@ package dataaccess.RamMemory;
 import Models.AuthData;
 import Models.UserData;
 import dataaccess.AuthDAO_interface;
+import dataaccess.DataAccessException;
 
 import javax.management.relation.Role;
 import java.util.ArrayList;
@@ -36,6 +37,13 @@ public class AuthDAO_RAM implements AuthDAO_interface {
     }
 
     @Override
-    public void deleteAuth(UserData username) {
+    public Object deleteAuth(AuthData authData) throws DataAccessException {
+        for (AuthData aData : authDatabase) {
+            if(aData.equals(authData)){
+                authDatabase.remove(aData);
+                return null;
+            }
+        }
+        throw new DataAccessException("AuthToken does not exist");
     }
 }

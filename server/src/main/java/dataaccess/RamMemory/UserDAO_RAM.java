@@ -63,17 +63,18 @@ public class UserDAO_RAM implements UserDao_interface {
     }
 
     @Override
-    public Object deleteUser(AuthData authData) throws DataAccessException {
-        for (UserData user : userDatabase) {
-            if (user.getUsername().equals(authData.getUsername())) {
-                userDatabase.remove(user);
-                return null;
-            }
+    public void clearUserDatabase() throws DataAccessException {
+        if (!userDatabase.isEmpty()){
+            userDatabase.clear();
         }
-        throw new DataAccessException("User does not exist");
+        else{
+            throw new DataAccessException("Database is empty");
+        }
     }
 
-
+    public Collection<UserData> getAllUsers() throws DataAccessException {
+        return userDatabase;
+    }
     private boolean isUserDataComplete(UserData userData){
         if (userData.getUsername() == null || userData.getUsername().equals("")){
             return false;
