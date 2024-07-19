@@ -75,6 +75,7 @@ public class UserDAO_RAM implements UserDao_interface {
     public Collection<UserData> getAllUsers() throws DataAccessException {
         return userDatabase;
     }
+
     private boolean isUserDataComplete(UserData userData){
         if (userData.getUsername() == null || userData.getUsername().equals("")){
             return false;

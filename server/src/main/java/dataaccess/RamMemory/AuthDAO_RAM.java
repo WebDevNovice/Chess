@@ -5,10 +5,9 @@ import Models.UserData;
 import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
 
-import javax.management.relation.Role;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 
 public class AuthDAO_RAM implements AuthDAO_interface {
@@ -20,10 +19,23 @@ public class AuthDAO_RAM implements AuthDAO_interface {
     }
 
     @Override
-    public AuthData createAuth(UserData user) {
-        AuthData authData = new AuthData(user.getUsername(), UUID.randomUUID().toString());
-        authDatabase.add(authData);
-        return authData;
+    public AuthData createAuth(UserData user) throws DataAccessException {
+        if (authDatabase.isEmpty()) {
+            AuthData aData = new AuthData(user.getUsername(), UUID.randomUUID().toString());
+            authDatabase.add(aData);
+            return aData;
+        }
+        for (AuthData authData : authDatabase) {
+            if (authData.getUsername().equals(user.getUsername())) {
+                throw new DataAccessException("AuthToken already exists");
+            }
+            else{
+                AuthData aData = new AuthData(user.getUsername(), UUID.randomUUID().toString());
+                authDatabase.add(aData);
+                return aData;
+            }
+        }
+        throw new DataAccessException("AuthToken already exists");
     }
 
     @Override
@@ -45,5 +57,28 @@ public class AuthDAO_RAM implements AuthDAO_interface {
             }
         }
         throw new DataAccessException("AuthToken does not exist");
+    }
+
+    @Override
+    public void clearAuthDatabase() throws DataAccessException {
+        if (!authDatabase.isEmpty()) {
+            authDatabase.clear();
+        }
+        else{
+            throw new DataAccessException("AuthDatabase is empty");
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AuthDAO_RAM that = (AuthDAO_RAM) o;
+        return Objects.equals(authDatabase, that.authDatabase);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(authDatabase);
     }
 }
