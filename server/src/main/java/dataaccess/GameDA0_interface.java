@@ -13,6 +13,6 @@ public interface GameDA0_interface {
 
     Collection<Objects> listGames() throws DataAccessException;
     Objects updateGame(GameDA0_interface game) throws DataAccessException;
-    void clearGamedatabase() throws DataAccessException;
+    void clearGamedatabase();
     HashMap<Integer, GameData> getGameDatabase() throws DataAccessException;
 }

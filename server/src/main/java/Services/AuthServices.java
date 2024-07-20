@@ -13,11 +13,25 @@ public class AuthServices {
     }
 
     public AuthData createAuth(UserData user) throws DataAccessException {
-        if (user.getUsername() == null || user.getPassword() == null) {
-            throw new DataAccessException("Username and password are required");
+            return authDao.createAuth(user);
+    }
+
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        if (authToken == null) {
+            throw new DataAccessException("Authtoken Is Required");
         }
         else {
-            return authDao.createAuth(user);
+            return authDao.getAuthData(authToken);
+        }
+    }
+
+    public Object logout(String authToken) throws DataAccessException {
+        if (authToken == null || authToken.isEmpty()) {
+            throw new DataAccessException("Auth object is required");
+        }
+        else {
+            authDao.deleteAuth(authToken);
+            return "";
         }
     }
 }

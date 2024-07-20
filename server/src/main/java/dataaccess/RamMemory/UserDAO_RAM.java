@@ -16,30 +16,25 @@ public class UserDAO_RAM implements UserDao_interface {
 
     public UserDAO_RAM() throws DataAccessException {
         this.userDatabase = new ArrayList<>();
-        String my_name = "Jake";
-        String my_email = "jacobgbullock3@gmail.com";
-        String my_password = "12345";
-        UserData test = new UserData(my_name, my_password,my_email);
-        userDatabase.add(test);
     }
 
     @Override
-    public AuthData createUser(UserData userData) throws DataAccessException {
-        AuthData authData;
+    public UserData createUser(UserData userData) throws DataAccessException {
         for (UserData user : userDatabase) {
 
             if (!isUsernameInDatabase(userData, user)) {
-
-                if (isUserDataComplete(userData)) {
-
-                    userDatabase.add(userData);
-                    authData = new AuthDAO_RAM().createAuth(userData);
-                    return authData;
-                }
-                incompleteDataHandler(userData);
+                continue;
             }
             throw new DataAccessException("User " + userData.getUsername() + " already exists");
         }
+        if (isUserDataComplete(userData)) {
+
+            userDatabase.add(userData);
+            return userData;
+
+        }else {
+                incompleteDataHandler(userData);
+            }
         throw new DataAccessException("Data Entry Failure");
     }
 
@@ -62,13 +57,8 @@ public class UserDAO_RAM implements UserDao_interface {
     }
 
     @Override
-    public void clearUserDatabase() throws DataAccessException {
-        if (!userDatabase.isEmpty()){
+    public void clearUserDatabase(){
             userDatabase.clear();
-        }
-        else{
-            throw new DataAccessException("Database is empty");
-        }
     }
 
     public Collection<UserData> getUserDatabase() throws DataAccessException {
@@ -76,13 +66,13 @@ public class UserDAO_RAM implements UserDao_interface {
     }
 
     private boolean isUserDataComplete(UserData userData){
-        if (userData.getUsername() == null || userData.getUsername().equals("")){
+        if (userData.getUsername() == null || userData.getUsername().isEmpty()){
             return false;
         }
-        if (userData.getPassword() == null || userData.getPassword().equals("")){
+        if (userData.getPassword() == null || userData.getPassword().isEmpty()){
             return false;
         }
-        if (userData.getEmail() == null || userData.getEmail().equals("")){
+        if (userData.getEmail() == null || userData.getEmail().isEmpty()){
             return false;
         }
         return true;
@@ -100,7 +90,10 @@ public class UserDAO_RAM implements UserDao_interface {
         }
     }
 
-    private boolean isUsernameInDatabase(UserData newUser, UserData storedUser) {
+    private boolean isUsernameInDatabase(UserData newUser, UserData storedUser) throws DataAccessException {
+        if(newUser.getUsername()==null || newUser.getUsername().isEmpty()){
+            throw new DataAccessException("Username Required");
+        }
         return newUser.getUsername().equals(storedUser.getUsername());
     }
 

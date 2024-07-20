@@ -20,53 +20,42 @@ public class AuthDAO_RAM implements AuthDAO_interface {
 
     @Override
     public AuthData createAuth(UserData user) throws DataAccessException {
-        if (authDatabase.isEmpty()) {
+        if (user.getUsername() == null || user.getPassword() == null ||
+                user.getUsername().isEmpty() || user.getPassword().isEmpty()) {
+            throw new DataAccessException("Username and password are required");
+        }
+        else {
             AuthData aData = new AuthData(user.getUsername(), UUID.randomUUID().toString());
             authDatabase.add(aData);
             return aData;
         }
-        for (AuthData authData : authDatabase) {
-            if (authData.getUsername().equals(user.getUsername())) {
-                throw new DataAccessException("AuthToken already exists");
-            }
-            else{
-                AuthData aData = new AuthData(user.getUsername(), UUID.randomUUID().toString());
-                authDatabase.add(aData);
-                return aData;
-            }
-        }
-        throw new DataAccessException("AuthToken already exists");
     }
 
     @Override
-    public AuthData getAuthData(AuthData authData) {
+    //take in a string
+    public AuthData getAuthData(String authToken) throws DataAccessException {
         for (AuthData aData : authDatabase) {
-            if (aData.equals(authData)){
+            if (aData.getAuthToken().equals(authToken)){
                 return aData;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Object deleteAuth(AuthData authData) throws DataAccessException {
-        for (AuthData aData : authDatabase) {
-            if(aData.equals(authData)){
-                authDatabase.remove(aData);
-                return null;
             }
         }
         throw new DataAccessException("AuthToken does not exist");
     }
 
     @Override
-    public void clearAuthDatabase() throws DataAccessException {
-        if (!authDatabase.isEmpty()) {
+    public Object deleteAuth(String authToken) throws DataAccessException {
+        if (getAuthData(authToken) != null) {
+            authDatabase.remove(getAuthData(authToken));
+            return "";
+        }
+        else {
+            throw new DataAccessException("AuthToken does not exist");
+        }
+    }
+
+    @Override
+    public void clearAuthDatabase() {
             authDatabase.clear();
-        }
-        else{
-            throw new DataAccessException("AuthDatabase is empty");
-        }
     }
 
     public Collection<AuthData> getAuthDatabase() throws DataAccessException{
