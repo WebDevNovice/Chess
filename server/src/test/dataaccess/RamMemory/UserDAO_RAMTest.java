@@ -65,6 +65,6 @@ class UserDAO_RAMTest {
     void clear() throws DataAccessException {
         Collection<UserData> empty = new ArrayList<>();
         userDAORam.clearUserDatabase();
-        assertEquals(empty, userDAORam.getAllUsers());
+        assertEquals(empty, userDAORam.getUserDatabase());
     }
 }

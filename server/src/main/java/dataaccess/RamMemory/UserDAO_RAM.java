@@ -23,7 +23,6 @@ public class UserDAO_RAM implements UserDao_interface {
         userDatabase.add(test);
     }
 
-
     @Override
     public AuthData createUser(UserData userData) throws DataAccessException {
         AuthData authData;
@@ -72,7 +71,7 @@ public class UserDAO_RAM implements UserDao_interface {
         }
     }
 
-    public Collection<UserData> getAllUsers() throws DataAccessException {
+    public Collection<UserData> getUserDatabase() throws DataAccessException {
         return userDatabase;
     }
 

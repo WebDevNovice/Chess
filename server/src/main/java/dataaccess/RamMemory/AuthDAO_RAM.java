@@ -69,6 +69,10 @@ public class AuthDAO_RAM implements AuthDAO_interface {
         }
     }
 
+    public Collection<AuthData> getAuthDatabase() throws DataAccessException{
+        return authDatabase;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

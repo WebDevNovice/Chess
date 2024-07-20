@@ -17,6 +17,11 @@ public class GameDAO_RAM implements GameDA0_interface {
     }
 
     @Override
+    public Objects createGame(GameDA0_interface game) throws DataAccessException {
+        return null;
+    }
+
+    @Override
     public Objects createGame(Objects game) throws DataAccessException {
         return null;
     }
@@ -27,17 +32,21 @@ public class GameDAO_RAM implements GameDA0_interface {
     }
 
     @Override
-    public Objects updateGame(Objects game) throws DataAccessException {
+    public Objects updateGame(GameDA0_interface game) throws DataAccessException {
         return null;
     }
 
     @Override
-    public void deleteGamedatabase() throws DataAccessException {
+    public void clearGamedatabase() throws DataAccessException {
         if (!gameDataHashMap.isEmpty()) {
             gameDataHashMap.clear();
         }
         else{
             throw new DataAccessException("Game data map is empty");
         }
+    }
+
+    public HashMap<Integer, GameData> getGameDatabase() throws DataAccessException{
+        return gameDataHashMap;
     }
 }
