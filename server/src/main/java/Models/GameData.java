@@ -3,18 +3,19 @@ package Models;
 import chess.ChessGame;
 
 public class GameData {
-    public int gameID = 1;
+    public Integer gameID;
 
     private String whiteUsername;
     private String blackUsername;
     private String gameName;
     private ChessGame game;
 
-    GameData(String whiteUsername, String blackUsername, String gameName, ChessGame game) {
+    public GameData(String whiteUsername, String blackUsername, String gameName, ChessGame game, Integer gameID) {
         setWhiteUsername(whiteUsername);
         setBlackUsername(blackUsername);
         setGameName(gameName);
         setGame(game);
+        setGameID(gameID);
     }
 
 
@@ -37,25 +38,20 @@ public class GameData {
         }
     }
 
-    private void setGameName(String gameName) throws IllegalArgumentException {
-        if (gameName != null) {
-            this.gameName = gameName;
-        }else{
-            throw new IllegalArgumentException("Game name cannot be null");
-        }
+    private void setGameName(String gameName) {
+        this.gameName = gameName;
     }
 
-    private void setGame(ChessGame game) throws IllegalArgumentException {
-        if (game != null) {
-            this.game = game;
-        }
-        else {
-            throw new IllegalArgumentException("Game cannot be null");
-        }
+    private void setGame(ChessGame game)  {
+        this.game = game;
+    }
+
+    private void setGameID(int gameID) {
+        this.gameID = gameID;
     }
 
     public int getGameID() {
-        return gameID;
+        return this.gameID;
     }
 
     public String getWhiteUsername() {

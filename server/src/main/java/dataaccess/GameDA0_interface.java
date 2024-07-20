@@ -7,12 +7,9 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public interface GameDA0_interface {
-    Objects createGame(GameDA0_interface game) throws DataAccessException;
-
-    Objects createGame(Objects game) throws DataAccessException;
-
+    Integer createGame(String gameName) throws DataAccessException;
     Collection<Objects> listGames() throws DataAccessException;
-    Objects updateGame(GameDA0_interface game) throws DataAccessException;
+    Objects updateGame(GameData game) throws DataAccessException;
     void clearGamedatabase();
     HashMap<Integer, GameData> getGameDatabase() throws DataAccessException;
 }
