@@ -1,5 +1,6 @@
 package dataaccess.RamMemory;
 
+import Models.AuthData;
 import Models.GameData;
 import chess.ChessGame;
 import dataaccess.DataAccessException;
@@ -30,8 +31,30 @@ public class GameDAO_RAM implements GameDA0_interface {
     }
 
     @Override
-    public Collection<Objects> listGames() throws DataAccessException {
-        return List.of();
+    public Collection<GameData> listGames() throws DataAccessException {
+        return gameDataHashMap.values();
+    }
+
+    @Override
+    public GameData joinGame(String playerColor, Integer gameId, AuthData authData) throws DataAccessException {
+        var username = authData.getUsername();
+        if (gameDataHashMap.containsKey(gameId)){
+            if (playerColor.equals("WHITE")) {
+                if (gameDataHashMap.get(gameId).getWhiteUsername().isEmpty()) {
+                    gameDataHashMap.get(gameId).setWhiteUsername(authData.getUsername());
+                    return gameDataHashMap.get(gameId);
+                }
+                throw new DataAccessException("OOPS! Someone has already taken that team Color");
+            }else{
+                if (gameDataHashMap.get(gameId).getBlackUsername().isEmpty()) {
+                    gameDataHashMap.get(gameId).setBlackUsername(authData.getUsername());
+                    return gameDataHashMap.get(gameId);
+                }
+                throw new DataAccessException("OOPS! Someone has already taken that team Color");
+            }
+        }else{
+            throw new DataAccessException("Game does not exist");
+        }
     }
 
     @Override

@@ -20,7 +20,7 @@ public class GameData {
 
 
 
-    private void setWhiteUsername(String whiteUsername) {
+    public void setWhiteUsername(String whiteUsername) {
         if (whiteUsername != null) {
             this.whiteUsername = whiteUsername;
         }
@@ -29,7 +29,7 @@ public class GameData {
         }
     }
 
-    private void setBlackUsername(String blackUsername) {
+    public void setBlackUsername(String blackUsername) {
         if (blackUsername != null) {
             this.blackUsername = blackUsername;
         }
