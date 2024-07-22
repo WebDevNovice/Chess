@@ -12,7 +12,7 @@ import java.util.Collection;
 
 public class UserDAO_RAM implements UserDao_interface {
 
-   Collection<UserData> userDatabase;
+   public Collection<UserData> userDatabase;
 
     public UserDAO_RAM() throws DataAccessException {
         this.userDatabase = new ArrayList<>();
@@ -20,13 +20,6 @@ public class UserDAO_RAM implements UserDao_interface {
 
     @Override
     public UserData createUser(UserData userData) throws DataAccessException {
-        for (UserData user : userDatabase) {
-
-            if (!isUsernameInDatabase(userData, user)) {
-                continue;
-            }
-            throw new DataAccessException("User " + userData.getUsername() + " already exists");
-        }
         if (isUserDataComplete(userData)) {
 
             userDatabase.add(userData);
@@ -35,7 +28,7 @@ public class UserDAO_RAM implements UserDao_interface {
         }else {
                 incompleteDataHandler(userData);
             }
-        throw new DataAccessException("Data Entry Failure");
+        throw new DataAccessException("Error: Data Entry Failure");
     }
 
     @Override
@@ -43,7 +36,7 @@ public class UserDAO_RAM implements UserDao_interface {
         for (UserData user : userDatabase) {
 
             if (userData.getUsername() == null) {
-                throw new DataAccessException("Username is empty");
+                throw new DataAccessException("Error: Username is empty");
             }
 
             if (isUsernameInDatabase(userData, user)) {
@@ -53,7 +46,7 @@ public class UserDAO_RAM implements UserDao_interface {
                 }
             }
         }
-        throw new DataAccessException("User does not exist");
+        throw new DataAccessException("Error: User does not exist");
     }
 
     @Override
@@ -80,29 +73,29 @@ public class UserDAO_RAM implements UserDao_interface {
 
     private void incompleteDataHandler(UserData userData) throws DataAccessException {
         if (userData.getUsername() == null) {
-            throw new DataAccessException("Username is empty");
+            throw new DataAccessException("Error: Username is empty");
         }
         else if (userData.getPassword() == null) {
-            throw new DataAccessException("Password is empty");
+            throw new DataAccessException("Error: Password is empty");
         }
         else if (userData.getEmail() == null) {
-            throw new DataAccessException("Email is empty");
+            throw new DataAccessException("Error: Email is empty");
         }
     }
 
     private boolean isUsernameInDatabase(UserData newUser, UserData storedUser) throws DataAccessException {
         if(newUser.getUsername()==null || newUser.getUsername().isEmpty()){
-            throw new DataAccessException("Username Required");
+            throw new DataAccessException("Error: Username Required");
         }
         return newUser.getUsername().equals(storedUser.getUsername());
     }
 
     private boolean arePasswordsSame(UserData storedUser, UserData newUser) throws DataAccessException {
         if (newUser.getPassword() == null) {
-            throw new DataAccessException("Password is empty");
+            throw new DataAccessException("Error: Password is empty");
         }
         if (!storedUser.getPassword().equals(newUser.getPassword())) {
-            throw new DataAccessException("Passwords do not match");
+            throw new DataAccessException("Error: Passwords do not match");
         }
         return true;
     }
