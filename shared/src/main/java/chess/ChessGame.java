@@ -201,8 +201,8 @@ public class ChessGame {
                     Collection<ChessMove> possibleMoves = chessBoard.getPiece(position).pieceMoves(chessBoard, position);
                         for (ChessMove possibleMove : possibleMoves) {
                             if (chessBoard.getPiece(possibleMove.getEndPosition())!=null){
-                                if (chessBoard.getPiece(possibleMove.getEndPosition()).getPieceType().equals(ChessPiece.PieceType.KING)//is the capture piece a king?
-                                        && chessBoard.getPiece(possibleMove.getStartPosition()).getTeamColor() != teamColor //is the piece capturing on the opposite team as the King?
+                                if (chessBoard.getPiece(possibleMove.getEndPosition()).getPieceType().equals(ChessPiece.PieceType.KING)
+                                        && chessBoard.getPiece(possibleMove.getStartPosition()).getTeamColor() != teamColor
                                         && chessBoard.getPiece(possibleMove.getEndPosition()).getTeamColor() == teamColor) {
                                     result = true;
                                     kingInCheckPosition = possibleMove.getEndPosition();
@@ -239,7 +239,7 @@ public class ChessGame {
                         continue;
                     }
                     if (chessBoard.getPiece(position).getTeamColor() == teamColor) {
-                        Collection<ChessMove> allyPotentialMoves = new ArrayList<>();
+                        Collection<ChessMove> allyPotentialMoves;
                         allyPotentialMoves = validMoves(position);
                         if (!allyPotentialMoves.isEmpty()) {
                             return false;

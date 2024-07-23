@@ -5,6 +5,7 @@ import model.UserData;
 import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
 import dataaccess.UserDao_interface;
+import service.execeptions.BadRequestException;
 
 public class UserServices {
     UserDao_interface userDao;

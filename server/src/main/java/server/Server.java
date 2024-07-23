@@ -13,6 +13,8 @@ import dataaccess.ramMemory.AuthDAO_RAM;
 import dataaccess.ramMemory.GameDAO_RAM;
 import dataaccess.ramMemory.UserDAO_RAM;
 import dataaccess.UserDao_interface;
+import service.execeptions.BadRequestException;
+import service.execeptions.UnvailableTeamException;
 import spark.*;
 
 import java.util.ArrayList;

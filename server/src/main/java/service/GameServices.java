@@ -4,6 +4,8 @@ import model.AuthData;
 import model.GameData;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0_interface;
+import service.execeptions.BadRequestException;
+import service.execeptions.UnvailableTeamException;
 
 import java.util.Collection;
 

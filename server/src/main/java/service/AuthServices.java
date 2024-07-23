@@ -4,6 +4,7 @@ import model.AuthData;
 import model.UserData;
 import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
+import service.execeptions.BadRequestException;
 import spark.Request;
 
 public class AuthServices {

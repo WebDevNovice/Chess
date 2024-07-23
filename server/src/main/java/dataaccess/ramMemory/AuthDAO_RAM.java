@@ -2,7 +2,7 @@ package dataaccess.ramMemory;
 
 import model.AuthData;
 import model.UserData;
-import service.BadRequestException;
+import service.execeptions.BadRequestException;
 import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
 

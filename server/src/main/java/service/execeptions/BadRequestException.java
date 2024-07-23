@@ -1,4 +1,4 @@
-package service;
+package service.execeptions;
 
 /**
  * Indicates there was an error connecting to the database

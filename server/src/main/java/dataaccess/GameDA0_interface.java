@@ -2,8 +2,8 @@ package dataaccess;
 
 import model.AuthData;
 import model.GameData;
-import service.BadRequestException;
-import service.UnvailableTeamException;
+import service.execeptions.BadRequestException;
+import service.execeptions.UnvailableTeamException;
 
 import java.util.Collection;
 import java.util.HashMap;

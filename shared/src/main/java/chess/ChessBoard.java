@@ -113,8 +113,6 @@ public class ChessBoard {
         squares[0][4] = king;
     }
 
-
-
     public void resetBoard() {
         boardWipe();
         ChessPiece BLACKPAWN = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
@@ -148,14 +146,6 @@ public class ChessBoard {
 
         place_new_black_queen(BLACKQUEEN);
         place_new_white_queen(WHITEQUEEN);
-    }
-
-    private void copyCurrentBoard(ChessBoard newBoard) {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                newBoard.squares[i][j] = squares[i][j];
-            }
-        }
     }
 
     @Override
