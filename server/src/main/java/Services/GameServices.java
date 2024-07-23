@@ -6,7 +6,6 @@ import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0_interface;
 
-import javax.servlet.UnavailableException;
 import java.util.Collection;
 
 public class GameServices {
@@ -16,10 +15,11 @@ public class GameServices {
         this.gameDoa = gameDoa;
     }
 
-    public Collection<ChessGame> listGames() throws DataAccessException {
-        Collection<ChessGame> games = gameDoa.listGames();
+    public Collection<GameData> listGames() throws DataAccessException {
+        Collection<GameData> games = gameDoa.listGames();
         if (games.isEmpty()) {
-            throw new DataAccessException("Error: No games found");
+            games = null;
+            return games;
         }
         return games;
     }
@@ -35,7 +35,8 @@ public class GameServices {
 
     public GameData joinGame(String playerColor, Integer gameId, AuthData authData) throws DataAccessException, BadRequestException, UnvailableTeamException {
         if (gameDoa.getGameDatabase().containsKey(gameId)){
-            return gameDoa.joinGame(playerColor, gameId, authData);
+            GameData game = gameDoa.joinGame(playerColor, gameId, authData);
+            return game;
         }else{
             throw new BadRequestException("Error: Game does not exist");
         }

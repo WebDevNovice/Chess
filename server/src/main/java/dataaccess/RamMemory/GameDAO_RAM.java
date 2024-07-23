@@ -8,7 +8,6 @@ import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0_interface;
 
-import javax.servlet.UnavailableException;
 import java.util.*;
 
 public class GameDAO_RAM implements GameDA0_interface {
@@ -27,23 +26,20 @@ public class GameDAO_RAM implements GameDA0_interface {
     }
 
     @Override
-    public Collection<ChessGame> listGames() throws DataAccessException {
+    public Collection<GameData> listGames() throws DataAccessException {
         Collection<GameData> gameData = gameDataHashMap.values();
-        Collection<ChessGame> chessGames = new ArrayList<>();
-        for (GameData gameData1 : gameData) {
-            chessGames.add(gameData1.getGame());
-        }
-        return chessGames;
+        return gameData;
     }
 
     @Override
     public GameData joinGame(String playerColor, Integer gameId, AuthData authData) throws UnvailableTeamException, BadRequestException {
         var username = authData.getUsername();
-        if (gameDataHashMap.get(gameId) == null) {
+        if (playerColor != null) {
             if (playerColor.equals("WHITE")) {
                 if (gameDataHashMap.get(gameId).getWhiteUsername().isEmpty()) {
                     gameDataHashMap.get(gameId).setWhiteUsername(username);
-                    return gameDataHashMap.get(gameId);
+                    GameData gameData = gameDataHashMap.get(gameId);
+                    return gameData;
                 }
                 throw new UnvailableTeamException("Error: OOPS! Someone has already taken that team Color");
             }else{
