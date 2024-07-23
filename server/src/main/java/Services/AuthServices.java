@@ -7,7 +7,7 @@ import dataaccess.DataAccessException;
 import spark.Request;
 
 public class AuthServices {
-    AuthDAO_interface authDao;
+    public AuthDAO_interface authDao;
 
     public AuthServices(AuthDAO_interface authDao) {
         this.authDao = authDao;
