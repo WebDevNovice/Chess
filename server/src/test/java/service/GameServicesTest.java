@@ -2,9 +2,9 @@ package java.service;
 
 import Models.AuthData;
 import Models.GameData;
-import services.BadRequestException;
-import services.GameServices;
-import services.UnvailableTeamException;
+import service.BadRequestException;
+import service.GameServices;
+import service.UnvailableTeamException;
 import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0_interface;

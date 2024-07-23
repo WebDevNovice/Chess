@@ -2,8 +2,8 @@ package java.service;
 
 import Models.AuthData;
 import Models.UserData;
-import services.BadRequestException;
-import services.UserServices;
+import service.BadRequestException;
+import service.UserServices;
 import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
 import dataaccess.ramMemory.AuthDAO_RAM;

@@ -4,7 +4,7 @@ import Response_Request_Objects.CreateGameRequest;
 import Response_Request_Objects.CreateGameResponse;
 import Response_Request_Objects.JoinGameRequest;
 import Response_Request_Objects.ListGamesResponse;
-import services.*;
+import service.*;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
