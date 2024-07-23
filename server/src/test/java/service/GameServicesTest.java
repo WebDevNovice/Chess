@@ -1,4 +1,4 @@
-package java.passoff.server.service;
+package service;
 
 import model.AuthData;
 import model.GameData;

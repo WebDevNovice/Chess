@@ -1,4 +1,4 @@
-package java.passoff.server.service;
+package service;
 
 import chess.ChessGame;
 import dataaccess.AuthDAO_interface;
