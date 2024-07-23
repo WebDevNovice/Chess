@@ -5,11 +5,10 @@ import model.GameData;
 import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0_interface;
-import dataaccess.ramMemory.AuthDAO_RAM;
-import dataaccess.ramMemory.GameDAO_RAM;
+import dataaccess.rammemory.AuthDAO_RAM;
+import dataaccess.rammemory.GameDAO_RAM;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.GameServices;
 import service.execeptions.BadRequestException;
 import service.execeptions.UnvailableTeamException;
 

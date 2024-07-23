@@ -1,4 +1,4 @@
-package dataaccess.ramMemory;
+package dataaccess.rammemory;
 
 import model.AuthData;
 import model.GameData;

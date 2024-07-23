@@ -4,12 +4,11 @@ import model.AuthData;
 import model.UserData;
 import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
-import dataaccess.ramMemory.AuthDAO_RAM;
-import dataaccess.ramMemory.UserDAO_RAM;
+import dataaccess.rammemory.AuthDAO_RAM;
+import dataaccess.rammemory.UserDAO_RAM;
 import dataaccess.UserDao_interface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.UserServices;
 import service.execeptions.BadRequestException;
 
 import static org.junit.jupiter.api.Assertions.*;
