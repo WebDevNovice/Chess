@@ -2,8 +2,10 @@ package Services;
 
 import Models.AuthData;
 import Models.GameData;
+import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0_interface;
+import dataaccess.RamMemory.AuthDAO_RAM;
 import dataaccess.RamMemory.GameDAO_RAM;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,11 +14,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameServicesTest {
     GameDA0_interface gameDao;
+    AuthDAO_interface authDao;
     GameServices gameServices;
 
     @BeforeEach
     void setUp() {
         gameDao = new GameDAO_RAM();
+        authDao = new AuthDAO_RAM();
         gameServices = new GameServices(gameDao);
     }
 
@@ -44,7 +48,7 @@ class GameServicesTest {
     }
 
     @Test
-    void joinGame_Success() throws DataAccessException {
+    void joinGame_Success() throws DataAccessException, BadRequestException, UnvailableTeamException {
         String gameName = "Skyrim";
         String playerName = "Jake";
         String teamColor = "WHITE";
@@ -55,7 +59,7 @@ class GameServicesTest {
     }
 
     @Test
-    void joinGame_Failure_WHITEUserTaken() throws DataAccessException {
+    void joinGame_Failure_WHITEUserTaken() throws DataAccessException, BadRequestException, UnvailableTeamException {
         String gameName = "Skyrim";
         String playerName = "Jake";
         String teamColor = "WHITE";
@@ -70,7 +74,7 @@ class GameServicesTest {
     }
 
     @Test
-    void joinGame_Failure_BLACKUserTaken() throws DataAccessException {
+    void joinGame_Failure_BLACKUserTaken() throws DataAccessException, BadRequestException, UnvailableTeamException {
         String gameName = "Skyrim";
         String playerName = "Jake";
         String teamColor = "BLACK";

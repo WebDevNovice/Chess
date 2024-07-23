@@ -4,6 +4,10 @@ import Models.AuthData;
 import Models.UserData;
 import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
+import spark.Request;
+
+
+import javax.management.BadAttributeValueExpException;
 
 public class AuthServices {
     AuthDAO_interface authDao;
@@ -13,25 +17,33 @@ public class AuthServices {
     }
 
     public AuthData createAuth(UserData user) throws DataAccessException {
+        if (user.getUsername() == null || user.getPassword() == null) {
+            throw new DataAccessException("Error: Username is required");
+        }
             return authDao.createAuth(user);
     }
 
-    public AuthData getAuth(String authToken) throws DataAccessException {
+    public AuthData getAuth(String authToken) throws DataAccessException, BadRequestException {
         if (authToken == null) {
-            throw new DataAccessException("Authtoken Is Required");
+            throw new DataAccessException("Error: Authtoken Is Required");
         }
         else {
             return authDao.getAuthData(authToken);
         }
     }
 
-    public Object logout(String authToken) throws DataAccessException {
+    public Object logout(String authToken) throws DataAccessException, BadRequestException {
         if (authToken == null || authToken.isEmpty()) {
-            throw new DataAccessException("Auth object is required");
+            throw new DataAccessException("Error: Auth Token is required");
         }
         else {
             authDao.deleteAuth(authToken);
-            return "";
+            return null;
         }
+    }
+
+    public AuthData isAuthenticated(Request req) throws BadRequestException, DataAccessException {
+        String authToken = req.headers("Authorization");
+        return authDao.getAuthData(authToken);
     }
 }

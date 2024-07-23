@@ -2,11 +2,12 @@ package Services;
 
 import Models.AuthData;
 import Models.GameData;
+import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0_interface;
 
+import javax.servlet.UnavailableException;
 import java.util.Collection;
-import java.util.HashMap;
 
 public class GameServices {
     GameDA0_interface gameDoa;
@@ -15,16 +16,31 @@ public class GameServices {
         this.gameDoa = gameDoa;
     }
 
-    public Collection<GameData> listGames() throws DataAccessException {
-        return gameDoa.listGames();
+    public Collection<ChessGame> listGames() throws DataAccessException {
+        Collection<ChessGame> games = gameDoa.listGames();
+        if (games.isEmpty()) {
+            throw new DataAccessException("Error: No games found");
+        }
+        return games;
     }
 
     public Integer CreateGame(String gameName) throws DataAccessException {
+        for (GameData game : gameDoa.getGameDatabase().values()) {
+            if (game.getGameName().equals(gameName)) {
+                throw new DataAccessException("Error: Game name already exists");
+            }
+        }
         return gameDoa.createGame(gameName);
     }
 
-    public GameData joinGame(String teamColor, Integer gameID, AuthData authData) throws DataAccessException {
-        return gameDoa.joinGame(teamColor, gameID, authData);
+    public GameData joinGame(String playerColor, Integer gameId, AuthData authData) throws DataAccessException, BadRequestException, UnvailableTeamException {
+        if (gameDoa.getGameDatabase().containsKey(gameId)){
+            return gameDoa.joinGame(playerColor, gameId, authData);
+        }else{
+            throw new BadRequestException("Error: Game does not exist");
+        }
     }
 
+
 }
+

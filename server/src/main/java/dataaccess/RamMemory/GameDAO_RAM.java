@@ -2,10 +2,13 @@ package dataaccess.RamMemory;
 
 import Models.AuthData;
 import Models.GameData;
+import Services.BadRequestException;
+import Services.UnvailableTeamException;
 import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0_interface;
 
+import javax.servlet.UnavailableException;
 import java.util.*;
 
 public class GameDAO_RAM implements GameDA0_interface {
@@ -18,43 +21,40 @@ public class GameDAO_RAM implements GameDA0_interface {
 
     @Override
     public Integer createGame(String gameName) throws DataAccessException {
-        for (GameData game : gameDataHashMap.values()) {
-            if (game.getGameName().equals(gameName)) {
-                throw new DataAccessException("Game name already exists");
-            }
-            continue;
-        }
         GameData newGame = new GameData("","",gameName, new ChessGame(), gameID);
         gameDataHashMap.put(gameID++, newGame);
-
         return newGame.getGameID();
     }
 
     @Override
-    public Collection<GameData> listGames() throws DataAccessException {
-        return gameDataHashMap.values();
+    public Collection<ChessGame> listGames() throws DataAccessException {
+        Collection<GameData> gameData = gameDataHashMap.values();
+        Collection<ChessGame> chessGames = new ArrayList<>();
+        for (GameData gameData1 : gameData) {
+            chessGames.add(gameData1.getGame());
+        }
+        return chessGames;
     }
 
     @Override
-    public GameData joinGame(String playerColor, Integer gameId, AuthData authData) throws DataAccessException {
+    public GameData joinGame(String playerColor, Integer gameId, AuthData authData) throws UnvailableTeamException, BadRequestException {
         var username = authData.getUsername();
-        if (gameDataHashMap.containsKey(gameId)){
+        if (gameDataHashMap.get(gameId) == null) {
             if (playerColor.equals("WHITE")) {
                 if (gameDataHashMap.get(gameId).getWhiteUsername().isEmpty()) {
-                    gameDataHashMap.get(gameId).setWhiteUsername(authData.getUsername());
+                    gameDataHashMap.get(gameId).setWhiteUsername(username);
                     return gameDataHashMap.get(gameId);
                 }
-                throw new DataAccessException("OOPS! Someone has already taken that team Color");
+                throw new UnvailableTeamException("Error: OOPS! Someone has already taken that team Color");
             }else{
                 if (gameDataHashMap.get(gameId).getBlackUsername().isEmpty()) {
-                    gameDataHashMap.get(gameId).setBlackUsername(authData.getUsername());
+                    gameDataHashMap.get(gameId).setBlackUsername(username);
                     return gameDataHashMap.get(gameId);
                 }
-                throw new DataAccessException("OOPS! Someone has already taken that team Color");
+                throw new UnvailableTeamException("Error: OOPS! Someone has already taken that team Color");
             }
-        }else{
-            throw new DataAccessException("Game does not exist");
         }
+        throw new BadRequestException("Error: Must Declare Team Color");
     }
 
     @Override

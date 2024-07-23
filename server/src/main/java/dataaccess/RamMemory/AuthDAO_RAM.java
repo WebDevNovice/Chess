@@ -2,6 +2,7 @@ package dataaccess.RamMemory;
 
 import Models.AuthData;
 import Models.UserData;
+import Services.BadRequestException;
 import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
 
@@ -20,36 +21,35 @@ public class AuthDAO_RAM implements AuthDAO_interface {
 
     @Override
     public AuthData createAuth(UserData user) throws DataAccessException {
-        if (user.getUsername() == null || user.getPassword() == null ||
-                user.getUsername().isEmpty() || user.getPassword().isEmpty()) {
-            throw new DataAccessException("Username and password are required");
-        }
-        else {
-            AuthData aData = new AuthData(user.getUsername(), UUID.randomUUID().toString());
-            authDatabase.add(aData);
-            return aData;
-        }
+            AuthData authData = new AuthData(user.getUsername(), UUID.randomUUID().toString());
+            authDatabase.add(authData);
+            return authData;
     }
 
     @Override
     //take in a string
     public AuthData getAuthData(String authToken) throws DataAccessException {
-        for (AuthData aData : authDatabase) {
-            if (aData.getAuthToken().equals(authToken)){
-                return aData;
+        for (AuthData authData : authDatabase) {
+            if (authData.getAuthToken().equals(authToken)){
+                return authData;
             }
         }
-        throw new DataAccessException("AuthToken does not exist");
+        throw new DataAccessException("Error: AuthToken does not exist");
     }
 
     @Override
-    public Object deleteAuth(String authToken) throws DataAccessException {
-        if (getAuthData(authToken) != null) {
-            authDatabase.remove(getAuthData(authToken));
-            return "";
+    public void deleteAuth(String authToken) throws DataAccessException, BadRequestException {
+        boolean found = false;
+        for (AuthData authData : authDatabase) {
+            if (authData.getAuthToken().equals(authToken)){
+                found = true;
+            }
         }
-        else {
-            throw new DataAccessException("AuthToken does not exist");
+        if (found){
+            authDatabase.remove(getAuthData(authToken));
+        }
+        else{
+            throw new DataAccessException("Error: AuthToken does not exist");
         }
     }
 

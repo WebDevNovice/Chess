@@ -1,7 +1,10 @@
 package Services;
 
+import Models.AuthData;
 import Models.UserData;
+import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
+import dataaccess.RamMemory.AuthDAO_RAM;
 import dataaccess.RamMemory.UserDAO_RAM;
 import dataaccess.UserDao_interface;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,20 +14,22 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserServicesTest {
     UserDao_interface userDao;
+    AuthDAO_interface authDAO;
     UserServices userServices;
 
     @BeforeEach
     void setUp() throws DataAccessException {
         this.userDao = new UserDAO_RAM();
-        this.userServices = new UserServices(userDao);
+        this.authDAO = new AuthDAO_RAM();
+        this.userServices = new UserServices(userDao, authDAO);
     }
 
 
     @Test
     void register() throws DataAccessException {
         UserData userData = new UserData("New","User","e@gmail.com");
-        UserData newUser = userServices.Register(userData);
-        assertInstanceOf(UserData.class, newUser);
+        AuthData newUser = userServices.Register(userData);
+        assertInstanceOf(AuthData.class, newUser);
     }
 
     @Test
@@ -36,9 +41,8 @@ class UserServicesTest {
     @Test
     void registerDuplicateUsername() throws DataAccessException {
         UserData userData = new UserData("New","User","e@gmail.com");
-        UserData newUser = userServices.Register(userData);
-        UserData duplicateUser = new UserData("New","User","e@gmail.com");
-        assertThrows(DataAccessException.class, () -> userServices.Register(duplicateUser));
+        userDao.getUserDatabase().add(userData);
+        assertThrows(DataAccessException.class, () -> userServices.Register(userData));
     }
 
     @Test
@@ -47,25 +51,35 @@ class UserServicesTest {
         String my_email = "jacobgbullock3@gmail.com";
         String my_password = "12345";
         UserData test = new UserData(my_name, my_password,my_email);
-        assertEquals(test, userServices.login(test));
+        String newName = "Jake";
+        String newPassword = "12345";
+        UserData test2 = new UserData(newName, newPassword,null);
+        userDao.getUserDatabase().add(test);
+        assertInstanceOf(AuthData.class, userServices.login(test2));
     }
+
 
     @Test
     void loginFailedPassword() throws DataAccessException {
         String my_name = "Jake";
         String my_email = "jacobgbullock3@gmail.com";
-        String my_password = "1234";
+        String my_password = "12345";
         UserData test = new UserData(my_name, my_password,my_email);
-        assertThrows(DataAccessException.class, () -> userServices.login(test));
+        userDao.getUserDatabase().add(test);
+        String wrong_password = "wrong_password";
+        UserData test2 = new UserData(my_name, wrong_password,my_email);
+        assertThrows(DataAccessException.class, () -> userServices.login(test2));
     }
 
     @Test
     void loginFailedUsername() throws DataAccessException {
-        String my_name = "Jak";
+        String my_name = "Jake";
         String my_email = "jacobgbullock3@gmail.com";
         String my_password = "12345";
         UserData test = new UserData(my_name, my_password,my_email);
-        assertThrows(DataAccessException.class, () -> userServices.login(test));
+        String wrong_username = "wrong_username";
+        UserData test2 = new UserData(wrong_username, my_password,my_email);
+        assertThrows(DataAccessException.class, () -> userServices.login(test2));
     }
 
 }

@@ -20,33 +20,19 @@ public class UserDAO_RAM implements UserDao_interface {
 
     @Override
     public UserData createUser(UserData userData) throws DataAccessException {
-        if (isUserDataComplete(userData)) {
-
             userDatabase.add(userData);
             return userData;
-
-        }else {
-                incompleteDataHandler(userData);
-            }
-        throw new DataAccessException("Error: Data Entry Failure");
     }
 
     @Override
     public UserData getUser(UserData userData) throws DataAccessException{
         for (UserData user : userDatabase) {
-
-            if (userData.getUsername() == null) {
-                throw new DataAccessException("Error: Username is empty");
-            }
-
-            if (isUsernameInDatabase(userData, user)) {
-
-                if (arePasswordsSame(user, userData)) {
-                    return user;
-                }
+            if(user.getUsername().equals(userData.getUsername()) &&
+               user.getPassword().equals(userData.getPassword())){
+                return user;
             }
         }
-        throw new DataAccessException("Error: User does not exist");
+        throw new DataAccessException("Error: User Not Found");
     }
 
     @Override
@@ -58,37 +44,6 @@ public class UserDAO_RAM implements UserDao_interface {
         return userDatabase;
     }
 
-    private boolean isUserDataComplete(UserData userData){
-        if (userData.getUsername() == null || userData.getUsername().isEmpty()){
-            return false;
-        }
-        if (userData.getPassword() == null || userData.getPassword().isEmpty()){
-            return false;
-        }
-        if (userData.getEmail() == null || userData.getEmail().isEmpty()){
-            return false;
-        }
-        return true;
-    }
-
-    private void incompleteDataHandler(UserData userData) throws DataAccessException {
-        if (userData.getUsername() == null) {
-            throw new DataAccessException("Error: Username is empty");
-        }
-        else if (userData.getPassword() == null) {
-            throw new DataAccessException("Error: Password is empty");
-        }
-        else if (userData.getEmail() == null) {
-            throw new DataAccessException("Error: Email is empty");
-        }
-    }
-
-    private boolean isUsernameInDatabase(UserData newUser, UserData storedUser) throws DataAccessException {
-        if(newUser.getUsername()==null || newUser.getUsername().isEmpty()){
-            throw new DataAccessException("Error: Username Required");
-        }
-        return newUser.getUsername().equals(storedUser.getUsername());
-    }
 
     private boolean arePasswordsSame(UserData storedUser, UserData newUser) throws DataAccessException {
         if (newUser.getPassword() == null) {

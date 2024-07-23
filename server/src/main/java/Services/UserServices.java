@@ -1,31 +1,62 @@
 package Services;
 
+import Models.AuthData;
 import Models.UserData;
+import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
 import dataaccess.UserDao_interface;
 
 public class UserServices {
     UserDao_interface userDao;
+    AuthDAO_interface authDao;
 
     //Follow the phase 2 diagram better
-    public UserServices(UserDao_interface userDao) {
+    public UserServices(UserDao_interface userDao, AuthDAO_interface authDao) {
         this.userDao = userDao;
-
+        this.authDao = authDao;
     }
 
-    public UserData Register(UserData user) throws DataAccessException {
-        UserData newUser =  userDao.createUser(user);
-        for (UserData registeredUser : userDao.getUserDatabase()) {
+    public AuthData Register(UserData user) throws DataAccessException {
 
-            if (!isUsernameInDatabase(registeredUser, user)) {
-                continue;
-            }
-            throw new DataAccessException("Error: User " + registeredUser.getUsername() + " already exists");
+        if (isUserDataComplete(user)){
+           if (!userDao.getUserDatabase().isEmpty()){
+               for (UserData registeredUser : userDao.getUserDatabase()) {
+                   //This next check should fail
+                   if (!isUsernameInDatabase(registeredUser, user)) {
+                       UserData newUser =  userDao.createUser(user);
+                       return authDao.createAuth(newUser);
+                   }
+                   throw new DataAccessException("Error: User " + registeredUser.getUsername() + " already exists");
+               }
+           }
+            UserData newUser =  userDao.createUser(user);
+            return authDao.createAuth(newUser);
         }
+        //If I have reached this point, one of my exceptions will be thrown in the next method call
+        incompleteDataHandler(user);
+        return null;
     }
 
-    public UserData login(UserData user) throws DataAccessException {
-            return userDao.getUser(user);
+    public AuthData login(UserData userData) throws DataAccessException {
+
+        UserData registeredUser = userDao.getUser(userData);
+        if (registeredUser != null) {
+            return authDao.createAuth(registeredUser);
+        }
+        throw new DataAccessException("Error: User does not exist");
+    }
+
+    private boolean isUserDataComplete(UserData userData){
+        if (userData.getUsername() == null || userData.getUsername().isEmpty()){
+            return false;
+        }
+        if (userData.getPassword() == null || userData.getPassword().isEmpty()){
+            return false;
+        }
+        if (userData.getEmail() == null || userData.getEmail().isEmpty()){
+            return false;
+        }
+        return true;
     }
 
     private void incompleteDataHandler(UserData userData) throws DataAccessException {
@@ -44,17 +75,10 @@ public class UserServices {
         if(newUser.getUsername()==null || newUser.getUsername().isEmpty()){
             throw new DataAccessException("Error: Username Required");
         }
-        return newUser.getUsername().equals(storedUser.getUsername());
-    }
-
-    private boolean arePasswordsSame(UserData storedUser, UserData newUser) throws DataAccessException {
-        if (newUser.getPassword() == null) {
-            throw new DataAccessException("Error: Password is empty");
+        if (newUser.getUsername().equals(storedUser.getUsername())){
+            return true;
         }
-        if (!storedUser.getPassword().equals(newUser.getPassword())) {
-            throw new DataAccessException("Error: Passwords do not match");
-        }
-        return true;
+        return false;
     }
 
 }

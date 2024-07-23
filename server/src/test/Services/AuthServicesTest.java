@@ -40,7 +40,7 @@ class AuthServicesTest {
     }
 
     @Test
-    void getAuth_Success() throws DataAccessException {
+    void getAuth_Success() throws DataAccessException, BadRequestException {
         AuthData authData = new AuthData("Hello", "There");
         authServices.authDao.getAuthDatabase().add(authData);
         assertEquals(authData, authServices.getAuth("There"));
@@ -55,16 +55,14 @@ class AuthServicesTest {
 
 
     @Test
-    void logout() throws DataAccessException {
+    void logout() throws DataAccessException, BadRequestException {
         AuthData authData = new AuthData("Hello", "There");
         authServices.authDao.getAuthDatabase().add(authData);
-        authServices.getAuth("There");
-        Object deletedAuth = authServices.logout("There");
-        assertEquals("", deletedAuth);
+        assertNull(authServices.logout("There"));
     }
 
     @Test
-    void logout_Failed_WrongAuthToken() throws DataAccessException {
+    void logout_Failed_WrongAuthToken() throws DataAccessException, BadRequestException {
         AuthData authData = new AuthData("Hello", "There");
         authServices.authDao.getAuthDatabase().add(authData);
         authServices.getAuth("There");
