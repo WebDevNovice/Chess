@@ -26,6 +26,7 @@ public class ClearService {
     public UserDao_interface getUserDao() {
         return userDao;
     }
+
     public AuthDAO_interface getAuthDao() {
         return authDao;
     }

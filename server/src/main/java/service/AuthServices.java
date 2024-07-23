@@ -1,7 +1,7 @@
 package service;
 
-import Models.AuthData;
-import Models.UserData;
+import model.AuthData;
+import model.UserData;
 import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
 import spark.Request;

@@ -1,4 +1,8 @@
-package chess;
+package chess.pieceMove;
+
+import chess.ChessBoard;
+import chess.ChessMove;
+import chess.ChessPosition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,39 +14,41 @@ import java.util.List;
  * if it is valid, append it to my list
  * if not skip
  */
-public class KnightMoveCalc {
+public class KingMoveCalc {
 
     private ChessPosition myPosition;
     private ChessBoard board;
 
-    public KnightMoveCalc(ChessBoard board, ChessPosition myPosition) {
+    public KingMoveCalc(ChessBoard board, ChessPosition myPosition) {
         this.board = board;
         this.myPosition = myPosition;
     }
 
-    public enum KnightPieceMove {
-        ForwardLeft(-2,1),
-        ForwardRight(-2,-1),
-        DownLeft(2,1),
-        DownRight(2,-1),
-        ForwardSideLeft(1,-2),
-        ForwardSideRight(1,2),
-        BackSideLEFT(-1,-2),
-        BackSideRIGHT(-1,2);
+    public enum KingPieceMove {
+        UP(-1,0),
+        DOWN(1,0),
+        LEFT(0,-1),
+        RIGHT(0,1),
+        DIAONALUPLEFT(-1,-1),
+        DIAGONALUPRIGHT(-1,1),
+        DIAGONALDOWNLEFT(1,-1),
+        DIAGONALDOWNRIGHT(1,1);
 
         private int rowChange;
         private int colChange;
 
-        KnightPieceMove(int rowChange, int colChange) {
+        KingPieceMove(int rowChange, int colChange) {
             this.rowChange = rowChange;
             this.colChange = colChange;
         }
     }
+
+
     public List<ChessMove> getValidMoves() {
         List<ChessMove> ValidMoves;
         ValidMoves = new ArrayList<>();
 
-        for (KnightPieceMove move : KnightPieceMove.values()) {
+        for (KingPieceMove move : KingPieceMove.values()) {
             int newRow = myPosition.getRow() + move.rowChange;
             int newCol = myPosition.getColumn() + move.colChange;
             ChessPosition newPosition = new ChessPosition(newRow, newCol);

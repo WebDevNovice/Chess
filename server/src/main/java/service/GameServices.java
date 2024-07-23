@@ -1,7 +1,7 @@
 package service;
 
-import Models.AuthData;
-import Models.GameData;
+import model.AuthData;
+import model.GameData;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0_interface;
 

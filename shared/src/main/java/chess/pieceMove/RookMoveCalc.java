@@ -1,4 +1,8 @@
-package chess;
+package chess.pieceMove;
+
+import chess.ChessBoard;
+import chess.ChessMove;
+import chess.ChessPosition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,26 +15,26 @@ import java.util.Objects;
  * if it is valid, append it to my list
  * if not skip
  */
-public class BishopMoveCalc {
+public class RookMoveCalc {
 
     private ChessPosition myPosition;
     private ChessBoard board;
 
-    public BishopMoveCalc(ChessBoard board, ChessPosition myPosition) {
+    public RookMoveCalc(ChessBoard board, ChessPosition myPosition) {
         this.board = board;
         this.myPosition = myPosition;
     }
 
-    public enum BishopPieceMove {
-        UPLeft(-1,-1),
-        UPRight(-1,1),
-        DOWNLEFT(1,-1),
-        DOWNRIGHT(1,1);
+    public enum RookPieceMove {
+        UP(-1,0),
+        Down(1,0),
+        LEFT(0,-1),
+        RIGHT(0,1);
 
         private int rowChange;
         private int colChange;
 
-        BishopPieceMove(int rowChange, int colChange) {
+        RookPieceMove(int rowChange, int colChange) {
             this.rowChange = rowChange;
             this.colChange = colChange;
         }
@@ -41,7 +45,7 @@ public class BishopMoveCalc {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BishopMoveCalc that = (BishopMoveCalc) o;
+        RookMoveCalc that = (RookMoveCalc) o;
         return Objects.equals(myPosition, that.myPosition) && Objects.equals(board, that.board);
     }
 
@@ -54,7 +58,7 @@ public class BishopMoveCalc {
         List<ChessMove> ValidMoves;
         ValidMoves = new ArrayList<>();
 
-        for (BishopPieceMove move : BishopPieceMove.values()) {//this will iterate through all the potential moves
+        for (RookPieceMove move : RookPieceMove.values()) {//this will iterate through all the potential moves
             int newRow = myPosition.getRow() + move.rowChange; //this creates the new row value
             int newCol = myPosition.getColumn() + move.colChange; //this creates the new col value
             ChessPosition newPosition = new ChessPosition(newRow, newCol); //this just create an instance of a position object

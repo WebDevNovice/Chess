@@ -1,9 +1,9 @@
 package server;
-import Models.*;
-import Response_Request_Objects.CreateGameRequest;
-import Response_Request_Objects.CreateGameResponse;
-import Response_Request_Objects.JoinGameRequest;
-import Response_Request_Objects.ListGamesResponse;
+import model.*;
+import response_request_objects.CreateGameRequest;
+import response_request_objects.CreateGameResponse;
+import response_request_objects.JoinGameRequest;
+import response_request_objects.ListGamesResponse;
 import service.*;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO_interface;

@@ -1,7 +1,7 @@
 package dataaccess.ramMemory;
 
 
-import Models.UserData;
+import model.UserData;
 import dataaccess.DataAccessException;
 import dataaccess.UserDao_interface;
 

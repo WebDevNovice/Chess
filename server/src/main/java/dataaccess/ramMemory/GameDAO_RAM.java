@@ -1,7 +1,7 @@
 package dataaccess.ramMemory;
 
-import Models.AuthData;
-import Models.GameData;
+import model.AuthData;
+import model.GameData;
 import service.BadRequestException;
 import service.UnvailableTeamException;
 import chess.ChessGame;
