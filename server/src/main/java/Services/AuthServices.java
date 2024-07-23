@@ -6,9 +6,6 @@ import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
 import spark.Request;
 
-
-import javax.management.BadAttributeValueExpException;
-
 public class AuthServices {
     AuthDAO_interface authDao;
 

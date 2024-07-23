@@ -2,7 +2,6 @@ package Services;
 
 import Models.AuthData;
 import Models.GameData;
-import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0_interface;
 
