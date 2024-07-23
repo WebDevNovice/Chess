@@ -13,7 +13,6 @@ public interface GameDA0_interface {
     Integer createGame(String gameName) throws DataAccessException;
     Collection<GameData> listGames() throws DataAccessException;
     GameData joinGame(String playerColor, Integer gameId, AuthData authData) throws DataAccessException, BadRequestException, UnvailableTeamException;
-    Objects updateGame(GameData game) throws DataAccessException;
     void clearGamedatabase();
     HashMap<Integer, GameData> getGameDatabase() throws DataAccessException;
 }

@@ -54,11 +54,6 @@ public class GameDAO_RAM implements GameDA0_interface {
     }
 
     @Override
-    public Objects updateGame(GameData game) throws DataAccessException {
-        return null;
-    }
-
-    @Override
     public void clearGamedatabase() {
             if (gameDataHashMap != null) {
                 gameDataHashMap.clear();
