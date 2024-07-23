@@ -2,7 +2,7 @@ package dataaccess;
 
 import Models.AuthData;
 import Models.UserData;
-import Services.BadRequestException;
+import services.BadRequestException;
 
 import java.util.Collection;
 

@@ -1,4 +1,4 @@
-package dataaccess.RamMemory;
+package dataaccess.ramMemory;
 
 
 import Models.UserData;

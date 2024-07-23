@@ -4,14 +4,14 @@ import Response_Request_Objects.CreateGameRequest;
 import Response_Request_Objects.CreateGameResponse;
 import Response_Request_Objects.JoinGameRequest;
 import Response_Request_Objects.ListGamesResponse;
-import Services.*;
+import services.*;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0_interface;
-import dataaccess.RamMemory.AuthDAO_RAM;
-import dataaccess.RamMemory.GameDAO_RAM;
-import dataaccess.RamMemory.UserDAO_RAM;
+import dataaccess.ramMemory.AuthDAO_RAM;
+import dataaccess.ramMemory.GameDAO_RAM;
+import dataaccess.ramMemory.UserDAO_RAM;
 import dataaccess.UserDao_interface;
 import spark.*;
 

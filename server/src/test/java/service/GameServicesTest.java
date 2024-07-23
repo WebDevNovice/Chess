@@ -2,14 +2,14 @@ package java.service;
 
 import Models.AuthData;
 import Models.GameData;
-import Services.BadRequestException;
-import Services.GameServices;
-import Services.UnvailableTeamException;
+import services.BadRequestException;
+import services.GameServices;
+import services.UnvailableTeamException;
 import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0_interface;
-import dataaccess.RamMemory.AuthDAO_RAM;
-import dataaccess.RamMemory.GameDAO_RAM;
+import dataaccess.ramMemory.AuthDAO_RAM;
+import dataaccess.ramMemory.GameDAO_RAM;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

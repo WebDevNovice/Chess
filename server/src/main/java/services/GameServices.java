@@ -1,4 +1,4 @@
-package Services;
+package services;
 
 import Models.AuthData;
 import Models.GameData;

@@ -1,9 +1,9 @@
-package dataaccess.RamMemory;
+package dataaccess.ramMemory;
 
 import Models.AuthData;
 import Models.GameData;
-import Services.BadRequestException;
-import Services.UnvailableTeamException;
+import services.BadRequestException;
+import services.UnvailableTeamException;
 import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0_interface;

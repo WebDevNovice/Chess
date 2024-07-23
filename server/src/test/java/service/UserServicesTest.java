@@ -2,12 +2,12 @@ package java.service;
 
 import Models.AuthData;
 import Models.UserData;
-import Services.BadRequestException;
-import Services.UserServices;
+import services.BadRequestException;
+import services.UserServices;
 import dataaccess.AuthDAO_interface;
 import dataaccess.DataAccessException;
-import dataaccess.RamMemory.AuthDAO_RAM;
-import dataaccess.RamMemory.UserDAO_RAM;
+import dataaccess.ramMemory.AuthDAO_RAM;
+import dataaccess.ramMemory.UserDAO_RAM;
 import dataaccess.UserDao_interface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
