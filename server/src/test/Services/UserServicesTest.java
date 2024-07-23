@@ -26,7 +26,7 @@ class UserServicesTest {
 
 
     @Test
-    void register() throws DataAccessException {
+    void register() throws DataAccessException, BadRequestException {
         UserData userData = new UserData("New","User","e@gmail.com");
         AuthData newUser = userServices.Register(userData);
         assertInstanceOf(AuthData.class, newUser);
@@ -39,10 +39,10 @@ class UserServicesTest {
     }
 
     @Test
-    void registerDuplicateUsername() throws DataAccessException {
+    void registerDuplicateUsername() throws DataAccessException,BadRequestException {
         UserData userData = new UserData("New","User","e@gmail.com");
         userDao.getUserDatabase().add(userData);
-        assertThrows(DataAccessException.class, () -> userServices.Register(userData));
+        assertThrows(BadRequestException.class, () -> userServices.Register(userData));
     }
 
     @Test

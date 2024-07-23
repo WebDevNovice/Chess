@@ -55,7 +55,9 @@ public class AuthDAO_RAM implements AuthDAO_interface {
 
     @Override
     public void clearAuthDatabase() {
-            authDatabase.clear();
+            if (!authDatabase.isEmpty()){
+                authDatabase.clear();
+            }
     }
 
     public Collection<AuthData> getAuthDatabase() throws DataAccessException{

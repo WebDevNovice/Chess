@@ -17,7 +17,8 @@ public class AuthServices {
     }
 
     public AuthData createAuth(UserData user) throws DataAccessException {
-        if (user.getUsername() == null || user.getPassword() == null) {
+        if (user.getUsername() == null || user.getPassword() == null
+         || user.getUsername().isEmpty() || user.getPassword().isEmpty()) {
             throw new DataAccessException("Error: Username is required");
         }
             return authDao.createAuth(user);

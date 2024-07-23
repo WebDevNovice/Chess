@@ -16,7 +16,7 @@ public class UserServices {
         this.authDao = authDao;
     }
 
-    public AuthData Register(UserData user) throws DataAccessException {
+    public AuthData Register(UserData user) throws DataAccessException, BadRequestException {
 
         if (isUserDataComplete(user)){
            if (!userDao.getUserDatabase().isEmpty()){
@@ -26,7 +26,7 @@ public class UserServices {
                        UserData newUser =  userDao.createUser(user);
                        return authDao.createAuth(newUser);
                    }
-                   throw new DataAccessException("Error: User " + registeredUser.getUsername() + " already exists");
+                   throw new BadRequestException("Error: User " + registeredUser.getUsername() + " already exists");
                }
            }
             UserData newUser =  userDao.createUser(user);

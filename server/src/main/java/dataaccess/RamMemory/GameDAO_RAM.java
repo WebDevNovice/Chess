@@ -20,7 +20,7 @@ public class GameDAO_RAM implements GameDA0_interface {
 
     @Override
     public Integer createGame(String gameName) throws DataAccessException {
-        GameData newGame = new GameData("","",gameName, new ChessGame(), gameID);
+        GameData newGame = new GameData(null,null,gameName, new ChessGame(), gameID);
         gameDataHashMap.put(gameID++, newGame);
         return newGame.getGameID();
     }
@@ -36,14 +36,14 @@ public class GameDAO_RAM implements GameDA0_interface {
         var username = authData.getUsername();
         if (playerColor != null) {
             if (playerColor.equals("WHITE")) {
-                if (gameDataHashMap.get(gameId).getWhiteUsername().isEmpty()) {
+                if (gameDataHashMap.get(gameId).getWhiteUsername()==null) {
                     gameDataHashMap.get(gameId).setWhiteUsername(username);
                     GameData gameData = gameDataHashMap.get(gameId);
                     return gameData;
                 }
                 throw new UnvailableTeamException("Error: OOPS! Someone has already taken that team Color");
             }else{
-                if (gameDataHashMap.get(gameId).getBlackUsername().isEmpty()) {
+                if (gameDataHashMap.get(gameId).getBlackUsername()==null) {
                     gameDataHashMap.get(gameId).setBlackUsername(username);
                     return gameDataHashMap.get(gameId);
                 }
@@ -60,7 +60,9 @@ public class GameDAO_RAM implements GameDA0_interface {
 
     @Override
     public void clearGamedatabase() {
-            gameDataHashMap.clear();
+            if (gameDataHashMap != null) {
+                gameDataHashMap.clear();
+            }
     }
 
     public HashMap<Integer, GameData> getGameDatabase() throws DataAccessException{

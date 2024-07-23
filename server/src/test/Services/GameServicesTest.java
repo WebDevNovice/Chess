@@ -66,11 +66,11 @@ class GameServicesTest {
         AuthData authData = new AuthData(playerName, teamColor);
         gameServices.CreateGame(gameName);
         gameServices.joinGame(teamColor, 1, authData);
-        DataAccessException thrownException = assertThrows(DataAccessException.class, () ->
+        UnvailableTeamException thrownException = assertThrows(UnvailableTeamException.class, () ->
                 gameServices.joinGame(teamColor, 1, authData)
         );
 
-        assertEquals("OOPS! Someone has already taken that team Color", thrownException.getMessage());
+        assertEquals("Error: OOPS! Someone has already taken that team Color", thrownException.getMessage());
     }
 
     @Test
@@ -81,11 +81,11 @@ class GameServicesTest {
         AuthData authData = new AuthData(playerName, teamColor);
         gameServices.CreateGame(gameName);
         gameServices.joinGame(teamColor, 1, authData);
-        DataAccessException thrownException = assertThrows(DataAccessException.class, () ->
+        UnvailableTeamException thrownException = assertThrows(UnvailableTeamException.class, () ->
                 gameServices.joinGame(teamColor, 1, authData)
         );
 
-        assertEquals("OOPS! Someone has already taken that team Color", thrownException.getMessage());
+        assertEquals("Error: OOPS! Someone has already taken that team Color", thrownException.getMessage());
     }
 
 }

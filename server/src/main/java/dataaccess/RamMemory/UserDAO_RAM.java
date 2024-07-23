@@ -37,7 +37,9 @@ public class UserDAO_RAM implements UserDao_interface {
 
     @Override
     public void clearUserDatabase(){
+        if(!userDatabase.isEmpty()){
             userDatabase.clear();
+        }
     }
 
     public Collection<UserData> getUserDatabase() throws DataAccessException {
