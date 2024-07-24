@@ -105,18 +105,14 @@ public class PawnMoveCalc {
                     ChessMove newMove = new ChessMove(myPosition,newPosition,type); //this creates a new valid move
                     validMoves.add(newMove); //this adds it to our valid moves list
                 }
-                ChessPosition capturePosition = new ChessPosition(newPosition.getRow(), newPosition.getColumn()+1);//this change check for a capture
-                if(board.getPiece(capturePosition) != null){//this will check if the capture square is empty
-                    if(board.getPiece(capturePosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()){//this will check if it is an oppenent piece
-                        ChessMove newMove = new ChessMove(myPosition,capturePosition,type);//if yes, it will
-                        validMoves.add(newMove);
-                    }
-                }
-                capturePosition = new ChessPosition(newPosition.getRow(), newPosition.getColumn()-1);
-                if(board.getPiece(capturePosition) != null){
-                    if(board.getPiece(capturePosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()){
-                        ChessMove newMove = new ChessMove(myPosition,capturePosition,type);
-                        validMoves.add(newMove);
+                int[] captureMoves = {1,-1};
+                for (int col : captureMoves) {
+                    ChessPosition capturePosition = new ChessPosition(newPosition.getRow(), newPosition.getColumn()+col);//this change check for a capture
+                    if(board.getPiece(capturePosition) != null){//this will check if the capture square is empty
+                        if(board.getPiece(capturePosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()){//this will check if it is an oppenent piece
+                            ChessMove newMove = new ChessMove(myPosition,capturePosition,type);//if yes, it will
+                            validMoves.add(newMove);
+                        }
                     }
                 }
             }
