@@ -4,7 +4,7 @@ import model.AuthData;
 import model.UserData;
 import dataaccess.AuthDAOInterface;
 import dataaccess.DataAccessException;
-import dataaccess.rammemory.AuthDAO_RAM;
+import dataaccess.rammemory.AuthDAORAM;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.execeptions.BadRequestException;
@@ -17,7 +17,7 @@ class AuthServicesTest {
 
     @BeforeEach
     void setUp() {
-        this.authDoa  = new AuthDAO_RAM();
+        this.authDoa  = new AuthDAORAM();
         this.authServices = new AuthServices(authDoa);
     }
 

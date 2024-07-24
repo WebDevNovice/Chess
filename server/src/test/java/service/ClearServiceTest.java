@@ -5,9 +5,9 @@ import dataaccess.AuthDAOInterface;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0Interface;
 import dataaccess.UserDaoInterface;
-import dataaccess.rammemory.AuthDAO_RAM;
-import dataaccess.rammemory.GameDAO_RAM;
-import dataaccess.rammemory.UserDAO_RAM;
+import dataaccess.rammemory.AuthDAORAM;
+import dataaccess.rammemory.GameDAORAM;
+import dataaccess.rammemory.UserDAORAM;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -26,9 +26,9 @@ class ClearServiceTest {
 
     @BeforeEach
     void setUp() throws DataAccessException {
-        this.authDao = new AuthDAO_RAM();
-        this.userDao = new UserDAO_RAM();
-        this.gameDao = new GameDAO_RAM();
+        this.authDao = new AuthDAORAM();
+        this.userDao = new UserDAORAM();
+        this.gameDao = new GameDAORAM();
         this.clearService = new ClearService(userDao, authDao, gameDao);
     }
 
@@ -95,16 +95,16 @@ class ClearServiceTest {
 
     @Test
     void getUserDaoFailure() throws DataAccessException {
-        assertNotEquals(new UserDAO_RAM(), clearService.getUserDao());
+        assertNotEquals(new UserDAORAM(), clearService.getUserDao());
     }
 
     @Test
     void getAuthDaoFailure() {
-        assertInstanceOf(AuthDAO_RAM.class, clearService.getAuthDao());
+        assertInstanceOf(AuthDAORAM.class, clearService.getAuthDao());
     }
 
     @Test
     void getGameDaoFailure() {
-        assertNotEquals(new GameDAO_RAM(), clearService.getGameDao());
+        assertNotEquals(new GameDAORAM(), clearService.getGameDao());
     }
 }

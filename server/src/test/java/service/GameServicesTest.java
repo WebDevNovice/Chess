@@ -5,8 +5,8 @@ import model.GameData;
 import dataaccess.AuthDAOInterface;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0Interface;
-import dataaccess.rammemory.AuthDAO_RAM;
-import dataaccess.rammemory.GameDAO_RAM;
+import dataaccess.rammemory.AuthDAORAM;
+import dataaccess.rammemory.GameDAORAM;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.execeptions.BadRequestException;
@@ -21,8 +21,8 @@ class GameServicesTest {
 
     @BeforeEach
     void setUp() {
-        gameDao = new GameDAO_RAM();
-        authDao = new AuthDAO_RAM();
+        gameDao = new GameDAORAM();
+        authDao = new AuthDAORAM();
         gameServices = new GameServices(gameDao);
     }
 

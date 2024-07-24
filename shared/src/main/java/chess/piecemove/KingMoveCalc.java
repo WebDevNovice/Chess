@@ -18,48 +18,29 @@ public class KingMoveCalc {
 
     private ChessPosition myPosition;
     private ChessBoard board;
+    private int[][] kingMoves = {
+            {1, 0},
+            {-1, 0},
+            {0, 1},
+            {0, -1},
+            {1, 1},
+            {-1, -1},
+            {1, -1},
+            {-1, 1}
+    };
 
     public KingMoveCalc(ChessBoard board, ChessPosition myPosition) {
         this.board = board;
         this.myPosition = myPosition;
     }
 
-    public enum KingPieceMove {
-        UP(-1,0),
-        DOWN(1,0),
-        LEFT(0,-1),
-        RIGHT(0,1),
-        DIAONALUPLEFT(-1,-1),
-        DIAGONALUPRIGHT(-1,1),
-        DIAGONALDOWNLEFT(1,-1),
-        DIAGONALDOWNRIGHT(1,1);
-
-        private int rowChange;
-        private int colChange;
-
-        KingPieceMove(int rowChange, int colChange) {
-            this.rowChange = rowChange;
-            this.colChange = colChange;
-        }
-    }
-
-
     public List<ChessMove> getValidMoves() {
         List<ChessMove> validMoves;
         validMoves = new ArrayList<>();
 
-        for (KingPieceMove move : KingPieceMove.values()) {
-            int newRow = myPosition.getRow() + move.rowChange;
-            int newCol = myPosition.getColumn() + move.colChange;
-            ChessPosition newPosition = new ChessPosition(newRow, newCol);
-            ChessMove newMove = new ChessMove(myPosition,newPosition,null);
-            if (newRow >= 1 && newRow < 9 && newCol >= 1 && newCol < 9) { // Bounds Check
-                if(board.getPiece(newPosition) == null){
-                    validMoves.add(newMove);
-                } else if (board.getPiece(newPosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
-                    validMoves.add(newMove);
-                }
-            }
+        for (int[] move : kingMoves) {
+            KingKnightMoves kingKnightMoves = new KingKnightMoves();
+            kingKnightMoves.shortDistanceMove(board, move, myPosition, validMoves);
         }
         return validMoves;
     }

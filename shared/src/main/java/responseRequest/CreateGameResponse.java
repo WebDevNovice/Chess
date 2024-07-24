@@ -1,4 +1,4 @@
-package response_request;
+package responseRequest;
 
 public class CreateGameResponse {
     Integer gameID;

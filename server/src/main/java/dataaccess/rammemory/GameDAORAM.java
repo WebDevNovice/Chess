@@ -10,11 +10,11 @@ import dataaccess.GameDA0Interface;
 
 import java.util.*;
 
-public class GameDAO_RAM implements GameDA0Interface {
+public class GameDAORAM implements GameDA0Interface {
     HashMap<Integer, GameData> gameDataHashMap;
     Integer gameID = 1;
 
-    public GameDAO_RAM() {
+    public GameDAORAM() {
         gameDataHashMap = new HashMap<>();
     }
 

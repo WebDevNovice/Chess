@@ -37,41 +37,41 @@ public class PawnMoveCalc {
     }
 
 
-    private void checkCaptureRight(ChessPosition targetPosition, List<ChessMove> ValidMoves){
+    private void checkCaptureRight(ChessPosition targetPosition, List<ChessMove> validMoves){
         int newCol = targetPosition.getColumn() + 1; //shift the col right
         if (targetPosition.getRow() >= 1 && targetPosition.getRow() < 9 && newCol >= 1 && newCol < 9) {
             ChessPosition newPosition = new ChessPosition(targetPosition.getRow(), newCol);
             ChessMove newMove = new ChessMove(myPosition, newPosition, null);
             if (board.getPiece(newPosition) != null) {
                 if (board.getPiece(newPosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
-                    ValidMoves.add(newMove);
+                    validMoves.add(newMove);
                 }
             }
         }
     }
 
-    private void checkCaptureLeft(ChessPosition target_position, List<ChessMove> ValidMoves) {
+    private void checkCaptureLeft(ChessPosition target_position, List<ChessMove> validMoves) {
         int newCol = target_position.getColumn() - 1; //shift the col left
         if (target_position.getRow() >= 1 && target_position.getRow() < 9 && newCol >= 1 && newCol < 9) {
             ChessPosition newPosition = new ChessPosition(target_position.getRow(), newCol);
             ChessMove newMove = new ChessMove(myPosition, newPosition, null);
             if (board.getPiece(newPosition) != null) {
                 if (board.getPiece(newPosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
-                    ValidMoves.add(newMove);
+                    validMoves.add(newMove);
                 }
             }
         }
     }
 
-    private void checkInFront(ChessPosition newPosition, List<ChessMove> ValidMoves){
+    private void checkInFront(ChessPosition newPosition, List<ChessMove> validMoves){
         ChessMove newMove = new ChessMove(myPosition,newPosition,null);
         if(board.getPiece(newPosition) == null){//is the target square empty?
-            ValidMoves.add(newMove); // yes, well add it to the possible move list
-            checkCaptureRight(newPosition, ValidMoves); //checks to see if we can capture on the right
-            checkCaptureLeft(newPosition, ValidMoves); //checks to see if we can capture on the left
+            validMoves.add(newMove); // yes, well add it to the possible move list
+            checkCaptureRight(newPosition, validMoves); //checks to see if we can capture on the right
+            checkCaptureLeft(newPosition, validMoves); //checks to see if we can capture on the left
         } else  {
-            checkCaptureLeft(newPosition, ValidMoves);
-            checkCaptureRight(newPosition, ValidMoves);
+            checkCaptureLeft(newPosition, validMoves);
+            checkCaptureRight(newPosition, validMoves);
         }
     }
 
@@ -80,7 +80,7 @@ public class PawnMoveCalc {
                 (board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.BLACK) && myPosition.getRow() == 7)); //black's home row should be 7
     }
 
-    private void specialStartingMoveWhite(ChessPosition newPosition, List<ChessMove> ValidMoves){
+    private void specialStartingMoveWhite(ChessPosition newPosition, List<ChessMove> validMoves){
         int newRow = newPosition.getRow() + 2;
         int infrontRow = newPosition.getRow() + 1;
         ChessPosition targetPosition = new ChessPosition(newRow, newPosition.getColumn());
@@ -88,12 +88,12 @@ public class PawnMoveCalc {
         ChessMove newMove = new ChessMove(myPosition,targetPosition,null);
         if(board.getPiece(infrontPosition) == null) {
             if(board.getPiece(targetPosition) == null){//is the target square empty?
-                ValidMoves.add(newMove); // yes, well add it to the possible move list
+                validMoves.add(newMove); // yes, well add it to the possible move list
             }
         }
     }
 
-    private void specialStartingMoveBlack(ChessPosition newPosition, List<ChessMove> ValidMoves){
+    private void specialStartingMoveBlack(ChessPosition newPosition, List<ChessMove> validMoves){
         int newRow = newPosition.getRow() - 2;
         int infrontRow = newPosition.getRow() - 1;
         ChessPosition targetPosition = new ChessPosition(newRow, newPosition.getColumn());
@@ -101,7 +101,7 @@ public class PawnMoveCalc {
         ChessMove newMove = new ChessMove(myPosition,targetPosition,null);
         if(board.getPiece(infrontPosition) == null) {
             if(board.getPiece(targetPosition) == null){//is the target square empty?
-                ValidMoves.add(newMove); // yes, well add it to the possible move list
+                validMoves.add(newMove); // yes, well add it to the possible move list
             }
         }
     }
@@ -111,32 +111,32 @@ public class PawnMoveCalc {
                 (board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.BLACK) && newPosition.getRow() == 1));
     }
 
-    private void promotionMove(ChessPosition newPosition, List<ChessMove> ValidMoves){
+    private void promotionMove(ChessPosition newPosition, List<ChessMove> validMoves){
         for (ChessPiece.PieceType type: ChessPiece.PieceType.values()){//for each type of promotion piece, do the following
             if(!type.equals(ChessPiece.PieceType.KING) && !type.equals(ChessPiece.PieceType.PAWN)){//Skips King and Pawn types
                 if(board.getPiece(newPosition) == null){ //this checks the space right in front if it is empty
                     ChessMove newMove = new ChessMove(myPosition,newPosition,type); //this creates a new valid move
-                    ValidMoves.add(newMove); //this adds it to our valid moves list
+                    validMoves.add(newMove); //this adds it to our valid moves list
                 }
                 ChessPosition capturePosition = new ChessPosition(newPosition.getRow(), newPosition.getColumn()+1);//this change check for a capture
                 if(board.getPiece(capturePosition) != null){//this will check if the capture square is empty
                     if(board.getPiece(capturePosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()){//this will check if it is an oppenent piece
                         ChessMove newMove = new ChessMove(myPosition,capturePosition,type);//if yes, it will
-                        ValidMoves.add(newMove);
+                        validMoves.add(newMove);
                     }
                 }
                 capturePosition = new ChessPosition(newPosition.getRow(), newPosition.getColumn()-1);
                 if(board.getPiece(capturePosition) != null){
                     if(board.getPiece(capturePosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()){
                         ChessMove newMove = new ChessMove(myPosition,capturePosition,type);
-                        ValidMoves.add(newMove);
+                        validMoves.add(newMove);
                     }
                 }
             }
         }
     }
 
-    private void pawnMovement(PawnPieceMove move, List<ChessMove> ValidMoves){
+    private void pawnMovement(PawnPieceMove move, List<ChessMove> validMoves){
         int newRow = myPosition.getRow() + move.rowChange; //this helps to check the target square
         int newCol = myPosition.getColumn() + move.colChange; //this helps to check the target square
         ChessPosition newPosition = new ChessPosition(newRow, newCol); //this helps to check the target square
@@ -146,18 +146,18 @@ public class PawnMoveCalc {
 
             if (checkStartingPosition(myPosition)) { //this is checking if I am in the starting col based on white or black pawns
 
-                checkInFront(newPosition, ValidMoves); //this handles looks at everything in front of the pawn for potential movement or captures
+                checkInFront(newPosition, validMoves); //this handles looks at everything in front of the pawn for potential movement or captures
                 if (board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
-                    specialStartingMoveWhite(myPosition, ValidMoves); //this should let me move two spaces in front of me (if possible)
+                    specialStartingMoveWhite(myPosition, validMoves); //this should let me move two spaces in front of me (if possible)
                 }else{
-                    specialStartingMoveBlack(myPosition, ValidMoves);
+                    specialStartingMoveBlack(myPosition, validMoves);
                 }
 
             } else if (promotionCheck(newPosition)){
-                promotionMove(newPosition, ValidMoves);
+                promotionMove(newPosition, validMoves);
 
             } else {
-                checkInFront(newPosition, ValidMoves);
+                checkInFront(newPosition, validMoves);
             }
         }
     }

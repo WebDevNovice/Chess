@@ -11,11 +11,11 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
 
-public class AuthDAO_RAM implements AuthDAOInterface {
+public class AuthDAORAM implements AuthDAOInterface {
 
     Collection<AuthData> authDatabase;
 
-    public AuthDAO_RAM() {
+    public AuthDAORAM() {
         authDatabase = new ArrayList<>();
     }
 
@@ -68,7 +68,7 @@ public class AuthDAO_RAM implements AuthDAOInterface {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AuthDAO_RAM that = (AuthDAO_RAM) o;
+        AuthDAORAM that = (AuthDAORAM) o;
         return Objects.equals(authDatabase, that.authDatabase);
     }
 

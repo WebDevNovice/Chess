@@ -18,46 +18,30 @@ public class KnightMoveCalc {
 
     private ChessPosition myPosition;
     private ChessBoard board;
+    private int[][] knightMoves ={
+            {-2,1},
+            {-2,-1},
+            {2,1},
+            {2,-1},
+            {-1,2},
+            {-1,-2},
+            {1,-2},
+            {1,2}
+    };
 
     public KnightMoveCalc(ChessBoard board, ChessPosition myPosition) {
         this.board = board;
         this.myPosition = myPosition;
     }
 
-    public enum KnightPieceMove {
-        ForwardLeft(-2,1),
-        ForwardRight(-2,-1),
-        DownLeft(2,1),
-        DownRight(2,-1),
-        ForwardSideLeft(1,-2),
-        ForwardSideRight(1,2),
-        BackSideLEFT(-1,-2),
-        BackSideRIGHT(-1,2);
 
-        private int rowChange;
-        private int colChange;
-
-        KnightPieceMove(int rowChange, int colChange) {
-            this.rowChange = rowChange;
-            this.colChange = colChange;
-        }
-    }
     public List<ChessMove> getValidMoves() {
         List<ChessMove> validMoves;
         validMoves = new ArrayList<>();
 
-        for (KnightPieceMove move : KnightPieceMove.values()) {
-            int newRow = myPosition.getRow() + move.rowChange;
-            int newCol = myPosition.getColumn() + move.colChange;
-            ChessPosition newPosition = new ChessPosition(newRow, newCol);
-            ChessMove newMove = new ChessMove(myPosition,newPosition,null);
-            if (newRow >= 1 && newRow < 9 && newCol >= 1 && newCol < 9) { // Bounds Check
-                if(board.getPiece(newPosition) == null){
-                    validMoves.add(newMove);
-                } else if (board.getPiece(newPosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
-                    validMoves.add(newMove);
-                }
-            }
+        for (int[] move : knightMoves) {
+            KingKnightMoves kingKnightMoves = new KingKnightMoves();
+            kingKnightMoves.shortDistanceMove(board, move, myPosition, validMoves);
         }
         return validMoves;
     }

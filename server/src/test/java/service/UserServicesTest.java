@@ -4,8 +4,8 @@ import model.AuthData;
 import model.UserData;
 import dataaccess.AuthDAOInterface;
 import dataaccess.DataAccessException;
-import dataaccess.rammemory.AuthDAO_RAM;
-import dataaccess.rammemory.UserDAO_RAM;
+import dataaccess.rammemory.AuthDAORAM;
+import dataaccess.rammemory.UserDAORAM;
 import dataaccess.UserDaoInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,8 +20,8 @@ class UserServicesTest {
 
     @BeforeEach
     void setUp() throws DataAccessException {
-        this.userDao = new UserDAO_RAM();
-        this.authDAO = new AuthDAO_RAM();
+        this.userDao = new UserDAORAM();
+        this.authDAO = new AuthDAORAM();
         this.userServices = new UserServices(userDao, authDAO);
     }
 
@@ -78,8 +78,8 @@ class UserServicesTest {
         String myEmail = "jacobgbullock3@gmail.com";
         String myPassword = "12345";
         new UserData(myName, myPassword, myEmail);
-        String wrong_username = "wrong_username";
-        UserData test2 = new UserData(wrong_username, myPassword, myEmail);
+        String wrongUsername = "wrong_username";
+        UserData test2 = new UserData(wrongUsername, myPassword, myEmail);
         assertThrows(DataAccessException.class, () -> userServices.login(test2));
     }
 

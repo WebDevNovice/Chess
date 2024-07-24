@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 
-public class UserDAO_RAM implements UserDaoInterface {
+public class UserDAORAM implements UserDaoInterface {
 
    public Collection<UserData> userDatabase;
 
-    public UserDAO_RAM() throws DataAccessException {
+    public UserDAORAM() throws DataAccessException {
         this.userDatabase = new ArrayList<>();
     }
 

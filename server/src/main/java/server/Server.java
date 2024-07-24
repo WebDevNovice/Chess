@@ -1,17 +1,17 @@
 package server;
 import model.*;
-import response_request.CreateGameRequest;
-import response_request.CreateGameResponse;
-import response_request.JoinGameRequest;
-import response_request.ListGamesResponse;
+import responseRequest.CreateGameRequest;
+import responseRequest.CreateGameResponse;
+import responseRequest.JoinGameRequest;
+import responseRequest.ListGamesResponse;
 import service.*;
 import com.google.gson.Gson;
 import dataaccess.AuthDAOInterface;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0Interface;
-import dataaccess.rammemory.AuthDAO_RAM;
-import dataaccess.rammemory.GameDAO_RAM;
-import dataaccess.rammemory.UserDAO_RAM;
+import dataaccess.rammemory.AuthDAORAM;
+import dataaccess.rammemory.GameDAORAM;
+import dataaccess.rammemory.UserDAORAM;
 import dataaccess.UserDaoInterface;
 import service.execeptions.BadRequestException;
 import service.execeptions.UnvailableTeamException;
@@ -32,9 +32,9 @@ public class Server {
 
     public Server() {
         try {
-            this.userDao = new UserDAO_RAM();
-            this.authDao = new AuthDAO_RAM();
-            this.gameDao = new GameDAO_RAM();
+            this.userDao = new UserDAORAM();
+            this.authDao = new AuthDAORAM();
+            this.gameDao = new GameDAORAM();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
