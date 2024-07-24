@@ -71,6 +71,7 @@ public class PawnMoveCalc {
     private void specialStartingMove(ChessPosition newPosition, List<ChessMove> validMoves){
         int newRow;
         int infrontRow;
+
         if(board.getPiece(newPosition).getTeamColor() == ChessGame.TeamColor.WHITE ){
             newRow = newPosition.getRow() + 2;
             infrontRow = newPosition.getRow() + 1;
@@ -78,10 +79,13 @@ public class PawnMoveCalc {
             newRow = newPosition.getRow() - 2;
             infrontRow = newPosition.getRow() - 1;
         }
+
         int newCol = newPosition.getColumn();
+
         ChessPosition targetPosition = new ChessPosition(newRow, newCol);
         ChessPosition infrontPosition = new ChessPosition(infrontRow, newCol);
         ChessMove newMove = new ChessMove(myPosition,targetPosition,null);
+
         if(board.getPiece(infrontPosition) == null) {
             if(board.getPiece(targetPosition) == null){//is the target square empty?
                 validMoves.add(newMove); // yes, well add it to the possible move list
@@ -129,7 +133,7 @@ public class PawnMoveCalc {
 
             if (checkStartingPosition(myPosition)) { //this is checking if I am in the starting col based on white or black pawns
 
-                checkInFront(newPosition, validMoves); //this handles looks at everything in front of the pawn for potential movement or captures
+                checkInFront(newPosition, validMoves);//this handles looks at everything in front of the pawn for potential movement or captures
                 specialStartingMove(myPosition, validMoves); //this should let me move two spaces in front of me (if possible)
 
 
