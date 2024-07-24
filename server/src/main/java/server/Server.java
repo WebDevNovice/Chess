@@ -1,18 +1,18 @@
 package server;
 import model.*;
-import response_requestobjects.CreateGameRequest;
-import response_requestobjects.CreateGameResponse;
-import response_requestobjects.JoinGameRequest;
-import response_requestobjects.ListGamesResponse;
+import response_request.CreateGameRequest;
+import response_request.CreateGameResponse;
+import response_request.JoinGameRequest;
+import response_request.ListGamesResponse;
 import service.*;
 import com.google.gson.Gson;
-import dataaccess.AuthDAO_interface;
+import dataaccess.AuthDAOInterface;
 import dataaccess.DataAccessException;
-import dataaccess.GameDA0_interface;
+import dataaccess.GameDA0Interface;
 import dataaccess.rammemory.AuthDAO_RAM;
 import dataaccess.rammemory.GameDAO_RAM;
 import dataaccess.rammemory.UserDAO_RAM;
-import dataaccess.UserDao_interface;
+import dataaccess.UserDaoInterface;
 import service.execeptions.BadRequestException;
 import service.execeptions.UnvailableTeamException;
 import spark.*;
@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class Server {
-    UserDao_interface userDao;
-    AuthDAO_interface authDao;
-    GameDA0_interface gameDao;
+    UserDaoInterface userDao;
+    AuthDAOInterface authDao;
+    GameDA0Interface gameDao;
     public UserServices userServices;
     public AuthServices authServices;
     public GameServices gameServices;
@@ -51,7 +51,7 @@ public class Server {
         Spark.staticFiles.location("web");
 
 
-        // Register your endpoints and handle exceptions here.
+        // register your endpoints and handle exceptions here.
 
         Spark.delete("/db",this::clear);
         Spark.post("/user",this::register);
@@ -74,8 +74,8 @@ public class Server {
 
         try {
             var user = gson.fromJson(req.body(), UserData.class);
-            AuthData authToken = userServices.Register(user);
-            return SuccessResponseAuthToken(gson, authToken, res);
+            AuthData authToken = userServices.register(user);
+            return successResponseAuthToken(gson, authToken, res);
 
         } catch (DataAccessException e) {
             return errorResponse(400, gson,e.getMessage(), res);
@@ -92,7 +92,7 @@ public class Server {
         try {
             var user = gson.fromJson(req.body(), UserData.class);
             AuthData authToken = userServices.login(user);
-            return SuccessResponseAuthToken(gson, authToken, res);
+            return successResponseAuthToken(gson, authToken, res);
 
         } catch (DataAccessException e) {
             return errorResponse(401, gson,e.getMessage(), res);
@@ -145,7 +145,7 @@ public class Server {
         try {
             authServices.isAuthenticated(req);
             CreateGameRequest gameName = gson.fromJson(req.body(), CreateGameRequest.class);
-            Integer gameID = gameServices.CreateGame(gameName.getGameName());
+            Integer gameID = gameServices.createGame(gameName.getGameName());
             CreateGameResponse createGameResponse = new CreateGameResponse(gameID);
             res.status(200);
             return gson.toJson(createGameResponse);
@@ -191,7 +191,7 @@ public class Server {
 
     private Object clear(Request req, Response res) {
         try {
-            clearService.clearALlDatabases();
+            clearService.clearAllDatabases();
 
             if (clearService.getUserDao().getUserDatabase().isEmpty() &&
                 clearService.getAuthDao().getAuthDatabase().isEmpty() &&
@@ -209,7 +209,7 @@ public class Server {
 
     //the following are methods that stay in the scope of this class
 
-    private String SuccessResponseAuthToken(Gson gson, AuthData authToken, Response res) {
+    private String successResponseAuthToken(Gson gson, AuthData authToken, Response res) {
         res.status(200);
         return gson.toJson(authToken);
     }

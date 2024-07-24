@@ -2,15 +2,15 @@ package service;
 
 import model.AuthData;
 import model.UserData;
-import dataaccess.AuthDAO_interface;
+import dataaccess.AuthDAOInterface;
 import dataaccess.DataAccessException;
 import service.execeptions.BadRequestException;
 import spark.Request;
 
 public class AuthServices {
-    public AuthDAO_interface authDao;
+    public AuthDAOInterface authDao;
 
-    public AuthServices(AuthDAO_interface authDao) {
+    public AuthServices(AuthDAOInterface authDao) {
         this.authDao = authDao;
     }
 

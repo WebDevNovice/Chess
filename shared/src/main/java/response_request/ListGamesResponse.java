@@ -1,4 +1,4 @@
-package response_requestobjects;
+package response_request;
 
 
 import java.util.Collection;

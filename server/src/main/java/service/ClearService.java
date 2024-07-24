@@ -1,37 +1,37 @@
 package service;
 
-import dataaccess.AuthDAO_interface;
+import dataaccess.AuthDAOInterface;
 import dataaccess.DataAccessException;
-import dataaccess.GameDA0_interface;
-import dataaccess.UserDao_interface;
+import dataaccess.GameDA0Interface;
+import dataaccess.UserDaoInterface;
 
 public class ClearService {
 
-    UserDao_interface userDao;
-    AuthDAO_interface authDao;
-    GameDA0_interface gameDao;
+    UserDaoInterface userDao;
+    AuthDAOInterface authDao;
+    GameDA0Interface gameDao;
 
-    public ClearService(UserDao_interface userDao, AuthDAO_interface authDao, GameDA0_interface gameDao){
+    public ClearService(UserDaoInterface userDao, AuthDAOInterface authDao, GameDA0Interface gameDao){
         this.userDao = userDao;
         this.authDao = authDao;
         this.gameDao = gameDao;
     }
 
-    public void clearALlDatabases() throws DataAccessException {
+    public void clearAllDatabases() throws DataAccessException {
         userDao.clearUserDatabase();
         authDao.clearAuthDatabase();
         gameDao.clearGamedatabase();
     }
 
-    public UserDao_interface getUserDao() {
+    public UserDaoInterface getUserDao() {
         return userDao;
     }
 
-    public AuthDAO_interface getAuthDao() {
+    public AuthDAOInterface getAuthDao() {
         return authDao;
     }
 
-    public GameDA0_interface getGameDao() {
+    public GameDA0Interface getGameDao() {
         return gameDao;
     }
 }

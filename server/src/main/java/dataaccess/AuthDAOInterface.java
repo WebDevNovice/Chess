@@ -6,7 +6,7 @@ import service.execeptions.BadRequestException;
 
 import java.util.Collection;
 
-public interface AuthDAO_interface {
+public interface AuthDAOInterface {
     AuthData createAuth(UserData user) throws DataAccessException;
     AuthData getAuthData(String authToken) throws DataAccessException, BadRequestException;
     void deleteAuth(String authToken) throws DataAccessException, BadRequestException;

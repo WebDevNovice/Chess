@@ -3,16 +3,16 @@ package service;
 import model.AuthData;
 import model.GameData;
 import dataaccess.DataAccessException;
-import dataaccess.GameDA0_interface;
+import dataaccess.GameDA0Interface;
 import service.execeptions.BadRequestException;
 import service.execeptions.UnvailableTeamException;
 
 import java.util.Collection;
 
 public class GameServices {
-    GameDA0_interface gameDoa;
+    GameDA0Interface gameDoa;
 
-    public GameServices(GameDA0_interface gameDoa) {
+    public GameServices(GameDA0Interface gameDoa) {
         this.gameDoa = gameDoa;
     }
 
@@ -25,7 +25,7 @@ public class GameServices {
         return games;
     }
 
-    public Integer CreateGame(String gameName) throws DataAccessException {
+    public Integer createGame(String gameName) throws DataAccessException {
         for (GameData game : gameDoa.getGameDatabase().values()) {
             if (game.getGameName().equals(gameName)) {
                 throw new DataAccessException("Error: Game name already exists");

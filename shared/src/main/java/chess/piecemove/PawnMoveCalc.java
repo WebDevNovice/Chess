@@ -37,10 +37,10 @@ public class PawnMoveCalc {
     }
 
 
-    private void check_capture_right(ChessPosition target_position, List<ChessMove> ValidMoves){
-        int newCol = target_position.getColumn() + 1; //shift the col right
-        if (target_position.getRow() >= 1 && target_position.getRow() < 9 && newCol >= 1 && newCol < 9) {
-            ChessPosition newPosition = new ChessPosition(target_position.getRow(), newCol);
+    private void checkCaptureRight(ChessPosition targetPosition, List<ChessMove> ValidMoves){
+        int newCol = targetPosition.getColumn() + 1; //shift the col right
+        if (targetPosition.getRow() >= 1 && targetPosition.getRow() < 9 && newCol >= 1 && newCol < 9) {
+            ChessPosition newPosition = new ChessPosition(targetPosition.getRow(), newCol);
             ChessMove newMove = new ChessMove(myPosition, newPosition, null);
             if (board.getPiece(newPosition) != null) {
                 if (board.getPiece(newPosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
@@ -50,7 +50,7 @@ public class PawnMoveCalc {
         }
     }
 
-    private void check_capture_left(ChessPosition target_position, List<ChessMove> ValidMoves) {
+    private void checkCaptureLeft(ChessPosition target_position, List<ChessMove> ValidMoves) {
         int newCol = target_position.getColumn() - 1; //shift the col left
         if (target_position.getRow() >= 1 && target_position.getRow() < 9 && newCol >= 1 && newCol < 9) {
             ChessPosition newPosition = new ChessPosition(target_position.getRow(), newCol);
@@ -63,24 +63,24 @@ public class PawnMoveCalc {
         }
     }
 
-    private void check_in_front(ChessPosition newPosition, List<ChessMove> ValidMoves){
+    private void checkInFront(ChessPosition newPosition, List<ChessMove> ValidMoves){
         ChessMove newMove = new ChessMove(myPosition,newPosition,null);
         if(board.getPiece(newPosition) == null){//is the target square empty?
             ValidMoves.add(newMove); // yes, well add it to the possible move list
-            check_capture_right(newPosition, ValidMoves); //checks to see if we can capture on the right
-            check_capture_left(newPosition, ValidMoves); //checks to see if we can capture on the left
+            checkCaptureRight(newPosition, ValidMoves); //checks to see if we can capture on the right
+            checkCaptureLeft(newPosition, ValidMoves); //checks to see if we can capture on the left
         } else  {
-            check_capture_left(newPosition, ValidMoves);
-            check_capture_right(newPosition, ValidMoves);
+            checkCaptureLeft(newPosition, ValidMoves);
+            checkCaptureRight(newPosition, ValidMoves);
         }
     }
 
-    private boolean check_starting_position(ChessPosition myPosition){
+    private boolean checkStartingPosition(ChessPosition myPosition){
         return ((board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.WHITE) && myPosition.getRow() == 2) || //white's home row should be 2
                 (board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.BLACK) && myPosition.getRow() == 7)); //black's home row should be 7
     }
 
-    private void special_starting_move_white(ChessPosition newPosition, List<ChessMove> ValidMoves){
+    private void specialStartingMoveWhite(ChessPosition newPosition, List<ChessMove> ValidMoves){
         int newRow = newPosition.getRow() + 2;
         int infrontRow = newPosition.getRow() + 1;
         ChessPosition targetPosition = new ChessPosition(newRow, newPosition.getColumn());
@@ -93,7 +93,7 @@ public class PawnMoveCalc {
         }
     }
 
-    private void special_starting_move_black(ChessPosition newPosition, List<ChessMove> ValidMoves){
+    private void specialStartingMoveBlack(ChessPosition newPosition, List<ChessMove> ValidMoves){
         int newRow = newPosition.getRow() - 2;
         int infrontRow = newPosition.getRow() - 1;
         ChessPosition targetPosition = new ChessPosition(newRow, newPosition.getColumn());
@@ -106,12 +106,12 @@ public class PawnMoveCalc {
         }
     }
 
-    private boolean promotion_check(ChessPosition newPosition){
+    private boolean promotionCheck(ChessPosition newPosition){
         return ((board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.WHITE) && newPosition.getRow() == 8) ||
                 (board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.BLACK) && newPosition.getRow() == 1));
     }
 
-    private void promotion_move(ChessPosition newPosition, List<ChessMove> ValidMoves){
+    private void promotionMove(ChessPosition newPosition, List<ChessMove> ValidMoves){
         for (ChessPiece.PieceType type: ChessPiece.PieceType.values()){//for each type of promotion piece, do the following
             if(!type.equals(ChessPiece.PieceType.KING) && !type.equals(ChessPiece.PieceType.PAWN)){//Skips King and Pawn types
                 if(board.getPiece(newPosition) == null){ //this checks the space right in front if it is empty
@@ -144,36 +144,36 @@ public class PawnMoveCalc {
 
         if (newRow >= 1 && newRow < 9 && newCol >= 1 && newCol < 9) { // Bounds Check (COULD BE A SOURCE OF BAD CODE)
 
-            if (check_starting_position(myPosition)) { //this is checking if I am in the starting col based on white or black pawns
+            if (checkStartingPosition(myPosition)) { //this is checking if I am in the starting col based on white or black pawns
 
-                check_in_front(newPosition, ValidMoves); //this handles looks at everything in front of the pawn for potential movement or captures
+                checkInFront(newPosition, ValidMoves); //this handles looks at everything in front of the pawn for potential movement or captures
                 if (board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
-                    special_starting_move_white(myPosition, ValidMoves); //this should let me move two spaces in front of me (if possible)
+                    specialStartingMoveWhite(myPosition, ValidMoves); //this should let me move two spaces in front of me (if possible)
                 }else{
-                    special_starting_move_black(myPosition, ValidMoves);
+                    specialStartingMoveBlack(myPosition, ValidMoves);
                 }
 
-            } else if (promotion_check(newPosition)){
-                promotion_move(newPosition, ValidMoves);
+            } else if (promotionCheck(newPosition)){
+                promotionMove(newPosition, ValidMoves);
 
             } else {
-                check_in_front(newPosition, ValidMoves);
+                checkInFront(newPosition, ValidMoves);
             }
         }
     }
 
     public List<ChessMove> getValidMoves() {
-        List<ChessMove> ValidMoves;
-        ValidMoves = new ArrayList<>();
+        List<ChessMove> validMoves;
+        validMoves = new ArrayList<>();
 
         if (board.getPiece(myPosition).getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
             PawnPieceMove move = PawnPieceMove.WhiteForward;
-            pawnMovement(move, ValidMoves);
+            pawnMovement(move, validMoves);
         }else{
             PawnPieceMove move = PawnPieceMove.BlackForward;
-            pawnMovement(move, ValidMoves);
+            pawnMovement(move, validMoves);
         }
-        return ValidMoves;
+        return validMoves;
     }
 
     @Override

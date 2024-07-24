@@ -2,11 +2,11 @@ package service;
 
 import model.AuthData;
 import model.UserData;
-import dataaccess.AuthDAO_interface;
+import dataaccess.AuthDAOInterface;
 import dataaccess.DataAccessException;
 import dataaccess.rammemory.AuthDAO_RAM;
 import dataaccess.rammemory.UserDAO_RAM;
-import dataaccess.UserDao_interface;
+import dataaccess.UserDaoInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.execeptions.BadRequestException;
@@ -14,8 +14,8 @@ import service.execeptions.BadRequestException;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserServicesTest {
-    UserDao_interface userDao;
-    AuthDAO_interface authDAO;
+    UserDaoInterface userDao;
+    AuthDAOInterface authDAO;
     UserServices userServices;
 
     @BeforeEach
@@ -29,29 +29,29 @@ class UserServicesTest {
     @Test
     void register() throws DataAccessException, BadRequestException {
         UserData userData = new UserData("New","User","e@gmail.com");
-        AuthData newUser = userServices.Register(userData);
+        AuthData newUser = userServices.register(userData);
         assertInstanceOf(AuthData.class, newUser);
     }
 
     @Test
     void registerUsernameMissing() throws DataAccessException {
         UserData userData = new UserData(null,"User","e@gmail.com");
-        assertThrows(DataAccessException.class, () -> userServices.Register(userData));
+        assertThrows(DataAccessException.class, () -> userServices.register(userData));
     }
 
     @Test
     void registerDuplicateUsername() throws DataAccessException,BadRequestException {
         UserData userData = new UserData("New","User","e@gmail.com");
         userDao.getUserDatabase().add(userData);
-        assertThrows(BadRequestException.class, () -> userServices.Register(userData));
+        assertThrows(BadRequestException.class, () -> userServices.register(userData));
     }
 
     @Test
     void login() throws DataAccessException {
-        String my_name = "Jake";
-        String my_email = "jacobgbullock3@gmail.com";
-        String my_password = "12345";
-        UserData test = new UserData(my_name, my_password,my_email);
+        String myName = "Jake";
+        String myEmail = "jacobgbullock3@gmail.com";
+        String myPassword = "12345";
+        UserData test = new UserData(myName, myPassword, myEmail);
         String newName = "Jake";
         String newPassword = "12345";
         UserData test2 = new UserData(newName, newPassword,null);
@@ -62,24 +62,24 @@ class UserServicesTest {
 
     @Test
     void loginFailedPassword() throws DataAccessException {
-        String my_name = "Jake";
-        String my_email = "jacobgbullock3@gmail.com";
-        String my_password = "12345";
-        UserData test = new UserData(my_name, my_password,my_email);
+        String myName = "Jake";
+        String myEmail = "jacobgbullock3@gmail.com";
+        String myPassword = "12345";
+        UserData test = new UserData(myName, myPassword, myEmail);
         userDao.getUserDatabase().add(test);
-        String wrong_password = "wrong_password";
-        UserData test2 = new UserData(my_name, wrong_password,my_email);
+        String wrongPassword = "wrongPassword";
+        UserData test2 = new UserData(myName, wrongPassword, myEmail);
         assertThrows(DataAccessException.class, () -> userServices.login(test2));
     }
 
     @Test
     void loginFailedUsername() throws DataAccessException {
-        String my_name = "Jake";
-        String my_email = "jacobgbullock3@gmail.com";
-        String my_password = "12345";
-        UserData test = new UserData(my_name, my_password,my_email);
+        String myName = "Jake";
+        String myEmail = "jacobgbullock3@gmail.com";
+        String myPassword = "12345";
+        new UserData(myName, myPassword, myEmail);
         String wrong_username = "wrong_username";
-        UserData test2 = new UserData(wrong_username, my_password,my_email);
+        UserData test2 = new UserData(wrong_username, myPassword, myEmail);
         assertThrows(DataAccessException.class, () -> userServices.login(test2));
     }
 

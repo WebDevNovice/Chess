@@ -2,22 +2,22 @@ package service;
 
 import model.AuthData;
 import model.UserData;
-import dataaccess.AuthDAO_interface;
+import dataaccess.AuthDAOInterface;
 import dataaccess.DataAccessException;
-import dataaccess.UserDao_interface;
+import dataaccess.UserDaoInterface;
 import service.execeptions.BadRequestException;
 
 public class UserServices {
-    UserDao_interface userDao;
-    AuthDAO_interface authDao;
+    UserDaoInterface userDao;
+    AuthDAOInterface authDao;
 
     //Follow the phase 2 diagram better
-    public UserServices(UserDao_interface userDao, AuthDAO_interface authDao) {
+    public UserServices(UserDaoInterface userDao, AuthDAOInterface authDao) {
         this.userDao = userDao;
         this.authDao = authDao;
     }
 
-    public AuthData Register(UserData user) throws DataAccessException, BadRequestException {
+    public AuthData register(UserData user) throws DataAccessException, BadRequestException {
 
         if (isUserDataComplete(user)){
            if (!userDao.getUserDatabase().isEmpty()){

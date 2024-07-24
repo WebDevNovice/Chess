@@ -3,13 +3,13 @@ package dataaccess.rammemory;
 
 import model.UserData;
 import dataaccess.DataAccessException;
-import dataaccess.UserDao_interface;
+import dataaccess.UserDaoInterface;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 
-public class UserDAO_RAM implements UserDao_interface {
+public class UserDAO_RAM implements UserDaoInterface {
 
    public Collection<UserData> userDatabase;
 

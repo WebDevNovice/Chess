@@ -45,8 +45,8 @@ public class KingMoveCalc {
 
 
     public List<ChessMove> getValidMoves() {
-        List<ChessMove> ValidMoves;
-        ValidMoves = new ArrayList<>();
+        List<ChessMove> validMoves;
+        validMoves = new ArrayList<>();
 
         for (KingPieceMove move : KingPieceMove.values()) {
             int newRow = myPosition.getRow() + move.rowChange;
@@ -55,12 +55,12 @@ public class KingMoveCalc {
             ChessMove newMove = new ChessMove(myPosition,newPosition,null);
             if (newRow >= 1 && newRow < 9 && newCol >= 1 && newCol < 9) { // Bounds Check
                 if(board.getPiece(newPosition) == null){
-                    ValidMoves.add(newMove);
+                    validMoves.add(newMove);
                 } else if (board.getPiece(newPosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
-                    ValidMoves.add(newMove);
+                    validMoves.add(newMove);
                 }
             }
         }
-        return ValidMoves;
+        return validMoves;
     }
 }

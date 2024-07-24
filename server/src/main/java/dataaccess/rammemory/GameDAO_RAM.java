@@ -6,11 +6,11 @@ import service.execeptions.BadRequestException;
 import service.execeptions.UnvailableTeamException;
 import chess.ChessGame;
 import dataaccess.DataAccessException;
-import dataaccess.GameDA0_interface;
+import dataaccess.GameDA0Interface;
 
 import java.util.*;
 
-public class GameDAO_RAM implements GameDA0_interface {
+public class GameDAO_RAM implements GameDA0Interface {
     HashMap<Integer, GameData> gameDataHashMap;
     Integer gameID = 1;
 

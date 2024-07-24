@@ -1,10 +1,10 @@
 package service;
 
 import chess.ChessGame;
-import dataaccess.AuthDAO_interface;
+import dataaccess.AuthDAOInterface;
 import dataaccess.DataAccessException;
-import dataaccess.GameDA0_interface;
-import dataaccess.UserDao_interface;
+import dataaccess.GameDA0Interface;
+import dataaccess.UserDaoInterface;
 import dataaccess.rammemory.AuthDAO_RAM;
 import dataaccess.rammemory.GameDAO_RAM;
 import dataaccess.rammemory.UserDAO_RAM;
@@ -19,9 +19,9 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ClearServiceTest {
-    AuthDAO_interface authDao;
-    UserDao_interface userDao;
-    GameDA0_interface gameDao;
+    AuthDAOInterface authDao;
+    UserDaoInterface userDao;
+    GameDA0Interface gameDao;
     ClearService clearService;
 
     @BeforeEach
@@ -33,14 +33,14 @@ class ClearServiceTest {
     }
 
     @Test
-    void clearALlDatabases_Success() throws DataAccessException {
+    void clearALlDatabasesSuccess() throws DataAccessException {
         String username = "Joseph";
         String password = "Smith";
         String email = "joseph@gmail.com";
         String uuid = UUID.randomUUID().toString();
         String gameName = "Danites Duel";
 
-        AuthData authData = new AuthData(username, uuid);
+        AuthData authData = new AuthData(username, password);
         UserData userData = new UserData(username, uuid, email);
         GameData gameData = new GameData(null, null, gameName, new ChessGame(), 1);
 
@@ -48,7 +48,7 @@ class ClearServiceTest {
         userDao.getUserDatabase().add(userData);
         gameDao.getGameDatabase().put(gameData.getGameID(), gameData);
 
-        clearService.clearALlDatabases();
+        clearService.clearAllDatabases();
 
         assertEquals(authDao.getAuthDatabase().isEmpty(), clearService.getAuthDao().getAuthDatabase().isEmpty());
         assertEquals(userDao.getUserDatabase().isEmpty(), clearService.getUserDao().getUserDatabase().isEmpty());
@@ -56,14 +56,14 @@ class ClearServiceTest {
     }
 
     @Test
-    void clearALlDatabases_Failure() throws DataAccessException {
+    void clearALlDatabasesFailure() throws DataAccessException {
         String username = "Joseph";
         String password = "Smith";
         String email = "joseph@gmail.com";
         String uuid = UUID.randomUUID().toString();
         String gameName = "Danites Duel";
 
-        AuthData authData = new AuthData(username, uuid);
+        AuthData authData = new AuthData(username, password);
         UserData userData = new UserData(username, uuid, email);
         GameData gameData = new GameData(null, null, gameName, new ChessGame(), 1);
 
@@ -71,7 +71,7 @@ class ClearServiceTest {
         userDao.getUserDatabase().add(userData);
         gameDao.getGameDatabase().put(gameData.getGameID(), gameData);
 
-        clearService.clearALlDatabases();
+        clearService.clearAllDatabases();
 
         userDao.getUserDatabase().add(new UserData("Jake","12345", "hello"));
 
@@ -79,32 +79,32 @@ class ClearServiceTest {
     }
 
     @Test
-    void getUserDao_Success() {
+    void getUserDaoSuccess() {
         assertEquals(userDao, clearService.getUserDao());
     }
 
     @Test
-    void getAuthDao_Success() {
+    void getAuthDaoSuccess() {
         assertEquals(authDao, clearService.getAuthDao());
     }
 
     @Test
-    void getGameDao_Success() {
+    void getGameDaoSuccess() {
         assertEquals(gameDao, clearService.getGameDao());
     }
 
     @Test
-    void getUserDao_Failure() throws DataAccessException {
+    void getUserDaoFailure() throws DataAccessException {
         assertNotEquals(new UserDAO_RAM(), clearService.getUserDao());
     }
 
     @Test
-    void getAuthDao_Failure() {
+    void getAuthDaoFailure() {
         assertInstanceOf(AuthDAO_RAM.class, clearService.getAuthDao());
     }
 
     @Test
-    void getGameDao_Failure() {
+    void getGameDaoFailure() {
         assertNotEquals(new GameDAO_RAM(), clearService.getGameDao());
     }
 }

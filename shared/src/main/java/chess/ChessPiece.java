@@ -75,8 +75,8 @@ public class ChessPiece {
                 BishopMoveCalc bishopMoveCalc = new BishopMoveCalc(board, myPosition);
                 return bishopMoveCalc.getValidMoves();
             case KNIGHT:
-                KnightMoveCalc KnightMoveCalc = new KnightMoveCalc(board, myPosition);
-                return KnightMoveCalc.getValidMoves();
+                KnightMoveCalc knightMoveCalc = new KnightMoveCalc(board, myPosition);
+                return knightMoveCalc.getValidMoves();
             case ROOK:
                 RookMoveCalc rookMoveCalc = new RookMoveCalc(board, myPosition);
                 return rookMoveCalc.getValidMoves();

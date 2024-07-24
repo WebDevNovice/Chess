@@ -115,7 +115,7 @@ public class StandardAPITests {
 
     @Test
     @Order(5)
-    @DisplayName("Re-Register User")
+    @DisplayName("Re-register User")
     public void registerTwice() {
         //submit register request trying to register existing user
         TestAuthResult registerResult = serverFacade.register(existingUser);
@@ -126,7 +126,7 @@ public class StandardAPITests {
 
     @Test
     @Order(5)
-    @DisplayName("Register Bad Request")
+    @DisplayName("register Bad Request")
     public void failRegister() {
         //attempt to register a user without a password
         TestUser registerRequest = new TestUser(newUser.getUsername(), null, newUser.getEmail());

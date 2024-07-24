@@ -3,7 +3,7 @@ package dataaccess.rammemory;
 import model.AuthData;
 import model.UserData;
 import service.execeptions.BadRequestException;
-import dataaccess.AuthDAO_interface;
+import dataaccess.AuthDAOInterface;
 import dataaccess.DataAccessException;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
 
-public class AuthDAO_RAM implements AuthDAO_interface {
+public class AuthDAO_RAM implements AuthDAOInterface {
 
     Collection<AuthData> authDatabase;
 
