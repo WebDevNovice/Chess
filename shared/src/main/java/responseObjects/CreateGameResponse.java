@@ -1,4 +1,4 @@
-package responseRequest;
+package responseObjects;
 
 public class CreateGameResponse {
     Integer gameID;
@@ -6,6 +6,7 @@ public class CreateGameResponse {
     public CreateGameResponse(Integer gameID) {
         this.gameID = gameID;
     }
+
     public Integer getGameID() {
         return gameID;
     }

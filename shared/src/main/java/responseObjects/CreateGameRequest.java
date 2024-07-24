@@ -1,4 +1,4 @@
-package responseRequest;
+package responseObjects;
 
 public class CreateGameRequest {
     String gameName;
@@ -6,6 +6,7 @@ public class CreateGameRequest {
     public CreateGameRequest(String gameName) {
         this.gameName = gameName;
     }
+
     public String getGameName() {
         return gameName;
     }

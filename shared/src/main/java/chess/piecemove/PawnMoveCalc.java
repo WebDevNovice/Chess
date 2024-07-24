@@ -50,10 +50,10 @@ public class PawnMoveCalc {
         }
     }
 
-    private void checkCaptureLeft(ChessPosition target_position, List<ChessMove> validMoves) {
-        int newCol = target_position.getColumn() - 1; //shift the col left
-        if (target_position.getRow() >= 1 && target_position.getRow() < 9 && newCol >= 1 && newCol < 9) {
-            ChessPosition newPosition = new ChessPosition(target_position.getRow(), newCol);
+    private void checkCaptureLeft(ChessPosition targetPosition, List<ChessMove> validMoves) {
+        int newCol = targetPosition.getColumn() - 1; //shift the col left
+        if (targetPosition.getRow() >= 1 && targetPosition.getRow() < 9 && newCol >= 1 && newCol < 9) {
+            ChessPosition newPosition = new ChessPosition(targetPosition.getRow(), newCol);
             ChessMove newMove = new ChessMove(myPosition, newPosition, null);
             if (board.getPiece(newPosition) != null) {
                 if (board.getPiece(newPosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {

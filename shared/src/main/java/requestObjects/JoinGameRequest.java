@@ -1,4 +1,4 @@
-package responseRequest;
+package requestObjects;
 
 public class JoinGameRequest {
     String playerColor;

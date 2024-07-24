@@ -45,17 +45,6 @@ public class UserDAORAM implements UserDaoInterface {
         return userDatabase;
     }
 
-
-    private boolean arePasswordsSame(UserData storedUser, UserData newUser) throws DataAccessException {
-        if (newUser.getPassword() == null) {
-            throw new DataAccessException("Error: Password is empty");
-        }
-        if (!storedUser.getPassword().equals(newUser.getPassword())) {
-            throw new DataAccessException("Error: Passwords do not match");
-        }
-        return true;
-    }
-
 }
 
 
