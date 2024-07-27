@@ -1,4 +1,7 @@
 package server;
+import dataaccess.sqlMemory.AuthDAOSQL;
+import dataaccess.sqlMemory.GameDAOSQL;
+import dataaccess.sqlMemory.UserDAOSQL;
 import model.*;
 import responseobjects.CreateGameRequest;
 import responseobjects.CreateGameResponse;
@@ -31,13 +34,9 @@ public class Server {
     public Gson gson = new Gson();
 
     public Server() {
-        try {
-            this.userDao = new UserDAORAM();
-            this.authDao = new AuthDAORAM();
-            this.gameDao = new GameDAORAM();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
+        this.userDao = new UserDAOSQL();
+        this.authDao = new AuthDAOSQL();
+        this.gameDao = new GameDAOSQL();
 
         this.userServices = new UserServices(userDao, authDao);
         this.authServices = new AuthServices(authDao);

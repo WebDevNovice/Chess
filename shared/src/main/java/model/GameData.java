@@ -18,8 +18,6 @@ public class GameData {
         setGameID(gameID);
     }
 
-
-
     public void setWhiteUsername(String whiteUsername) {
         if (whiteUsername != null) {
             this.whiteUsername = whiteUsername;
