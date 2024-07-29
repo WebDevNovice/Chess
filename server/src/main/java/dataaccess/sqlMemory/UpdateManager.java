@@ -10,7 +10,7 @@ import static java.sql.Types.NULL;
 
 public class UpdateManager {
 
-    static int executeUpdate(String statement, Object... params) throws ResponseException, DataAccessException {
+    static int executeUpdateForInteger(String statement, Object... params) throws ResponseException, DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (var i = 0; i < params.length; i++) {

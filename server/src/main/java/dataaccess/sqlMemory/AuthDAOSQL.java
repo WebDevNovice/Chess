@@ -15,14 +15,16 @@ public class AuthDAOSQL implements AuthDAOInterface {
     public AuthData createAuth(UserData user) throws DataAccessException, ResponseException {
         var statement = "insert into auth (username, uuid) values (?, ?)";
         var authToken = UUID.randomUUID().toString();
-        var id = UpdateManager.executeUpdate(statement, user.getUsername(), authToken);
+        var id = UpdateManager.executeUpdateForInteger(statement, user.getUsername(), authToken);
         return new AuthData(user.getUsername(), authToken);
     }
 
     @Override
     public AuthData getAuthData(String authToken) throws DataAccessException, BadRequestException {
-        var statement = "select auth from auth where uuid = ?";
-        var
+        var statement = "select uuid from auth where uuid = ?";
+        if (statement != null){
+            return
+        }
     }
 
     @Override
