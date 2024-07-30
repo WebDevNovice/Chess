@@ -4,6 +4,7 @@ import dataaccess.AuthDAOInterface;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0Interface;
 import dataaccess.UserDaoInterface;
+import dataaccess.sqlMemory.ResponseException;
 
 public class ClearService {
 
@@ -17,7 +18,7 @@ public class ClearService {
         this.gameDao = gameDao;
     }
 
-    public void clearAllDatabases() throws DataAccessException {
+    public void clearAllDatabases() throws DataAccessException, ResponseException {
         userDao.clearUserDatabase();
         authDao.clearAuthDatabase();
         gameDao.clearGamedatabase();

@@ -1,25 +1,25 @@
 package dataaccess.sqlMemory;
 
 import dataaccess.DataAccessException;
+import model.AuthData;
+import model.GameData;
 import model.UserData;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class UpdateManager {
 
-    static int executeUpdateForInteger(String statement, Object... params) throws ResponseException, DataAccessException {
+    static int executeUpdate(String statement, Object... params) throws ResponseException, DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (var i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    if (param instanceof String p) ps.setString(i + 1, p);
-                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
-                    else if (param instanceof UserData p) ps.setString(i + 1, p.toString());
-                    else if (param == null) ps.setNull(i + 1, NULL);
-                }
+                verifyParams(ps, params);
+
                 ps.executeUpdate();
 
                 var rs = ps.getGeneratedKeys();
@@ -31,6 +31,47 @@ public class UpdateManager {
             }
         } catch (SQLException e) {
             throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
+        }
+    }
+
+    static List<List<Object>> executeQuery(String statement, Object... params) throws DataAccessException, ResponseException {
+        List<List<Object>> queryResult = new ArrayList<>();
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                verifyParams(ps, params);
+
+                try (var rs = ps.executeQuery()) {
+                    var metaData = rs.getMetaData();
+                    var colcount = metaData.getColumnCount();
+
+                    while (rs.next()) {
+                        var row = new ArrayList<>();
+                        for (var i = 1; i <= colcount; i++) {
+                            row.add(rs.getObject(i));
+                        }
+                        queryResult.add(row);
+                    }
+                }
+                return queryResult;
+            }
+        } catch (SQLException e) {
+            throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
+        }
+    }
+
+    static void verifyParams (PreparedStatement ps, Object... params) throws SQLException {
+        for (var i = 0; i < params.length; i++) {
+            var param = params[i];
+            switch (param) {
+                case String p -> ps.setString(i + 1, p);
+                case Integer p -> ps.setInt(i + 1, p);
+                case UserData p -> ps.setString(i + 1, p.toString());
+                case AuthData p -> ps.setString(i + 1, p.toString());
+                case GameData p -> ps.setString(i + 1, p.toString());
+                case null -> ps.setNull(i + 1, NULL);
+                default -> {
+                }
+            }
         }
     }
 }

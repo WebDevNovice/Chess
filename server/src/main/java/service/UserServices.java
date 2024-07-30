@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.sqlMemory.ResponseException;
 import model.AuthData;
 import model.UserData;
 import dataaccess.AuthDAOInterface;
@@ -17,7 +18,7 @@ public class UserServices {
         this.authDao = authDao;
     }
 
-    public AuthData register(UserData user) throws DataAccessException, BadRequestException {
+    public AuthData register(UserData user) throws DataAccessException, BadRequestException, ResponseException {
 
         if (isUserDataComplete(user)){
            if (!userDao.getUserDatabase().isEmpty()){
@@ -38,7 +39,7 @@ public class UserServices {
         return null;
     }
 
-    public AuthData login(UserData userData) throws DataAccessException {
+    public AuthData login(UserData userData) throws DataAccessException, ResponseException {
 
         UserData registeredUser = userDao.getUser(userData);
         if (registeredUser != null) {

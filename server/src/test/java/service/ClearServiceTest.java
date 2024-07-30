@@ -8,6 +8,7 @@ import dataaccess.UserDaoInterface;
 import dataaccess.rammemory.AuthDAORAM;
 import dataaccess.rammemory.GameDAORAM;
 import dataaccess.rammemory.UserDAORAM;
+import dataaccess.sqlMemory.ResponseException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -33,7 +34,7 @@ class ClearServiceTest {
     }
 
     @Test
-    void clearALlDatabasesSuccess() throws DataAccessException {
+    void clearALlDatabasesSuccess() throws DataAccessException, ResponseException {
         String username = "Joseph";
         String password = "Smith";
         String email = "joseph@gmail.com";
@@ -56,7 +57,7 @@ class ClearServiceTest {
     }
 
     @Test
-    void clearALlDatabasesFailure() throws DataAccessException {
+    void clearALlDatabasesFailure() throws DataAccessException, ResponseException {
         String username = "Joseph";
         String password = "Smith";
         String email = "joseph@gmail.com";

@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.sqlMemory.ResponseException;
 import model.AuthData;
 import model.UserData;
 import dataaccess.AuthDAOInterface;
@@ -14,7 +15,7 @@ public class AuthServices {
         this.authDao = authDao;
     }
 
-    public AuthData createAuth(UserData user) throws DataAccessException {
+    public AuthData createAuth(UserData user) throws DataAccessException, ResponseException {
         if (user.getUsername() == null || user.getPassword() == null
          || user.getUsername().isEmpty() || user.getPassword().isEmpty()) {
             throw new DataAccessException("Error: Username is required");
@@ -22,7 +23,7 @@ public class AuthServices {
             return authDao.createAuth(user);
     }
 
-    public AuthData getAuth(String authToken) throws DataAccessException, BadRequestException {
+    public AuthData getAuth(String authToken) throws DataAccessException, BadRequestException, ResponseException {
         if (authToken == null) {
             throw new DataAccessException("Error: Authtoken Is Required");
         }
@@ -36,12 +37,16 @@ public class AuthServices {
             throw new DataAccessException("Error: Auth Token is required");
         }
         else {
-            authDao.deleteAuth(authToken);
+            try {
+                authDao.deleteAuth(authToken);
+            } catch (ResponseException e) {
+                throw new RuntimeException(e);
+            }
             return null;
         }
     }
 
-    public AuthData isAuthenticated(Request req) throws BadRequestException, DataAccessException {
+    public AuthData isAuthenticated(Request req) throws BadRequestException, DataAccessException, ResponseException {
         String authToken = req.headers("Authorization");
         return authDao.getAuthData(authToken);
     }

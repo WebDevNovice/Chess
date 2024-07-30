@@ -1,8 +1,8 @@
 package dataaccess.rammemory;
 
+import dataaccess.sqlMemory.ResponseException;
 import model.AuthData;
 import model.UserData;
-import service.execeptions.BadRequestException;
 import dataaccess.AuthDAOInterface;
 import dataaccess.DataAccessException;
 
@@ -38,7 +38,7 @@ public class AuthDAORAM implements AuthDAOInterface {
     }
 
     @Override
-    public void deleteAuth(String authToken) throws DataAccessException, BadRequestException {
+    public void deleteAuth(String authToken) throws DataAccessException, ResponseException {
         boolean found = false;
         for (AuthData authData : authDatabase) {
             if (authData.getAuthToken().equals(authToken)){

@@ -1,11 +1,12 @@
 package service;
 
+import dataaccess.sqlMemory.AuthDAOSQL;
+import dataaccess.sqlMemory.ResponseException;
+import dataaccess.sqlMemory.UserDAOSQL;
 import model.AuthData;
 import model.UserData;
 import dataaccess.AuthDAOInterface;
 import dataaccess.DataAccessException;
-import dataaccess.rammemory.AuthDAORAM;
-import dataaccess.rammemory.UserDAORAM;
 import dataaccess.UserDaoInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,14 +21,14 @@ class UserServicesTest {
 
     @BeforeEach
     void setUp() throws DataAccessException {
-        this.userDao = new UserDAORAM();
-        this.authDAO = new AuthDAORAM();
+        this.userDao = new UserDAOSQL();
+        this.authDAO = new AuthDAOSQL();
         this.userServices = new UserServices(userDao, authDAO);
     }
 
 
     @Test
-    void register() throws DataAccessException, BadRequestException {
+    void register() throws DataAccessException, BadRequestException, ResponseException {
         UserData userData = new UserData("New","User","e@gmail.com");
         AuthData newUser = userServices.register(userData);
         assertInstanceOf(AuthData.class, newUser);
@@ -47,7 +48,7 @@ class UserServicesTest {
     }
 
     @Test
-    void login() throws DataAccessException {
+    void login() throws DataAccessException, ResponseException {
         String myName = "Jake";
         String myEmail = "jacobgbullock3@gmail.com";
         String myPassword = "12345";

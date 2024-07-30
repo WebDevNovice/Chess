@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.sqlMemory.ResponseException;
 import model.AuthData;
 import model.UserData;
 import dataaccess.AuthDAOInterface;
@@ -22,7 +23,7 @@ class AuthServicesTest {
     }
 
     @Test
-    void createAuthSuccess() throws DataAccessException {
+    void createAuthSuccess() throws DataAccessException, ResponseException {
         UserData user = new UserData("Hello", "There", "jediKiller@darkside.org");
         AuthData newAuth = authServices.createAuth(user);
         assertInstanceOf(AuthData.class, newAuth);
@@ -41,28 +42,28 @@ class AuthServicesTest {
     }
 
     @Test
-    void getAuthSuccess() throws DataAccessException, BadRequestException {
+    void getAuthSuccess() throws DataAccessException, BadRequestException, ResponseException {
         AuthData authData = new AuthData("Hello", "There");
         authServices.authDao.getAuthDatabase().add(authData);
         assertEquals(authData, authServices.getAuth("There"));
     }
 
     @Test
-    void getAuthFailedWrongAuthToken() throws DataAccessException {
+    void getAuthFailedWrongAuthToken() throws DataAccessException, ResponseException {
         AuthData authData = new AuthData("Hello", "There");
         authServices.authDao.getAuthDatabase().add(authData);
         assertThrows(DataAccessException.class, () -> authServices.getAuth("jediKiller"));
     }
 
     @Test
-    void logout() throws DataAccessException, BadRequestException {
+    void logout() throws DataAccessException, BadRequestException, ResponseException {
         AuthData authData = new AuthData("Hello", "There");
         authServices.authDao.getAuthDatabase().add(authData);
         assertNull(authServices.logout("There"));
     }
 
     @Test
-    void logoutFailedWrongAuthToken() throws DataAccessException, BadRequestException {
+    void logoutFailedWrongAuthToken() throws DataAccessException, BadRequestException, ResponseException {
         AuthData authData = new AuthData("Hello", "There");
         authServices.authDao.getAuthDatabase().add(authData);
         authServices.getAuth("There");
