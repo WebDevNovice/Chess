@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import service.execeptions.BadRequestException;
 import service.execeptions.UnvailableTeamException;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -54,7 +55,7 @@ class GameDAOSQLTest {
 
     @Test
     void listGamesFailure() throws ResponseException, DataAccessException {
-        assertThrows(DataAccessException.class, () -> gameDAOSQL.listGames());
+        assertEquals(new ArrayList<>(), gameDAOSQL.listGames());
     }
 
     @Test

@@ -46,7 +46,7 @@ class UserServicesTest {
     void registerDuplicateUsername() throws DataAccessException, BadRequestException, ResponseException {
         UserData userData = new UserData("New","User","e@gmail.com");
         userDao.createUser(userData);
-        assertThrows(ResponseException.class, () -> userServices.register(userData));
+        assertThrows(BadRequestException.class, () -> userServices.register(userData));
     }
 
     @Test

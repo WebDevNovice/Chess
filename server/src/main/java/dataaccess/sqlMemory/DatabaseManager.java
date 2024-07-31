@@ -39,15 +39,39 @@ public class DatabaseManager {
      * Creates the database if it does not already exist.
      */
     static void createDatabase() throws DataAccessException {
-        try {
-            var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
-            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
+        var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
+        executeQuery(statement);
+    }
+
+    static void createUserTable() throws DataAccessException {
+        var statement = "CREATE TABLE IF NOT EXISTS user (" +
+                                            "username VARCHAR(255) NOT NULL UNIQUE, " +
+                                            "password VARCHAR(255) NOT NULL, " +
+                                            "email varchar(255)) NOT NULL" +
+                                            "PRIMARY KEY (username);)";
+
+        executeQuery(statement);
+    }
+
+    static void createAuthTable() throws DataAccessException {
+        var statement = "CREATE TABLE IF NOT EXISTS auth (" +
+                "username VARCHAR(255) NOT NULL UNIQUE, " +
+                "uuid VARCHAR(255) NOT NULL UNIQUE, " +
+                "PRIMARY KEY (username);)";
+
+        executeQuery(statement);
+    }
+
+    static void createGameTable() throws DataAccessException {
+        var statement = "CREATE TABLE IF NOT EXISTS game (" +
+                "id INT NOT NULL UNIQUE AUTO_INCREMENT, " +
+                "white_player VARCHAR(255), " +
+                "black_player VARCHAR(255), " +
+                "game_name VARCHAR(255) NOT NULL, " +
+                "game_data LONGTEXT NOT NULL, " +
+                "PRIMARY KEY (id);)";
+
+        executeQuery(statement);
     }
 
     /**
@@ -71,4 +95,16 @@ public class DatabaseManager {
             throw new DataAccessException(e.getMessage());
         }
     }
+
+    static void executeQuery(String statement) throws DataAccessException {
+        try {
+            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
 }

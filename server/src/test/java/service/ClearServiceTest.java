@@ -44,13 +44,11 @@ class ClearServiceTest {
         String uuid = UUID.randomUUID().toString();
         String gameName = "Danites Duel";
 
-        AuthData authData = new AuthData(username, password);
         UserData userData = new UserData(username, uuid, email);
-        GameData gameData = new GameData(null, null, gameName, new ChessGame(), 1);
 
-        authDao.getAuthDatabase().add(authData);
-        userDao.getUserDatabase().add(userData);
-        gameDao.getGameDatabase().put(gameData.getGameID(), gameData);
+        authDao.createAuth(userData);
+        userDao.createUser(userData);
+        gameDao.createGame(gameName);
 
         clearService.clearAllDatabases();
 
@@ -72,11 +70,11 @@ class ClearServiceTest {
 
         authDao.createAuth(userData);
         userDao.createUser(userData);
-        gameDao.getGameDatabase().put(gameData.getGameID(), gameData);
+        gameDao.createGame(gameName);
 
         clearService.clearAllDatabases();
 
-        userDao.getUserDatabase().add(new UserData("Jake","12345", "hello"));
+        userDao.createUser(new UserData("Jake","12345", "hello"));
 
         assertEquals(false, clearService.getUserDao().getUserDatabase().isEmpty());
     }
@@ -103,7 +101,7 @@ class ClearServiceTest {
 
     @Test
     void getAuthDaoFailure() {
-        assertInstanceOf(AuthDAORAM.class, clearService.getAuthDao());
+        assertInstanceOf(AuthDAOSQL.class, clearService.getAuthDao());
     }
 
     @Test

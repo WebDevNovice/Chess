@@ -6,6 +6,7 @@ import dataaccess.DataAccessException;
 import dataaccess.GameDA0Interface;
 import model.AuthData;
 import model.GameData;
+import org.junit.jupiter.api.BeforeAll;
 import service.execeptions.BadRequestException;
 import service.execeptions.UnvailableTeamException;
 
@@ -15,6 +16,13 @@ import java.util.HashMap;
 import java.util.List;
 
 public class GameDAOSQL implements GameDA0Interface {
+
+    @BeforeAll
+    public static void init() throws DataAccessException {
+        DatabaseManager.createDatabase();
+        DatabaseManager.createGameTable();
+    }
+
     @Override
     public Integer createGame(String gameName) throws DataAccessException, ResponseException {
         if (gameName == null || gameName.isEmpty()) {
@@ -41,9 +49,6 @@ public class GameDAOSQL implements GameDA0Interface {
             GameData gameData = getGameData(row);
             games.add(gameData);
         }
-        if (games.isEmpty()) {
-            throw new DataAccessException("Error: No games found. Try Creating a new one:)");
-        }
         return games;
     }
 
@@ -60,6 +65,9 @@ public class GameDAOSQL implements GameDA0Interface {
         }
         for (List<Object> row : gameList) {
             deserializeGame(row);
+            if (playerColor == null || playerColor.isEmpty()) {
+                throw new BadRequestException("Error: Player color not found. Try Creating a new one:)");
+            }
             if (playerColor == "WHITE") {
                 setPlayerColor(row, playerColor, authData, 1, gameId);
             }

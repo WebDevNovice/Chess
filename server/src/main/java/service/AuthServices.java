@@ -38,6 +38,7 @@ public class AuthServices {
         }
         else {
             try {
+                authDao.getAuthData(authToken);
                 authDao.deleteAuth(authToken);
             } catch (ResponseException e) {
                 throw new RuntimeException(e);

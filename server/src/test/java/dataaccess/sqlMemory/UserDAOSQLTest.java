@@ -31,6 +31,7 @@ class UserDAOSQLTest {
 
     @Test
     void createUserFail() throws ResponseException, DataAccessException {
+        userDAOSQL.createUser(userData);
         assertThrows(ResponseException.class, () -> userDAOSQL.createUser(userData));
     }
 
@@ -39,6 +40,13 @@ class UserDAOSQLTest {
         userDAOSQL.createUser(userData);
         UserData registeredUser = userDAOSQL.getUser(userData);
         assertEquals(userData.getUsername(), registeredUser.getUsername());
+    }
+
+    @Test
+    void getUserFail() throws ResponseException, DataAccessException {
+        userDAOSQL.createUser(userData);
+        UserData unregisteredUser = new UserData("Fred", "Bullock", "jb@famous.com");
+        assertThrows(DataAccessException.class, () -> userDAOSQL.getUser(unregisteredUser));
     }
 
     @Test

@@ -3,12 +3,22 @@ package dataaccess.sqlMemory;
 import dataaccess.DataAccessException;
 import dataaccess.UserDaoInterface;
 import model.UserData;
+import org.junit.jupiter.api.BeforeAll;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class UserDAOSQL implements UserDaoInterface {
+
+    @BeforeAll
+    public static void init() throws DataAccessException {
+        DatabaseManager.createDatabase();
+        DatabaseManager.createAuthTable();
+    }
+
     @Override
     public UserData createUser(UserData userData) throws DataAccessException, ResponseException {
         var statement = "INSERT INTO user (username, password, email) VALUES (?,?,?)";
@@ -22,14 +32,14 @@ public class UserDAOSQL implements UserDaoInterface {
         var statement = "SELECT password FROM user WHERE username = ?";
         List<List<Object>> queryList = UpdateManager.executeQuery(statement, user.getUsername());
         if (queryList.isEmpty()) {
-            throw new DataAccessException("User not found");
+            throw new DataAccessException("Error: User not found");
         }
 
         List<Object> userData = queryList.getFirst();
         if (BCrypt.checkpw(user.getPassword(), userData.getFirst().toString())) {
             return new UserData(user.getUsername(), null,null);
         }else {
-            throw new ResponseException(401,"Wrong password");
+            throw new ResponseException(401,"Error: Wrong password");
         }
     }
 
@@ -40,8 +50,15 @@ public class UserDAOSQL implements UserDaoInterface {
     }
 
     @Override
-    public Collection<UserData> getUserDatabase() throws DataAccessException {
-        return List.of();
+    public Collection<UserData> getUserDatabase() throws DataAccessException, ResponseException {
+        Collection<UserData> userDataCollection = new ArrayList<>();
+        var statement = "SELECT * FROM user";
+        List<List<Object>> queryList = UpdateManager.executeQuery(statement);
+        for (List<Object> query : queryList) {
+            UserData userData = new UserData(query.get(0).toString(),null,null);
+            userDataCollection.add(userData);
+        }
+        return userDataCollection;
     }
 
 }

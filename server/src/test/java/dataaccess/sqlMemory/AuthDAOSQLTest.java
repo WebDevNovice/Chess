@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.AuthServices;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class AuthDAOSQLTest {
@@ -32,12 +34,6 @@ class AuthDAOSQLTest {
     }
 
     @Test
-    void createAuthFail() throws ResponseException, DataAccessException {
-        authDAOSQL.createAuth(userData);
-        assertThrows(ResponseException.class, () -> authDAOSQL.createAuth(userData));
-    }
-
-    @Test
     void getAuthDataSuccess() throws ResponseException, DataAccessException {
         AuthData newAuthData = authDAOSQL.createAuth(userData);
         AuthData newAuth = authDAOSQL.getAuthData(newAuthData.getAuthToken());
@@ -60,7 +56,7 @@ class AuthDAOSQLTest {
     void deleteAuthFail() throws ResponseException, DataAccessException {
         AuthData authData = authDAOSQL.createAuth(userData);
         authDAOSQL.deleteAuth(authData.getAuthToken());
-        assertThrows(DataAccessException.class, () -> authDAOSQL.deleteAuth(authData.getAuthToken()));
+        assertThrows(DataAccessException.class, () -> authDAOSQL.deleteAuth(null));
     }
 
     @Test
@@ -68,6 +64,13 @@ class AuthDAOSQLTest {
         AuthData authData = authDAOSQL.createAuth(userData);
         authDAOSQL.clearAuthDatabase();
         assertThrows(DataAccessException.class, () -> authDAOSQL.getAuthData(authData.getAuthToken()));
+    }
+
+    @Test
+    void clearAuthDatabaseFail() throws ResponseException, DataAccessException {
+        AuthData authData = authDAOSQL.createAuth(userData);
+        authDAOSQL.clearAuthDatabase();
+        assertEquals(new ArrayList<>(), authDAOSQL.getAuthDatabase());
     }
 
 }

@@ -1,6 +1,7 @@
 package server;
 import dataaccess.sqlMemory.AuthDAOSQL;
 import dataaccess.sqlMemory.GameDAOSQL;
+import dataaccess.sqlMemory.ResponseException;
 import dataaccess.sqlMemory.UserDAOSQL;
 import model.*;
 import responseobjects.CreateGameRequest;
@@ -94,7 +95,9 @@ public class Server {
             return successResponseAuthToken(gson, authToken, res);
 
         } catch (DataAccessException e) {
-            return errorResponse(401, gson,e.getMessage(), res);
+            return errorResponse(401, gson, e.getMessage(), res);
+        }catch (ResponseException e){
+            return errorResponse(e.getStatusCode(), gson, e.getMessage(), res);
         } catch (Exception e) {
             return errorResponse(500,gson,e.getMessage(),res);
         }
