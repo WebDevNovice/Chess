@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.sqlMemory.AuthDAOSQL;
 import dataaccess.sqlMemory.ResponseException;
 import model.AuthData;
 import model.UserData;
@@ -8,6 +9,7 @@ import dataaccess.DataAccessException;
 import dataaccess.rammemory.AuthDAORAM;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 import service.execeptions.BadRequestException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,9 +19,10 @@ class AuthServicesTest {
     AuthServices authServices;
 
     @BeforeEach
-    void setUp() {
-        this.authDoa  = new AuthDAORAM();
+    void setUp() throws ResponseException, DataAccessException {
+        this.authDoa  = new AuthDAOSQL();
         this.authServices = new AuthServices(authDoa);
+        authDoa.clearAuthDatabase();
     }
 
     @Test
@@ -43,30 +46,25 @@ class AuthServicesTest {
 
     @Test
     void getAuthSuccess() throws DataAccessException, BadRequestException, ResponseException {
-        AuthData authData = new AuthData("Hello", "There");
-        authServices.authDao.getAuthDatabase().add(authData);
-        assertEquals(authData, authServices.getAuth("There"));
+        UserData user = new UserData("Hello", "Kenobi", "jediKiller@darkside.org");
+        AuthData authData = authDoa.createAuth(user);
+        assertEquals(authData.getAuthToken(), authDoa.getAuthData(authData.getAuthToken()).getAuthToken());
     }
 
     @Test
-    void getAuthFailedWrongAuthToken() throws DataAccessException, ResponseException {
-        AuthData authData = new AuthData("Hello", "There");
-        authServices.authDao.getAuthDatabase().add(authData);
+    void getAuthFailedWrongAuthToken() {
         assertThrows(DataAccessException.class, () -> authServices.getAuth("jediKiller"));
     }
 
     @Test
     void logout() throws DataAccessException, BadRequestException, ResponseException {
-        AuthData authData = new AuthData("Hello", "There");
-        authServices.authDao.getAuthDatabase().add(authData);
-        assertNull(authServices.logout("There"));
+        UserData userData = new UserData("Hello", "There", null);
+        AuthData authData = authDoa.createAuth(userData);
+        assertNull(authServices.logout(authData.getAuthToken()));
     }
 
     @Test
-    void logoutFailedWrongAuthToken() throws DataAccessException, BadRequestException, ResponseException {
-        AuthData authData = new AuthData("Hello", "There");
-        authServices.authDao.getAuthDatabase().add(authData);
-        authServices.getAuth("There");
+    void logoutFailedWrongAuthToken() {
         assertThrows(DataAccessException.class, () -> authServices.logout("Ther"));
     }
 }

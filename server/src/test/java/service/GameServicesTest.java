@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.sqlMemory.ResponseException;
 import model.AuthData;
 import model.GameData;
 import dataaccess.AuthDAOInterface;
@@ -27,7 +28,7 @@ class GameServicesTest {
     }
 
     @Test
-    void listGames() throws DataAccessException {
+    void listGames() throws DataAccessException, ResponseException {
         for (int i = 0; i < 3; i++) {
             String gameName = "Skyrim" + i;
             gameServices.createGame(gameName);
@@ -36,21 +37,21 @@ class GameServicesTest {
     }
 
     @Test
-    void createGameSuccess() throws DataAccessException {
+    void createGameSuccess() throws DataAccessException, ResponseException {
         String gameName = "Skyrim";
         Integer gameId = gameServices.createGame(gameName);
         assertEquals(1, gameId);
     }
 
     @Test
-    void createGameFailureGameAlreadyExists() throws DataAccessException {
+    void createGameFailureGameAlreadyExists() throws DataAccessException, ResponseException {
         String gameName = "Skyrim";
         gameServices.createGame(gameName);
         assertThrows(DataAccessException.class, () -> gameServices.createGame(gameName));
     }
 
     @Test
-    void joinGameSuccess() throws DataAccessException, BadRequestException, UnvailableTeamException {
+    void joinGameSuccess() throws DataAccessException, BadRequestException, UnvailableTeamException, ResponseException {
         String gameName = "Skyrim";
         String playerName = "Jake";
         String teamColor = "WHITE";
@@ -61,7 +62,7 @@ class GameServicesTest {
     }
 
     @Test
-    void joinGameFailureWHITEUserTaken() throws DataAccessException, BadRequestException, UnvailableTeamException {
+    void joinGameFailureWHITEUserTaken() throws DataAccessException, BadRequestException, UnvailableTeamException, ResponseException {
         String gameName = "Skyrim";
         String playerName = "Jake";
         String teamColor = "WHITE";
@@ -76,7 +77,7 @@ class GameServicesTest {
     }
 
     @Test
-    void joinGameFailureBLACKUserTaken() throws DataAccessException, BadRequestException, UnvailableTeamException {
+    void joinGameFailureBLACKUserTaken() throws DataAccessException, BadRequestException, UnvailableTeamException, ResponseException {
         String gameName = "Skyrim";
         String playerName = "Jake";
         String teamColor = "BLACK";

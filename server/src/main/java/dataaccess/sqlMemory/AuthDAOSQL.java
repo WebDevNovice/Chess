@@ -34,16 +34,28 @@ public class AuthDAOSQL implements AuthDAOInterface {
 
     @Override
     public void deleteAuth(String authToken) throws DataAccessException, ResponseException {
-
-
-        var updateStatement = "delete from auth where uuid = ?";
-        UpdateManager.executeUpdate(updateStatement, authToken);
+        if (authToken == null || authToken.isEmpty()) {
+            throw new DataAccessException("Auth token not found");
+        }
+        else if (getAuthData(authToken) == null) {
+            throw new DataAccessException("Auth token not found");
+        }else{
+            var updateStatement = "delete from auth where uuid = ?";
+            UpdateManager.executeUpdate(updateStatement, authToken);
+        }
     }
 
     @Override
     public void clearAuthDatabase() throws ResponseException, DataAccessException {
-        var statement = "delete from auth";
-        UpdateManager.executeUpdate(statement);
+        var clearStatement = "delete from auth";
+        UpdateManager.executeUpdate(clearStatement);
+
+        var verifyStatement = "select * from auth";
+        List<List<Object>> authQuery = UpdateManager.executeQuery(verifyStatement);
+
+        if (!authQuery.isEmpty()) {
+            throw new DataAccessException("Database not empty");
+        }
     }
 
 

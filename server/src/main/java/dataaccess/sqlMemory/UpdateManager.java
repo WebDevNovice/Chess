@@ -1,5 +1,6 @@
 package dataaccess.sqlMemory;
 
+import chess.ChessGame;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.GameData;
@@ -67,6 +68,7 @@ public class UpdateManager {
                 case Integer p -> ps.setInt(i + 1, p);
                 case UserData p -> ps.setString(i + 1, p.toString());
                 case AuthData p -> ps.setString(i + 1, p.toString());
+                case ChessGame p -> ps.setString(i + 1, p.toString());
                 case GameData p -> ps.setString(i + 1, p.toString());
                 case null -> ps.setNull(i + 1, NULL);
                 default -> {

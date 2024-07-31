@@ -64,13 +64,10 @@ class AuthDAOSQLTest {
     }
 
     @Test
-    void clearAuthDatabase() throws ResponseException, DataAccessException {
+    void clearAuthDatabaseSuccess() throws ResponseException, DataAccessException {
         AuthData authData = authDAOSQL.createAuth(userData);
         authDAOSQL.clearAuthDatabase();
         assertThrows(DataAccessException.class, () -> authDAOSQL.getAuthData(authData.getAuthToken()));
     }
 
-    @Test
-    void getAuthDatabase() {
-    }
 }

@@ -20,10 +20,12 @@ class UserServicesTest {
     UserServices userServices;
 
     @BeforeEach
-    void setUp() throws DataAccessException {
+    void setUp() throws DataAccessException, ResponseException {
         this.userDao = new UserDAOSQL();
         this.authDAO = new AuthDAOSQL();
         this.userServices = new UserServices(userDao, authDAO);
+        userDao.clearUserDatabase();
+        authDAO.clearAuthDatabase();
     }
 
 
@@ -41,10 +43,10 @@ class UserServicesTest {
     }
 
     @Test
-    void registerDuplicateUsername() throws DataAccessException,BadRequestException {
+    void registerDuplicateUsername() throws DataAccessException, BadRequestException, ResponseException {
         UserData userData = new UserData("New","User","e@gmail.com");
-        userDao.getUserDatabase().add(userData);
-        assertThrows(BadRequestException.class, () -> userServices.register(userData));
+        userDao.createUser(userData);
+        assertThrows(ResponseException.class, () -> userServices.register(userData));
     }
 
     @Test
@@ -56,21 +58,21 @@ class UserServicesTest {
         String newName = "Jake";
         String newPassword = "12345";
         UserData test2 = new UserData(newName, newPassword,null);
-        userDao.getUserDatabase().add(test);
+        userDao.createUser(test);
         assertInstanceOf(AuthData.class, userServices.login(test2));
     }
 
 
     @Test
-    void loginFailedPassword() throws DataAccessException {
+    void loginFailedPassword() throws DataAccessException, ResponseException {
         String myName = "Jake";
         String myEmail = "jacobgbullock3@gmail.com";
         String myPassword = "12345";
         UserData test = new UserData(myName, myPassword, myEmail);
-        userDao.getUserDatabase().add(test);
+        userDao.createUser(test);
         String wrongPassword = "wrongPassword";
         UserData test2 = new UserData(myName, wrongPassword, myEmail);
-        assertThrows(DataAccessException.class, () -> userServices.login(test2));
+        assertThrows(ResponseException.class, () -> userServices.login(test2));
     }
 
     @Test

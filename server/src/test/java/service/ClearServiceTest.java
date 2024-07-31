@@ -8,7 +8,10 @@ import dataaccess.UserDaoInterface;
 import dataaccess.rammemory.AuthDAORAM;
 import dataaccess.rammemory.GameDAORAM;
 import dataaccess.rammemory.UserDAORAM;
+import dataaccess.sqlMemory.AuthDAOSQL;
+import dataaccess.sqlMemory.GameDAOSQL;
 import dataaccess.sqlMemory.ResponseException;
+import dataaccess.sqlMemory.UserDAOSQL;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -27,9 +30,9 @@ class ClearServiceTest {
 
     @BeforeEach
     void setUp() throws DataAccessException {
-        this.authDao = new AuthDAORAM();
-        this.userDao = new UserDAORAM();
-        this.gameDao = new GameDAORAM();
+        this.authDao = new AuthDAOSQL();
+        this.userDao = new UserDAOSQL();
+        this.gameDao = new GameDAOSQL();
         this.clearService = new ClearService(userDao, authDao, gameDao);
     }
 
@@ -64,12 +67,11 @@ class ClearServiceTest {
         String uuid = UUID.randomUUID().toString();
         String gameName = "Danites Duel";
 
-        AuthData authData = new AuthData(username, password);
         UserData userData = new UserData(username, uuid, email);
         GameData gameData = new GameData(null, null, gameName, new ChessGame(), 1);
 
-        authDao.getAuthDatabase().add(authData);
-        userDao.getUserDatabase().add(userData);
+        authDao.createAuth(userData);
+        userDao.createUser(userData);
         gameDao.getGameDatabase().put(gameData.getGameID(), gameData);
 
         clearService.clearAllDatabases();
