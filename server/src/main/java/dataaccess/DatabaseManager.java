@@ -1,6 +1,4 @@
-package dataaccess.sqlMemory;
-
-import dataaccess.DataAccessException;
+package dataaccess;
 
 import java.sql.*;
 import java.util.Properties;

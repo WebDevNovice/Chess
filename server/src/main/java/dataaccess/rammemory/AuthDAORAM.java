@@ -1,6 +1,5 @@
 package dataaccess.rammemory;
 
-import dataaccess.sqlMemory.DatabaseManager;
 import dataaccess.sqlMemory.ResponseException;
 import model.AuthData;
 import model.UserData;

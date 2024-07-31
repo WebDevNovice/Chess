@@ -1,12 +1,12 @@
 package dataaccess.sqlMemory;
 
 import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
 import dataaccess.UserDaoInterface;
 import model.UserData;
 import org.junit.jupiter.api.BeforeAll;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
