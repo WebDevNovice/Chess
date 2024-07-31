@@ -1,7 +1,6 @@
 package dataaccess.sqlMemory;
 
 import dataaccess.DataAccessException;
-import dataaccess.DatabaseManager;
 import dataaccess.UserDaoInterface;
 import model.UserData;
 import org.junit.jupiter.api.BeforeAll;

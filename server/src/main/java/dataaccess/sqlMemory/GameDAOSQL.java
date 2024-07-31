@@ -3,7 +3,6 @@ package dataaccess.sqlMemory;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
-import dataaccess.DatabaseManager;
 import dataaccess.GameDA0Interface;
 import model.AuthData;
 import model.GameData;
