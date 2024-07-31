@@ -1,9 +1,13 @@
 package dataaccess.sqlMemory;
 
+import chess.ChessGame;
 import dataaccess.DataAccessException;
+import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import service.execeptions.BadRequestException;
+import service.execeptions.UnvailableTeamException;
 
 import java.util.Collection;
 import java.util.List;
@@ -49,6 +53,26 @@ class GameDAOSQLTest {
     }
 
     @Test
-    void joinGame() {
+    void listGamesFailure() throws ResponseException, DataAccessException {
+        assertThrows(DataAccessException.class, () -> gameDAOSQL.listGames());
     }
+
+    @Test
+    void joinGameSuccess() throws ResponseException, DataAccessException, UnvailableTeamException, BadRequestException {
+        Integer id = gameDAOSQL.createGame("Test1");
+        AuthData authData = new AuthData("Jake",":)");
+        String playerColor = ChessGame.TeamColor.BLACK.toString();
+        GameData gameData = gameDAOSQL.joinGame(playerColor, id, authData);
+        assertEquals(authData.getUsername(), gameData.getBlackUsername());
+    }
+
+    @Test
+    void joinGameFailure() throws ResponseException, DataAccessException, UnvailableTeamException, BadRequestException {
+        Integer id = gameDAOSQL.createGame("Test1");
+        AuthData authData = new AuthData("Jake",":)");
+        String playerColor = ChessGame.TeamColor.BLACK.toString();
+        GameData gameData = gameDAOSQL.joinGame(playerColor, id, authData);
+        assertThrows(UnvailableTeamException.class, () -> gameDAOSQL.joinGame(playerColor, id, authData));
+    }
+
 }

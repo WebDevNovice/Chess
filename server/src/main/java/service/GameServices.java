@@ -36,7 +36,7 @@ public class GameServices {
     }
 
     public GameData joinGame(String playerColor, Integer gameId, AuthData authData)
-            throws DataAccessException, BadRequestException, UnvailableTeamException {
+            throws DataAccessException, BadRequestException, UnvailableTeamException, ResponseException {
 
         if (gameDoa.getGameDatabase().containsKey(gameId)){
             GameData game = gameDoa.joinGame(playerColor, gameId, authData);
