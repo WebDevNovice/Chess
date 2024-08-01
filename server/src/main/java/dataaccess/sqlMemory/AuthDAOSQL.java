@@ -13,15 +13,19 @@ import java.util.UUID;
 
 public class AuthDAOSQL implements AuthDAOInterface {
 
-    @BeforeAll
-    public static void init() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        DatabaseManager.createAuthTable();
+    public AuthDAOSQL() {
+        try{
+            DatabaseManager.createDatabase();
+            DatabaseManager.createAuthTable();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public AuthData createAuth(UserData user) throws DataAccessException, ResponseException {
-        var statement = "insert into auth (username, uuid) values (?, ?)";
+        var statement = "INSERT INTO auth (username, uuid) VALUES (?, ?)";
         var authToken = UUID.randomUUID().toString();
         UpdateManager.executeUpdate(statement, user.getUsername(), authToken);
         return new AuthData(user.getUsername(), authToken);
@@ -29,11 +33,13 @@ public class AuthDAOSQL implements AuthDAOInterface {
 
     @Override
     public AuthData getAuthData(String authToken) throws DataAccessException, ResponseException {
-        var statement = "select username from auth where uuid = ?";
+        AuthData authData = null;
+        var statement = "select * from auth where uuid = ?";
         List<List<Object>> authQuery = UpdateManager.executeQuery(statement, authToken);
         if (!authQuery.isEmpty()) {
-            List<Object> authList = authQuery.getFirst();
-            AuthData authData = new AuthData(authList.get(0).toString(), authToken);
+            for (List<Object> row : authQuery) {
+                authData = new AuthData(row.get(0).toString(), row.get(1).toString());
+            }
             return authData;
         }
         throw new DataAccessException("Error: Auth token not found");

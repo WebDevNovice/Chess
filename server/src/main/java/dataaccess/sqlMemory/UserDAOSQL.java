@@ -12,10 +12,15 @@ import java.util.List;
 
 public class UserDAOSQL implements UserDaoInterface {
 
-    @BeforeAll
-    public static void init() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        DatabaseManager.createAuthTable();
+
+    public UserDAOSQL() {
+        try {
+            DatabaseManager.createDatabase();
+            DatabaseManager.createUserTable();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -44,8 +49,8 @@ public class UserDAOSQL implements UserDaoInterface {
 
     @Override
     public void clearUserDatabase() throws ResponseException, DataAccessException {
-        var statment = "DELETE FROM user";
-        UpdateManager.executeUpdate(statment);
+        var statement = "DELETE FROM user";
+        UpdateManager.executeUpdate(statement);
     }
 
     @Override

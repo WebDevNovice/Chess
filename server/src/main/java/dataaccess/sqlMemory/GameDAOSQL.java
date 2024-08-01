@@ -17,10 +17,13 @@ import java.util.List;
 
 public class GameDAOSQL implements GameDA0Interface {
 
-    @BeforeAll
-    public static void init() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        DatabaseManager.createGameTable();
+    public GameDAOSQL(){
+        try{
+            DatabaseManager.createDatabase();
+            DatabaseManager.createGameTable();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override

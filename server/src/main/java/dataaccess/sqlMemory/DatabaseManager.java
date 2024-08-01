@@ -40,24 +40,31 @@ public class DatabaseManager {
      */
     static void createDatabase() throws DataAccessException {
         var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
-        executeQuery(statement);
+        try {
+            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     static void createUserTable() throws DataAccessException {
         var statement = "CREATE TABLE IF NOT EXISTS user (" +
                                             "username VARCHAR(255) NOT NULL UNIQUE, " +
                                             "password VARCHAR(255) NOT NULL, " +
-                                            "email varchar(255)) NOT NULL" +
-                                            "PRIMARY KEY (username);)";
+                                            "email varchar(255) NOT NULL, " +
+                                            "PRIMARY KEY (username))";
 
         executeQuery(statement);
     }
 
     static void createAuthTable() throws DataAccessException {
         var statement = "CREATE TABLE IF NOT EXISTS auth (" +
-                "username VARCHAR(255) NOT NULL UNIQUE, " +
+                "username VARCHAR(255) NOT NULL, " +
                 "uuid VARCHAR(255) NOT NULL UNIQUE, " +
-                "PRIMARY KEY (username);)";
+                "PRIMARY KEY (uuid))";
 
         executeQuery(statement);
     }
@@ -69,7 +76,7 @@ public class DatabaseManager {
                 "black_player VARCHAR(255), " +
                 "game_name VARCHAR(255) NOT NULL, " +
                 "game_data LONGTEXT NOT NULL, " +
-                "PRIMARY KEY (id);)";
+                "PRIMARY KEY (id))";
 
         executeQuery(statement);
     }
@@ -99,6 +106,7 @@ public class DatabaseManager {
     static void executeQuery(String statement) throws DataAccessException {
         try {
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
+            conn.setCatalog(DATABASE_NAME);
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
