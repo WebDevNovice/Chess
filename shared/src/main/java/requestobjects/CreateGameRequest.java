@@ -1,4 +1,4 @@
-package responseobjects;
+package requestobjects;
 
 public class CreateGameRequest {
     String gameName;
