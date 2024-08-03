@@ -1,8 +1,6 @@
 package responseobjects;
 
 
-import chess.ChessGame;
-import chess.ChessMove;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -20,10 +18,10 @@ public class ListGamesResponse {
         return games;
     }
 
-    public Collection<PrettyListGameResponse> getPrettyGames(){
-        Collection<PrettyListGameResponse> prettyGames = new ArrayList<>();
+    public Collection<PrettyGameResponse> getPrettyGames(){
+        Collection<PrettyGameResponse> prettyGames = new ArrayList<>();
         for (GameData game : games) {
-            PrettyListGameResponse prettyGame = new PrettyListGameResponse(game.getGameID(), game.getWhiteUsername(), game.getBlackUsername());
+            PrettyGameResponse prettyGame = new PrettyGameResponse(game.getGameID(), game.getWhiteUsername(), game.getBlackUsername());
             prettyGames.add(prettyGame);
         }
         return prettyGames;

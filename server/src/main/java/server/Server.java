@@ -8,6 +8,7 @@ import requestobjects.CreateGameRequest;
 import responseobjects.CreateGameResponse;
 import requestobjects.JoinGameRequest;
 import responseobjects.ListGamesResponse;
+import responseobjects.PrettyGameResponse;
 import service.*;
 import com.google.gson.Gson;
 import dataaccess.AuthDAOInterface;

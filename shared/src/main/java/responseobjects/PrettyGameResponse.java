@@ -1,11 +1,11 @@
 package responseobjects;
 
-public class PrettyListGameResponse {
+public class PrettyGameResponse {
     Integer gameID;
     String whitePlayer;
     String blackPlayer;
 
-    PrettyListGameResponse(Integer gameID, String whitePlayer, String blackPlayer) {
+    public PrettyGameResponse(Integer gameID, String whitePlayer, String blackPlayer) {
         this.gameID = gameID;
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
