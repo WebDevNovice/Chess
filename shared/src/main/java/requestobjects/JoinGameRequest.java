@@ -1,12 +1,12 @@
 package requestobjects;
 
 public class JoinGameRequest {
-    String playerColor;
     Integer gameID;
+    String playerColor;
 
-    public JoinGameRequest(String playerColor, Integer gameID) {
+    public JoinGameRequest(String gameID, String playerColor) {
+        this.gameID = Integer.parseInt(gameID);
         this.playerColor = playerColor;
-        this.gameID = gameID;
     }
 
     public Integer getGameID() {

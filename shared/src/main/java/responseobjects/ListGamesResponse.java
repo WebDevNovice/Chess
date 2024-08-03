@@ -1,13 +1,31 @@
 package responseobjects;
 
 
+import chess.ChessGame;
+import chess.ChessMove;
+import model.GameData;
+
+import java.util.ArrayList;
 import java.util.Collection;
 
-public class ListGamesResponse <T> {
-    public Collection<T> games;
+public class ListGamesResponse {
+    public Collection<GameData> games;
 
-    public ListGamesResponse(Collection<T> games) {
-        this.games = games;
+
+    public ListGamesResponse(Collection<GameData> games) {
+        this.games =  games;
     }
 
+    public Collection<GameData> getGames() {
+        return games;
+    }
+
+    public Collection<PrettyListGameResponse> getPrettyGames(){
+        Collection<PrettyListGameResponse> prettyGames = new ArrayList<>();
+        for (GameData game : games) {
+            PrettyListGameResponse prettyGame = new PrettyListGameResponse(game.getGameID(), game.getWhiteUsername(), game.getBlackUsername());
+            prettyGames.add(prettyGame);
+        }
+        return prettyGames;
+    }
 }
