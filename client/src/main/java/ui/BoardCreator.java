@@ -37,25 +37,26 @@ public class BoardCreator {
         if (teamColor == ChessGame.TeamColor.BLACK) {
             drawHeaders(reversedHeader, chessBoardBuilder);
             for (int row = 1; row < 9; row++) {
-                doColLoop(row, chessBoardBuilder, vertNumber, bgColors);
+                doColLoop(row, chessBoardBuilder, reversedVertNumber, bgColors, true);
                 chessBoardBuilder.append("\n");
             }
         } else {
             drawHeaders(header, chessBoardBuilder);
             for (int row = 8; row > 0; row--) {
-                doColLoop(row, chessBoardBuilder, vertNumber, bgColors);
+                doColLoop(row, chessBoardBuilder, vertNumber, bgColors, false);
                 chessBoardBuilder.append("\n");
             }
         }
         System.out.println(chessBoardBuilder.toString());
     }
 
-    public static void doColLoop(int row, StringBuilder chessBoardBuilder, String[] vertNumber, String[] bgColor) {
+    public static void doColLoop(int row, StringBuilder chessBoardBuilder, String[] vertNumber, String[] bgColor, boolean reverseColumns) {
         for (int col = 0; col < 9; col++) {
-            if ((row + col) % 2 == 0) {
-                drawSquare(bgColor[0], chessBoardBuilder, col, row, vertNumber);
-            } else if ((row + col) % 2 == 1) {
-                drawSquare(bgColor[1], chessBoardBuilder, col, row, vertNumber);
+            int adjustedCol = reverseColumns ? 9 - col : col;
+            if ((row + adjustedCol) % 2 == 0) {
+                drawSquare(bgColor[0], chessBoardBuilder, col, row, vertNumber, reverseColumns);
+            } else if ((row + adjustedCol) % 2 == 1) {
+                drawSquare(bgColor[1], chessBoardBuilder, col, row, vertNumber, reverseColumns);
             }
         }
     }
@@ -74,11 +75,12 @@ public class BoardCreator {
         chessStringBuilder.append(setTextLightGray(vertNumber[index]));
     }
 
-    public static void drawSquare(String squareColor, StringBuilder chessBoardBuilder, int col, int row, String[] vertNumber) {
+    public static void drawSquare(String squareColor, StringBuilder chessBoardBuilder, int col, int row, String[] vertNumber, boolean reverseColumns) {
         if (col == 0) {
             drawVertNumbers(vertNumber, chessBoardBuilder, row);
         } else {
-            getPieceInformation(row, col, chessBoardBuilder, squareColor);
+            int adjustedCol = reverseColumns ? 9 - col : col;
+            getPieceInformation(row, adjustedCol, chessBoardBuilder, squareColor);
         }
     }
 

@@ -221,7 +221,6 @@ public class Server {
         res.body(errorJson);
         return errorJson;
     }
-
 }
 
 

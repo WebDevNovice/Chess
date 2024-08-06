@@ -139,7 +139,7 @@ public class Client {
     }
 
     public String watchGame(String... params) throws ResponseException {
-        if (params.length == 1) {
+        if (params.length == 2) {
             ListGamesResponse games = serverFacade.listGames(authData);
             gameDataList = games.getGames();
 
