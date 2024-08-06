@@ -129,7 +129,7 @@ public class ServerFacadeTests {
         AuthData authData = serverFacade.register(userData);
         CreateGameResponse newGame = serverFacade.createGame("Test123456789", authData);
         GameData game = serverFacade.joinGame(newGame.getGameID().toString(),"white", authData);
-        Assertions.assertInstanceOf(GameData.class,game);
+        Assertions.assertInstanceOf(GameData.class, game);
     }
 
     @Test

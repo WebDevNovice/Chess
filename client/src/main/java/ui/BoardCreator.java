@@ -26,22 +26,24 @@ public class BoardCreator {
         String darkGreenSquare = SET_BG_COLOR_DARK_GREEN + EMPTY + RESET_BG_COLOR;
         String magentaSquare = SET_BG_COLOR_MAGENTA + EMPTY + RESET_BG_COLOR;
 
-        String[] bgColors ={darkGreenSquare, magentaSquare};
+        String[] bgColors = {darkGreenSquare, magentaSquare};
 
         StringBuilder chessBoardBuilder = new StringBuilder();
         String[] header = {"   ", " A ", " B ", " C ", " D ", " E ", " F ", " G ", " H  \n"};
+        String[] reversedHeader = {"   ", " H ", " G ", " F ", " E ", " D ", " C ", " B ", " A  \n"};
         String[] vertNumber = {"  ", " 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "};
-
-        drawHeaders(header, chessBoardBuilder);
+        String[] reversedVertNumber = {"  ", " 8 ", " 7 ", " 6 ", " 5 ", " 4 ", " 3 ", " 2 ", " 1 "};
 
         if (teamColor == ChessGame.TeamColor.BLACK) {
+            drawHeaders(reversedHeader, chessBoardBuilder);
             for (int row = 1; row < 9; row++) {
-                doColLoop(row,chessBoardBuilder,vertNumber, bgColors);
+                doColLoop(row, chessBoardBuilder, vertNumber, bgColors);
                 chessBoardBuilder.append("\n");
             }
         } else {
+            drawHeaders(header, chessBoardBuilder);
             for (int row = 8; row > 0; row--) {
-                doColLoop(row,chessBoardBuilder,vertNumber, bgColors);
+                doColLoop(row, chessBoardBuilder, vertNumber, bgColors);
                 chessBoardBuilder.append("\n");
             }
         }

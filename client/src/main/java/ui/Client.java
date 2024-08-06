@@ -6,12 +6,12 @@ import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import requestobjects.JoinGameRequest;
 import responseobjects.CreateGameResponse;
 import responseobjects.ListGamesResponse;
 import serverfacade.ResponseException;
 import serverfacade.ServerFacade;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -21,11 +21,15 @@ public class Client {
     String serverUrl;
     Status status;
     AuthData authData;
+    Collection<GameData> gameDataList;
+    Collection<Integer> gameIDList;
 
     public Client(String serverUrl) {
         this.serverUrl = serverUrl;
         serverFacade = new ServerFacade(serverUrl);
         status = Status.LOGGEDOUT;
+        gameDataList = new ArrayList<>();
+        gameIDList = new ArrayList<>();
     }
 
     public String eval(String input) {
@@ -57,7 +61,7 @@ public class Client {
             status = Status.LOGGEDIN;
             return String.format("You are now logged in to %s", visitorName);
         }
-        throw new ResponseException(400, "Error: Your are missing parameters");
+        throw new ResponseException(400, "Error: Your are missing your username, password and/or email");
     }
 
     public String login(String... params) throws ResponseException {
@@ -67,7 +71,7 @@ public class Client {
             status = Status.LOGGEDIN;
             return String.format("You are now logged in as %s", visitorName);
         }
-        throw new ResponseException(400, "Error: Incorrect Number of Parameters");
+        throw new ResponseException(400, "Error: Your username and/or password are incorrect");
     }
 
     public String logout() throws ResponseException {
@@ -81,53 +85,82 @@ public class Client {
 
     public String listGames() throws ResponseException {
         isSignedIn();
+        Integer num = 1;
         ListGamesResponse games = serverFacade.listGames(authData);
-        return String.format(games.getPrettyGames().toString());
+        gameDataList = games.getGames();
+        StringBuilder listbuilder = new StringBuilder();
+        if (games.getGames().size() == 0) {
+            listbuilder.append("No games found");
+        }
+        for (GameData gameData : games.getGames()) {
+            String numStr = String.valueOf(num++);
+            String gameName = gameData.getGameName();
+            String whitePlayer = gameData.getWhiteUsername();
+            String blackPlayer = gameData.getBlackUsername();
+            listbuilder.append(numStr + ": Game Name:" + gameName + ", WHITE: " +  whitePlayer + ", BLACK: " + blackPlayer + "\n");
+        }
+        return listbuilder.toString();
     }
 
     public String createGame(String... params) throws ResponseException {
         if (params.length == 1) {
             isSignedIn();
             CreateGameResponse gameID = serverFacade.createGame(params[0], authData);
-            return String.format("Your newly created gameID is: %s", gameID.getGameID());
+            gameIDList.add(gameID.getGameID());
+            ListGamesResponse games = serverFacade.listGames(authData);
+            gameDataList = games.getGames();
+            return String.format("Your newly created gameID is: %s", gameDataList.size());
         }
-        throw new ResponseException(400, "Error: Incorrect Number of Parameters");
+        throw new ResponseException(400, "Error: We need a game name to proceed, try again");
     }
 
     public String joinGame(String... params) throws ResponseException {
-        if (params.length == 2) {
-            isSignedIn();
-            GameData updatedGame = serverFacade.joinGame(params[0], params[1], authData);
-            if (params[1].toUpperCase().equals("WHITE")){
-                BoardCreator boardCreator = new BoardCreator(updatedGame.getGame(), ChessGame.TeamColor.WHITE);
-                boardCreator.main();
-            }
-            else{
-                BoardCreator boardCreator = new BoardCreator(updatedGame.getGame(), ChessGame.TeamColor.BLACK);
-                boardCreator.main();
-            }
+        ListGamesResponse games = serverFacade.listGames(authData);
+        gameDataList = games.getGames();
 
+        if (params.length == 2) {
+            int num = 1;
+            isSignedIn();
+            int index = Integer.parseInt(params[0]);
+            Integer gameId = 0;
+            for (GameData gameData : gameDataList) {
+                if (index == num){
+                    gameId = gameData.getGameID();
+                }
+                else{
+                    num++;
+                }
+            }
+            GameData updatedGame = serverFacade.joinGame(gameId.toString(), params[1], authData);
+            drawBoard(updatedGame, params[1]);
             return String.format("You are now joining gameID %s as the %s Player", params[0], params[1].toUpperCase());
         }
-        throw new ResponseException(400, "Error: Incorrect Number of Parameters");
+        throw new ResponseException(400, "Error: We are missing either the game id or the team color you want to join");
     }
 
     public String watchGame(String... params) throws ResponseException {
-        if (params.length == 2) {
-            isSignedIn();
-            GameData updatedGame = serverFacade.joinGame(params[0], params[1], authData);
-            if (params[1].toUpperCase().equals("WHITE")){
-                BoardCreator boardCreator = new BoardCreator(updatedGame.getGame(), ChessGame.TeamColor.WHITE);
-                boardCreator.main();
-            }
-            else{
-                BoardCreator boardCreator = new BoardCreator(updatedGame.getGame(), ChessGame.TeamColor.BLACK);
-                boardCreator.main();
-            }
+        if (params.length == 1) {
+            ListGamesResponse games = serverFacade.listGames(authData);
+            gameDataList = games.getGames();
 
-            return String.format("You are now watching gameID %s from the perspective of the %s Player", params[0], params[1].toUpperCase());
+            Integer num = 1;
+            isSignedIn();
+            int index = Integer.parseInt(params[0]);
+            GameData selectedGame = null;
+
+            for (GameData gameData : gameDataList) {
+                if (index == num){
+                    selectedGame = gameData;
+                    drawBoard(gameData, params[1]);
+                }
+                num++;
+            }
+            if (selectedGame == null) {
+                return String.format("No games found");
+            }
+            return String.format("You are watching %s", selectedGame.getGameName());
         }
-        throw new ResponseException(400, "Error: Incorrect Number of Parameters");
+        throw new ResponseException(400, "We are missing either the game id or the team color you want to watch");
     }
 
     public String clear() throws ResponseException {
@@ -160,6 +193,17 @@ public class Client {
     private void isSignedIn() throws ResponseException {
         if (status == Status.LOGGEDOUT) {
             throw new ResponseException(400, SET_TEXT_BOLD+ SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_MAGENTA + "Error: Must be signed in!");
+        }
+    }
+
+    private void drawBoard(GameData updatedGame, String teamColor) {
+        if (teamColor.toUpperCase().equals("WHITE")){
+            BoardCreator boardCreator = new BoardCreator(updatedGame.getGame(), ChessGame.TeamColor.WHITE);
+            boardCreator.main();
+        }
+        else{
+            BoardCreator boardCreator = new BoardCreator(updatedGame.getGame(), ChessGame.TeamColor.BLACK);
+            boardCreator.main();
         }
     }
 }

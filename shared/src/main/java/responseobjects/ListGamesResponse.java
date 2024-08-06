@@ -21,7 +21,7 @@ public class ListGamesResponse {
     public Collection<PrettyGameResponse> getPrettyGames(){
         Collection<PrettyGameResponse> prettyGames = new ArrayList<>();
         for (GameData game : games) {
-            PrettyGameResponse prettyGame = new PrettyGameResponse(game.getGameID(), game.getWhiteUsername(), game.getBlackUsername());
+            PrettyGameResponse prettyGame = new PrettyGameResponse(game.getGameName(), game.getWhiteUsername(), game.getBlackUsername());
             prettyGames.add(prettyGame);
         }
         return prettyGames;

@@ -5,10 +5,6 @@ public class ResponseException extends Exception {
 
     public ResponseException(int statusCode, String message) {
         super(message);
-        this.statusCode = statusCode;
     }
 
-    public int getStatusCode() {
-        return statusCode;
-    }
 }

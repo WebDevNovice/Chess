@@ -1,17 +1,17 @@
 package responseobjects;
 
 public class PrettyGameResponse {
-    Integer gameID;
+    String gameName;
     String whitePlayer;
     String blackPlayer;
 
-    public PrettyGameResponse(Integer gameID, String whitePlayer, String blackPlayer) {
-        this.gameID = gameID;
+    public PrettyGameResponse(String gameName, String whitePlayer, String blackPlayer) {
+        this.gameName = gameName;
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
     }
-    public Integer getGameID() {
-        return gameID;
+    public String getGameName() {
+        return gameName;
     }
 
     public String getWhitePlayer() {
@@ -24,8 +24,8 @@ public class PrettyGameResponse {
 
     @Override
     public String toString() {
-        return "GameID=" + gameID +
-                ", White Player='" + whitePlayer + '\'' +
-                ", Black Player='" + blackPlayer + '\'' + "\n";
+        return "Game Name = " + gameName +
+                ", White Player = '" + whitePlayer + '\'' +
+                ", Black Player = '" + blackPlayer + '\'' + "\n";
     }
 }
