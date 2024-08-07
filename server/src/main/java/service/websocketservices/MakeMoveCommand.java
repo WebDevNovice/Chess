@@ -1,4 +1,9 @@
 package service.websocketservices;
 
-public class MakeMoveCommand {
+import websocket.commands.UserGameCommand;
+
+public class MakeMoveCommand extends SuperCommand {
+    public MakeMoveCommand(UserGameCommand.CommandType commandType) {
+        super(commandType);
+    }
 }

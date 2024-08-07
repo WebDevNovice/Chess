@@ -48,7 +48,7 @@ public class Server {
         this.gameServices = new GameServices(gameDao);
         this.clearService = new ClearService(userDao, authDao, gameDao);
 
-        this.wsHandler = new WSHandler();
+        this.wsHandler = new WSHandler(this.authServices);
     }
 
     public int run(int desiredPort) {

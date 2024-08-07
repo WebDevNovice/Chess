@@ -2,10 +2,10 @@ package service.websocketservices;
 
 import websocket.commands.UserGameCommand;
 
-public class ConnectCommand {
-    UserGameCommand.CommandType commandType;
+public class ConnectCommand extends SuperCommand {
 
     public ConnectCommand(UserGameCommand.CommandType commandType) {
-        this.commandType = commandType;
+        super(commandType);
     }
+
 }
