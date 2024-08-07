@@ -9,7 +9,6 @@ import responseobjects.CreateGameResponse;
 import requestobjects.JoinGameRequest;
 import responseobjects.ErrorMessage;
 import responseobjects.ListGamesResponse;
-import service.*;
 import com.google.gson.Gson;
 import dataaccess.AuthDAOInterface;
 import dataaccess.DataAccessException;
@@ -17,6 +16,10 @@ import dataaccess.GameDA0Interface;
 import dataaccess.UserDaoInterface;
 import service.execeptions.BadRequestException;
 import service.execeptions.UnvailableTeamException;
+import service.serverservices.AuthServices;
+import service.serverservices.ClearService;
+import service.serverservices.GameServices;
+import service.serverservices.UserServices;
 import spark.*;
 
 import java.util.ArrayList;
@@ -58,6 +61,7 @@ public class Server {
         Spark.get("/game",this::listGames);
         Spark.post("/game",this::createGame);
         Spark.put("/game", this::joinGame);
+
 
         Spark.awaitInitialization();
         return Spark.port();

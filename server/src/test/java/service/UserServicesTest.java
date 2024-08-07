@@ -11,6 +11,7 @@ import dataaccess.UserDaoInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.execeptions.BadRequestException;
+import service.serverservices.UserServices;
 
 import static org.junit.jupiter.api.Assertions.*;
 

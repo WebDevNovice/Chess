@@ -4,7 +4,7 @@ import dataaccess.DataAccessException;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.UserServices;
+import service.serverservices.UserServices;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -5,7 +5,7 @@ import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.AuthServices;
+import service.serverservices.AuthServices;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package service;
+package service.serverservices;
 
 import dataaccess.sqlMemory.ResponseException;
 import model.AuthData;

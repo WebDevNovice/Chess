@@ -5,18 +5,17 @@ import dataaccess.AuthDAOInterface;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0Interface;
 import dataaccess.UserDaoInterface;
-import dataaccess.rammemory.AuthDAORAM;
 import dataaccess.rammemory.GameDAORAM;
 import dataaccess.rammemory.UserDAORAM;
 import dataaccess.sqlMemory.AuthDAOSQL;
 import dataaccess.sqlMemory.GameDAOSQL;
 import dataaccess.sqlMemory.ResponseException;
 import dataaccess.sqlMemory.UserDAOSQL;
-import model.AuthData;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import service.serverservices.ClearService;
 
 import java.util.UUID;
 
