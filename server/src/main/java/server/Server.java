@@ -14,6 +14,7 @@ import dataaccess.AuthDAOInterface;
 import dataaccess.DataAccessException;
 import dataaccess.GameDA0Interface;
 import dataaccess.UserDaoInterface;
+import server.websocket.WSHandler;
 import service.execeptions.BadRequestException;
 import service.execeptions.UnvailableTeamException;
 import service.serverservices.AuthServices;
@@ -35,6 +36,8 @@ public class Server {
     public ClearService clearService;
     public Gson gson = new Gson();
 
+    private final WSHandler wsHandler;
+
     public Server() {
         this.userDao = new UserDAOSQL();
         this.authDao = new AuthDAOSQL();
@@ -44,12 +47,15 @@ public class Server {
         this.authServices = new AuthServices(authDao);
         this.gameServices = new GameServices(gameDao);
         this.clearService = new ClearService(userDao, authDao, gameDao);
+
+        this.wsHandler = new WSHandler();
     }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
 
 
         // register your endpoints and handle exceptions here.
@@ -61,7 +67,7 @@ public class Server {
         Spark.get("/game",this::listGames);
         Spark.post("/game",this::createGame);
         Spark.put("/game", this::joinGame);
-
+        Spark.webSocket("/ws", wsHandler);
 
         Spark.awaitInitialization();
         return Spark.port();

@@ -14,7 +14,7 @@ public class Main {
 
     private static void testServer(String[] args) {
         try {
-            var port = 8080;
+            var port = 8070;
             if (args.length >= 1) {
                 port = Integer.parseInt(args[0]);
             }
