@@ -1,4 +1,4 @@
-package service.websocketservices;
+package service.wsservices;
 
 import websocket.commands.UserGameCommand;
 

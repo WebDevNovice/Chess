@@ -185,8 +185,6 @@ public class ChessGame {
         }
     }
 
-
-
     /**
      * Determines if the given team is in check
      *
@@ -211,7 +209,7 @@ public class ChessGame {
         return result;
     }
 
-public boolean isKingInCheck(ChessPosition position,TeamColor teamColor, boolean result) {
+    public boolean isKingInCheck(ChessPosition position,TeamColor teamColor, boolean result) {
     Collection<ChessMove> possibleMoves = chessBoard.getPiece(position).pieceMoves(chessBoard, position);
     for (ChessMove possibleMove : possibleMoves) {
         if (chessBoard.getPiece(possibleMove.getEndPosition()) != null) {

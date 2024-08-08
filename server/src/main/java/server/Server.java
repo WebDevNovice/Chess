@@ -56,8 +56,6 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-
-
         // register your endpoints and handle exceptions here.
 
         Spark.delete("/db",this::clear);
@@ -177,10 +175,9 @@ public class Server {
             AuthData authToken = authServices.isAuthenticated(req);
             JoinGameRequest playerData = gson.fromJson(req.body(), JoinGameRequest.class);
             GameData updatedGame = gameServices.joinGame(playerData.getPlayerColor(), playerData.getGameID(), authToken);
+            wsHandler.onMessage();
             res.status(200);
             return gson.toJson(updatedGame);
-
-
 
         } catch (DataAccessException e) {
 
