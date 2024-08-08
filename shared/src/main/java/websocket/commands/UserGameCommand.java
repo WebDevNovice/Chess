@@ -20,6 +20,8 @@ public class UserGameCommand {
 
     private final String teamColor;
 
+
+    //teamColor and GameID might be null
     public UserGameCommand(CommandType commandType, String authToken, Integer gameID, String teamColor) {
         this.commandType = commandType;
         this.authToken = authToken;

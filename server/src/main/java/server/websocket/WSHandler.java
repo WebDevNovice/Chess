@@ -3,21 +3,32 @@ package server.websocket;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.sqlMemory.GameDAOSQL;
+import dataaccess.sqlMemory.ResponseException;
 import model.AuthData;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import responseobjects.ErrorMessage;
+import server.Server;
 import service.execeptions.BadRequestException;
+import service.execeptions.UnvailableTeamException;
 import service.serverservices.AuthServices;
 import service.serverservices.GameServices;
 import service.wsservices.*;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
+
+import java.io.IOException;
+import java.util.Set;
 
 @WebSocket
 public class WSHandler {
     AuthServices authServices;
     WSSessions wsSessions;
     GameServices gameServices;
+    ServerMessage.ServerMessageType notificationMsg = ServerMessage.ServerMessageType.NOTIFICATION;
+    ServerMessage.ServerMessageType errorMsg = ServerMessage.ServerMessageType.ERROR;
+    ServerMessage.ServerMessageType loadGameMsg = ServerMessage.ServerMessageType.LOAD_GAME;
 
     public WSHandler(AuthServices authServices){
         this.authServices = authServices;
@@ -57,10 +68,10 @@ public class WSHandler {
                 default -> throw new IllegalStateException("Unexpected value: " + command.getCommandType());
             }
         } catch (BadRequestException | DataAccessException ex) {
-            sendMessage(session, new ErrorMessage("Error: unauthorized"));
+            sendMessage(session, new ServerMessage(errorMsg,"Error: " + ex.getMessage() ));
         } catch (Exception ex) {
             ex.printStackTrace();
-            sendMessage(session, new ErrorMessage("Error: " + ex.getMessage()));
+            sendMessage(session, new ServerMessage(errorMsg,"Error: " + ex.getMessage() ));
         }
     }
 
@@ -70,6 +81,20 @@ public class WSHandler {
         //Broadcast a message to everyone that a new player joined and the color they are playing as
         //Broadcast that someone is watching and which team they are rooting for (i.e. watching)
         AuthData authData = new AuthData(username, command.getAuthString());
+        ConnectCommand connectCommand = new ConnectCommand(authData, command.getGameID(), command.getTeamColor());
+        try{
+            GameData gameData = connectCommand.connect();
+            StringBuilder messageBuilder = new StringBuilder();
+
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        } catch (UnvailableTeamException e) {
+            throw new RuntimeException(e);
+        } catch (BadRequestException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
 
 
     }
@@ -91,7 +116,21 @@ public class WSHandler {
         //print the board, but don't allow anymore moves to be made
     }
 
-    private void sendMessage(Session session, ErrorMessage errorMsg) {}
+    private void sendMessage(Session session, ServerMessage message) {}
 
-    private void broadcast(Integer gameID, ErrorMessage errorMsg) {}
+    private void broadcast(Integer gameID, ServerMessage message, Session excludeSession) {
+        try{
+            Set<Session> sessions = wsSessions.getSession(gameID);
+            for (Session session : sessions) {
+                if (session.isOpen() && !session.equals(excludeSession)) {
+                    session.getRemote().sendString(message.getMessage());
+                }
+            }
+        } catch (BadRequestException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }

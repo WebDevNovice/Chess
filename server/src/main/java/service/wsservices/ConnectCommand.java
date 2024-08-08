@@ -17,7 +17,7 @@ public class ConnectCommand {
     String teamColor;
     GameDAOSQL gameDAOSQL;
 
-    ConnectCommand(AuthData authData, Integer gameID, String teamColor) {
+    public ConnectCommand(AuthData authData, Integer gameID, String teamColor) {
         this.authData = authData;
         this.gameID = gameID;
         this.teamColor = teamColor;
