@@ -86,24 +86,20 @@ public class WSHandler {
         AuthData authData = new AuthData(username, command.getAuthString());
         ConnectCommand connectCommand = new ConnectCommand(authData, command.getGameID(), command.getTeamColor());
         try{
-            GameData gameData = connectCommand.connect();
-            String message = String.format("Player + %s connected to the game under the %s banner! HooZAH!!",
-                    authData.getUsername(), command.getTeamColor());
+            if (command.getTeamColor() == null || command.getTeamColor().isEmpty()) {
+                //Jake you need to implement a new public method in your gamedao to just retrieve game data
+            }else {
+                GameData gameData = connectCommand.connect();
+                String message = String.format("Player %s connected to the game under the %s banner! HooZAH!!",
+                        authData.getUsername(), command.getTeamColor());
 
-            ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
-            broadcast(command.getGameID(), serverMessage, session);
+                ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
+                broadcast(command.getGameID(), serverMessage, null);
 
-            serverMessage = new WSLoadGameMsg(loadGameMsg, gameData);
-            broadcast(command.getGameID(), serverMessage, null);
-
-
-        } catch (ResponseException e) {
-            throw new RuntimeException(e);
-        } catch (UnvailableTeamException e) {
-            throw new RuntimeException(e);
-        } catch (BadRequestException e) {
-            throw new RuntimeException(e);
-        } catch (DataAccessException e) {
+                serverMessage = new WSLoadGameMsg(loadGameMsg, gameData);
+                broadcast(command.getGameID(), serverMessage, null);
+            }
+        } catch (ResponseException | UnvailableTeamException | BadRequestException | DataAccessException e) {
             throw new RuntimeException(e);
         }
 
@@ -134,7 +130,8 @@ public class WSHandler {
             Set<Session> sessions = wsSessions.getSession(gameID);
             for (Session session : sessions) {
                 if (session.isOpen() && !session.equals(excludeSession)) {
-                    session.getRemote().sendString(message.getMessage());
+                    String jsonMsg = new Gson().toJson(message); //how will the client know of all the child classes it is?
+                    session.getRemote().sendString(jsonMsg);
                 }
             }
         } catch (BadRequestException e) {
