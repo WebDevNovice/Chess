@@ -8,8 +8,6 @@ import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
-import responseobjects.ErrorMessage;
-import server.Server;
 import service.execeptions.BadRequestException;
 import service.execeptions.UnvailableTeamException;
 import service.serverservices.AuthServices;
@@ -22,6 +20,7 @@ import websocket.messages.WSLoadGameMsg;
 import websocket.messages.WSNotificationMsg;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Set;
 
 @WebSocket
@@ -80,7 +79,7 @@ public class WSHandler {
 
 
     private void connect(Session session, String username, UserGameCommand command) {
-        //this will connect the player to a game
+        //this will ConnectPlayer the player to a game
         //Broadcast a message to everyone that a new player joined and the color they are playing as
         //Broadcast that someone is watching and which team they are rooting for (i.e. watching)
         AuthData authData = new AuthData(username, command.getAuthString());
@@ -88,8 +87,26 @@ public class WSHandler {
         try{
             if (command.getTeamColor() == null || command.getTeamColor().isEmpty()) {
                 //Jake you need to implement a new public method in your gamedao to just retrieve game data
+                GameData desiredGame = null;
+                Collection<GameData> games = connectCommand.ConnectObserver();
+                for (GameData gameData : games) {
+                    if (gameData.getGameID() == command.getGameID()) {
+                        desiredGame = gameData;
+                    }
+                }
+                if (desiredGame == null) {
+                    throw new BadRequestException("Error: Game not found");
+                }
+                String message = String.format("Player %s is now watching the game! HooZAH!!",
+                        authData.getUsername());
+                ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
+                broadcast(command.getGameID(), serverMessage, null);
+
+                serverMessage = new WSLoadGameMsg(loadGameMsg, desiredGame);
+                broadcast(command.getGameID(), serverMessage, null);
+
             }else {
-                GameData gameData = connectCommand.connect();
+                GameData gameData = connectCommand.ConnectPlayer();
                 String message = String.format("Player %s connected to the game under the %s banner! HooZAH!!",
                         authData.getUsername(), command.getTeamColor());
 

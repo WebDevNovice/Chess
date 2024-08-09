@@ -8,7 +8,8 @@ import model.GameData;
 import service.execeptions.BadRequestException;
 import service.execeptions.UnvailableTeamException;
 import service.serverservices.GameServices;
-import websocket.commands.UserGameCommand;
+
+import java.util.Collection;
 
 public class ConnectCommand {
     AuthData authData;
@@ -25,9 +26,13 @@ public class ConnectCommand {
         this.gameServices = new GameServices(gameDAOSQL);
     }
 
-    public GameData connect() throws ResponseException, UnvailableTeamException, BadRequestException, DataAccessException {
+    public GameData ConnectPlayer() throws ResponseException, UnvailableTeamException, BadRequestException, DataAccessException {
         GameData gameData = gameServices.joinGame(teamColor, gameID, authData);
         return gameData;
+    }
+
+    public Collection<GameData> ConnectObserver() throws ResponseException, UnvailableTeamException, BadRequestException, DataAccessException {
+        return gameServices.listGames();
     }
 
 }
