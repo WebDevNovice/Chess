@@ -21,10 +21,14 @@ public class WSSessions {
     }
 
     public void removeSession(Integer gameID, Session session) throws BadRequestException {
-        if (!this.connections.containsKey(gameID)) {
-            throw new BadRequestException("Session does not exist");
+        try {
+            if (!this.connections.containsKey(gameID)) {
+                throw new BadRequestException("Session does not exist");
+            }
+            this.connections.get(gameID).remove(session);
+        } catch (BadRequestException e) {
+            throw new RuntimeException(e);
         }
-        this.connections.get(gameID).remove(session);
     }
 
     public Set<Session> getSession(Integer gameID) throws BadRequestException {
