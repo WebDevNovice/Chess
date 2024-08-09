@@ -106,13 +106,31 @@ public class GameDAOSQL implements GameDA0Interface {
         var statement = "Update game SET game_data = ? WHERE id = ?";
         Integer gameId = UpdateManager.executeUpdate(statement, updatedGame.getGameID(), gameID);
         //This is essentially just checking that I am implementing this correctly
-        statement = "SELECT game_data FROM game WHERE id = ?";
-        List<List<Object>> gameList = UpdateManager.executeQuery(statement, gameId);
+        List<List<Object>> gameList = getGameDataList(gameId);
         if (gameList.isEmpty()) {
             throw new DataAccessException("Error: Game could not be updated)");
         }
         GameData game = getGameData(gameList.get(0));
         return game;
+    }
+
+    public GameData updatePlayer(Integer gameID, String playerColor, String updatedUsername) throws ResponseException, DataAccessException {
+        if (playerColor == null || playerColor.isEmpty()) {
+            throw new DataAccessException("Error: Player color required.");
+        }
+        if (gameID == null || gameID < 1) {
+            throw new DataAccessException("Error: Game ID is required.");
+        }
+        if (playerColor == "WHITE") {
+            var statement = "Update game SET white_player = ? WHERE id = ?";
+            GameData gameData = updatePlayerHelper(statement, updatedUsername, gameID);
+            return gameData;
+        }
+        else {
+            var statement = "Update game SET black_player = ? WHERE id = ?";
+            GameData gameData = updatePlayerHelper(statement, updatedUsername, gameID);
+            return gameData;
+        }
     }
 
     private ChessGame deserializeGame(List<Object> row) {
@@ -139,4 +157,19 @@ public class GameDAOSQL implements GameDA0Interface {
         return gameData;
     }
 
+    private List<List<Object>> getGameDataList(Integer gameID) throws ResponseException, DataAccessException {
+        String statement = "SELECT * FROM game WHERE id = ?";
+        List<List<Object>> gameList = UpdateManager.executeQuery(statement, gameID);
+        return gameList;
+    }
+
+    private GameData updatePlayerHelper(String statement, String updatedUsername, Integer gameID) throws DataAccessException, ResponseException {
+        Integer gameId = UpdateManager.executeUpdate(statement, updatedUsername, gameID);
+        List<List<Object>> gameList = getGameDataList(gameId);
+        if (gameList.isEmpty()) {
+            throw new DataAccessException("Error: Game could not be updated)");
+        }
+        GameData game = getGameData(gameList.get(0));
+        return game;
+    }
 }

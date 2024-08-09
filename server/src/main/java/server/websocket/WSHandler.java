@@ -64,15 +64,12 @@ public class WSHandler {
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(session, username, command);
-                case MAKE_MOVE -> makeMove(session, username);
-                case LEAVE -> leaveGame(session, username);
-                case RESIGN -> resign(session, username);
+                case MAKE_MOVE -> makeMove(session, username, command);
+                case LEAVE -> leaveGame(session, username, command);
+                case RESIGN -> resign(session, username, command);
                 default -> throw new IllegalStateException("Unexpected value: " + command.getCommandType());
             }
-        } catch (BadRequestException | DataAccessException ex) {
-            sendMessage(session, new WSErrorMsg(errorMsg, ex.getMessage()));
         } catch (Exception ex) {
-            ex.printStackTrace();
             sendMessage(session, new WSErrorMsg(errorMsg, ex.getMessage()));
         }
     }
@@ -86,9 +83,9 @@ public class WSHandler {
         ConnectCommand connectCommand = new ConnectCommand(authData, command.getGameID(), command.getTeamColor());
         try{
             if (command.getTeamColor() == null || command.getTeamColor().isEmpty()) {
-                //Jake you need to implement a new public method in your gamedao to just retrieve game data
                 GameData desiredGame = null;
                 Collection<GameData> games = connectCommand.ConnectObserver();
+                //this is how I'm retrieving the game data
                 for (GameData gameData : games) {
                     if (gameData.getGameID() == command.getGameID()) {
                         desiredGame = gameData;
@@ -97,7 +94,7 @@ public class WSHandler {
                 if (desiredGame == null) {
                     throw new BadRequestException("Error: Game not found");
                 }
-                String message = String.format("Player %s is now watching the game! HooZAH!!",
+                String message = String.format("Hail! Player %s is now watching the game! HooZAH!!",
                         authData.getUsername());
                 ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
                 broadcast(command.getGameID(), serverMessage, null);
@@ -105,9 +102,10 @@ public class WSHandler {
                 serverMessage = new WSLoadGameMsg(loadGameMsg, desiredGame);
                 broadcast(command.getGameID(), serverMessage, null);
 
-            }else {
+            }
+            else {
                 GameData gameData = connectCommand.ConnectPlayer();
-                String message = String.format("Player %s connected to the game under the %s banner! HooZAH!!",
+                String message = String.format("On Guard! Player %s connected to the game under the %s banner! HooZAH!!",
                         authData.getUsername(), command.getTeamColor());
 
                 ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
@@ -119,23 +117,21 @@ public class WSHandler {
         } catch (ResponseException | UnvailableTeamException | BadRequestException | DataAccessException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
-    private void makeMove(Session session, String username) {
+    private void makeMove(Session session, String username, UserGameCommand command) {
         //this allows a player to make a move
         //broadcast to everyone except the player who made the move what the move was
         //Should this should also return if they are in Check, CheckMate, or Stalemate?
 
     }
 
-    private void leaveGame(Session session, String usernamed) {
+    private void leaveGame(Session session, String username, UserGameCommand command) {
         //Broadcast to everyone that a player left
-
+        
     }
 
-    private void resign(Session session, String username) {
+    private void resign(Session session, String username, UserGameCommand command) {
         //Broadcast that a player resigns
         //print the board, but don't allow anymore moves to be made
     }
