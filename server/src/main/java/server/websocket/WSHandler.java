@@ -17,6 +17,9 @@ import service.serverservices.GameServices;
 import service.wsservices.*;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
+import websocket.messages.WSErrorMsg;
+import websocket.messages.WSLoadGameMsg;
+import websocket.messages.WSNotificationMsg;
 
 import java.io.IOException;
 import java.util.Set;
@@ -68,10 +71,10 @@ public class WSHandler {
                 default -> throw new IllegalStateException("Unexpected value: " + command.getCommandType());
             }
         } catch (BadRequestException | DataAccessException ex) {
-            sendMessage(session, new ServerMessage(errorMsg,"Error: " + ex.getMessage() ));
+            sendMessage(session, new WSErrorMsg(errorMsg, ex.getMessage()));
         } catch (Exception ex) {
             ex.printStackTrace();
-            sendMessage(session, new ServerMessage(errorMsg,"Error: " + ex.getMessage() ));
+            sendMessage(session, new WSErrorMsg(errorMsg, ex.getMessage()));
         }
     }
 
@@ -84,7 +87,15 @@ public class WSHandler {
         ConnectCommand connectCommand = new ConnectCommand(authData, command.getGameID(), command.getTeamColor());
         try{
             GameData gameData = connectCommand.connect();
-            StringBuilder messageBuilder = new StringBuilder();
+            String message = String.format("Player + %s connected to the game under the %s banner! HooZAH!!",
+                    authData.getUsername(), command.getTeamColor());
+
+            ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
+            broadcast(command.getGameID(), serverMessage, session);
+
+            serverMessage = new WSLoadGameMsg(loadGameMsg, gameData);
+            broadcast(command.getGameID(), serverMessage, null);
+
 
         } catch (ResponseException e) {
             throw new RuntimeException(e);

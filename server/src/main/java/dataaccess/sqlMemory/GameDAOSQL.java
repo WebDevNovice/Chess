@@ -101,6 +101,20 @@ public class GameDAOSQL implements GameDA0Interface {
         return gameDataHashMap;
     }
 
+    @Override
+    public GameData updateGame(Integer gameID, GameData updatedGame) throws ResponseException, DataAccessException {
+        var statement = "Update game SET game_data = ? WHERE id = ?";
+        Integer gameId = UpdateManager.executeUpdate(statement, updatedGame.getGameID(), gameID);
+        //This is essentially just checking that I am implementing this correctly
+        statement = "SELECT game_data FROM game WHERE id = ?";
+        List<List<Object>> gameList = UpdateManager.executeQuery(statement, gameId);
+        if (gameList.isEmpty()) {
+            throw new DataAccessException("Error: Game could not be updated)");
+        }
+        GameData game = getGameData(gameList.get(0));
+        return game;
+    }
+
     private ChessGame deserializeGame(List<Object> row) {
         ChessGame game = new Gson().fromJson((String) row.get(4), ChessGame.class);
         return game;
@@ -125,16 +139,4 @@ public class GameDAOSQL implements GameDA0Interface {
         return gameData;
     }
 
-    private GameData updateGame(Integer gameID, GameData updatedGame) throws ResponseException, DataAccessException {
-        var statement = "Update game SET game_data = ? WHERE id = ?";
-        Integer gameId = UpdateManager.executeUpdate(statement, updatedGame.getGameID(), gameID);
-        //This is essentially just checking that I am implementing this correctly
-        statement = "SELECT game_data FROM game WHERE id = ?";
-        List<List<Object>> gameList = UpdateManager.executeQuery(statement, gameId);
-        if (gameList.isEmpty()) {
-            throw new DataAccessException("Error: Game could not be updated)");
-        }
-        GameData game = getGameData(gameList.get(0));
-        return game;
-    }
 }

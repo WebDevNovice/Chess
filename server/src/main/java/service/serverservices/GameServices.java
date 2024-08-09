@@ -46,6 +46,10 @@ public class GameServices {
         }
     }
 
+    public GameData updateGame(Integer gameID, GameData updatedGame) throws DataAccessException, ResponseException {
+        GameData gameData = gameDoa.updateGame(gameID, updatedGame);
+        return gameData;
+    }
 
 }
 

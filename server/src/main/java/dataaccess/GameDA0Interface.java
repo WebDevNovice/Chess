@@ -15,4 +15,5 @@ public interface GameDA0Interface {
     GameData joinGame(String playerColor, Integer gameId, AuthData authData) throws DataAccessException, BadRequestException, UnvailableTeamException, ResponseException;
     void clearGamedatabase() throws ResponseException, DataAccessException;
     HashMap<Integer, GameData> getGameDatabase() throws DataAccessException, ResponseException;
+    GameData updateGame(Integer gameID, GameData game) throws ResponseException, DataAccessException;
 }
