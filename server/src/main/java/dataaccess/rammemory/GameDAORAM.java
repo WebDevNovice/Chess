@@ -1,5 +1,6 @@
 package dataaccess.rammemory;
 
+import dataaccess.sqlMemory.ResponseException;
 import model.AuthData;
 import model.GameData;
 import service.execeptions.BadRequestException;
@@ -62,5 +63,10 @@ public class GameDAORAM implements GameDA0Interface {
 
     public HashMap<Integer, GameData> getGameDatabase() throws DataAccessException{
         return gameDataHashMap;
+    }
+
+    @Override
+    public GameData updateGame(Integer gameID, GameData game) throws ResponseException, DataAccessException {
+        return null;
     }
 }

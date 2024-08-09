@@ -38,20 +38,15 @@ public class WSHandler {
         this.gameServices = new GameServices(new GameDAOSQL());
     }
 
-    @OnWebSocketConnect
-    public void onConnect(Session session, String message) {
-        System.out.println("onConnect: " + message);
-    }
-
-    @OnWebSocketClose
-    public void onClose(Session session) {
-        System.out.println("onClose: " + session);
-    }
-
-    @OnWebSocketError
-    public void onError(Throwable error) {
-        System.out.println("onError: " + error);
-    }
+//    @OnWebSocketConnect
+//    public void onConnect(Session session, String message) {
+//        System.out.println("onConnect: " + message);
+//    }
+//
+//    @OnWebSocketError
+//    public void onError(Throwable error) {
+//        System.out.println("onError: " + error);
+//    }
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) {
@@ -67,7 +62,7 @@ public class WSHandler {
                 case MAKE_MOVE -> makeMove(session, username, command);
                 case LEAVE -> leaveGame(session, username, command);
                 case RESIGN -> resign(session, username, command);
-                default -> throw new IllegalStateException("Unexpected value: " + command.getCommandType());
+                default -> throw new IllegalStateException("Error: " + command.getCommandType());
             }
         } catch (Exception ex) {
             sendMessage(session, new WSErrorMsg(errorMsg, ex.getMessage()));
@@ -97,10 +92,10 @@ public class WSHandler {
                 String message = String.format("Hail! Player %s is now watching the game! HooZAH!!",
                         authData.getUsername());
                 ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
-                broadcast(command.getGameID(), serverMessage, null);
+                broadcast(command.getGameID(), serverMessage, session);
 
                 serverMessage = new WSLoadGameMsg(loadGameMsg, desiredGame);
-                broadcast(command.getGameID(), serverMessage, null);
+                sendMessage(session, serverMessage);
 
             }
             else {
@@ -154,9 +149,6 @@ public class WSHandler {
 
         ResignCommand resignCommand = new ResignCommand(command.getGameID());
         GameData gameData = resignCommand.resignGame();
-
-        serverMessage = new WSLoadGameMsg(loadGameMsg, gameData);
-        broadcast(command.getGameID(), serverMessage, null);
 
         wsSessions.getSession(command.getGameID()).clear();
     }
