@@ -128,15 +128,39 @@ public class WSHandler {
 
     private void leaveGame(Session session, String username, UserGameCommand command) {
         //Broadcast to everyone that a player left
-        
+        LeaveGameCommand leaveGameCommand = new LeaveGameCommand(command.getGameID(), command.getTeamColor(), username);
+        leaveGameCommand.leaveGame();
+
+        String message = String.format("Player %s left the game! Cowardice!!!", username);
+        ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
+        broadcast(command.getGameID(), serverMessage, session);
+
+        message = String.format("You have successfully left the game! Regroup Soldier!");
+        serverMessage = new WSNotificationMsg(notificationMsg, message);
+        sendMessage(session, serverMessage);
     }
 
     private void resign(Session session, String username, UserGameCommand command) {
         //Broadcast that a player resigns
         //print the board, but don't allow anymore moves to be made
+        String message = String.format("Player %s resigned the game!", username);
+        ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
+        broadcast(command.getGameID(), serverMessage, null);
+
+        GameData resignedGame = new GameData(null, null, null, null, command.getGameID());
+
+
     }
 
-    private void sendMessage(Session session, ServerMessage message) {}
+    private void sendMessage(Session session, ServerMessage message) {
+        String jsonMsg= new Gson().toJson(message);
+        if (session.isOpen())
+            try{
+                session.getRemote().sendString(jsonMsg);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+    }
 
     private void broadcast(Integer gameID, ServerMessage message, Session excludeSession) {
         try{
