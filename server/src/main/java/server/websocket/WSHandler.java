@@ -90,6 +90,7 @@ public class WSHandler {
         else {
             String message = String.format("On Guard! %s is commanding the %s forces, HooZAH!",
                     authData.getUsername(), connectCommand.getTeamColor());
+
             ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
             broadcast(gameData.gameID, serverMessage, session);
 
@@ -255,21 +256,21 @@ public class WSHandler {
         if (chessGame.isInCheckmate(opponentColor)){
             String message = String.format("%s player is in checkmate!", teamColor.toString());
             ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
-            broadcast(gameID, serverMessage, session);
+            broadcast(gameID, serverMessage, null);
         }
         else if (chessGame.isInCheck(opponentColor)){
             String message = String.format("%s player is in check!", opponentColor.toString());
             ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
-            broadcast(gameID, serverMessage, session);
+            broadcast(gameID, serverMessage, null);
         }
         else if (chessGame.isInStalemate(teamColor)){
             String message = String.format("%s player is in stalemate!", teamColor.toString());
             ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
-            broadcast(gameID, serverMessage, session);
+            broadcast(gameID, serverMessage, null);
         } else if (chessGame.isInStalemate(opponentColor)) {
             String message = String.format("%s player is in stalemate!", opponentColor.toString());
             ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
-            broadcast(gameID, serverMessage, session);
+            broadcast(gameID, serverMessage, null);
         }
 
     }

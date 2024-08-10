@@ -71,7 +71,7 @@ public class GameDAOSQL implements GameDA0Interface {
             if (playerColor == null || playerColor.isEmpty()) {
                 throw new BadRequestException("Error: Player color not found. Try Creating a new one:)");
             }
-            if (playerColor == "WHITE") {
+            if (playerColor.equals("WHITE")) {
                 setPlayerColor(row, playerColor, authData, 1, gameId);
             }
             else {
@@ -86,7 +86,7 @@ public class GameDAOSQL implements GameDA0Interface {
     private void setPlayerColor(List<Object> row, String playerColor, AuthData authData, Integer num, Integer gameID)
             throws UnvailableTeamException, ResponseException, DataAccessException {
 
-        if (row.get(num) == null) {
+        if (row.get(num) == null || row.get(num).equals("")) {
             String newPlayerColor = playerColor.toLowerCase() + "_player";
             var statement = "UPDATE game SET "+ newPlayerColor +" = ? WHERE id = ?";
             UpdateManager.executeUpdate(statement, authData.getUsername(), gameID);
@@ -137,7 +137,7 @@ public class GameDAOSQL implements GameDA0Interface {
         if (gameID == null || gameID < 1) {
             throw new DataAccessException("Error: Game ID is required.");
         }
-        if (playerColor == "WHITE") {
+        if (playerColor.equals("WHITE")) {
             var statement = "UPDATE game SET white_player = ? WHERE id = ?";
             GameData gameData = updatePlayerHelper(statement, updatedUsername, gameID);
             return gameData;
