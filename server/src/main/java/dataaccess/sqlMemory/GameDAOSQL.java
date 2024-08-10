@@ -116,14 +116,18 @@ public class GameDAOSQL implements GameDA0Interface {
     @Override
     public GameData updateGame(Integer gameID, GameData updatedGame) throws ResponseException, DataAccessException {
         var statement = "Update game SET game_data = ? WHERE id = ?";
-        Integer gameId = UpdateManager.executeUpdate(statement, updatedGame.getGameID(), gameID);
+        String updatedJsonGame = new Gson().toJson(updatedGame.getGame());
+        UpdateManager.executeUpdate(statement, updatedJsonGame, gameID);
         //This is essentially just checking that I am implementing this correctly
-        List<List<Object>> gameList = getGameDataList(gameId);
-        if (gameList.isEmpty()) {
-            throw new DataAccessException("Error: Game could not be updated)");
+        Collection<GameData> games = listGames();
+        for (GameData game: games){
+            if (game.getGameID() == gameID){
+                if (game.getGame().equals( updatedGame.getGame())){
+                    return game;
+                }
+            }
         }
-        GameData game = getGameData(gameList.get(0));
-        return game;
+        throw new DataAccessException("Error: Game was not updated");
     }
 
     public GameData updatePlayer(Integer gameID, String playerColor, String updatedUsername) throws ResponseException, DataAccessException {

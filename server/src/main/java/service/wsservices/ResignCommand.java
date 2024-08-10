@@ -1,5 +1,6 @@
 package service.wsservices;
 
+import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.sqlMemory.GameDAOSQL;
 import dataaccess.sqlMemory.ResponseException;
@@ -17,23 +18,46 @@ public class ResignCommand{
     String playerColor;
     String username;
 
-    public ResignCommand(Integer gameID) {
+    public ResignCommand(Integer gameID, String username) throws ResponseException, DataAccessException {
         gameDAOSQL = new GameDAOSQL();
         this.gameID = gameID;
         this.gameServices = new GameServices(gameDAOSQL);
+        this.username = username;
+        PlayerColorHelper playerColorHelper = new PlayerColorHelper();
+        this.playerColor = playerColorHelper.setPlayerColor(gameServices, gameID, username);
     }
 
-    public GameData resignGame() throws DataAccessException {
-        try{
-            Collection<GameData> games = gameServices.listGames();
-            for(GameData game: games){
-                if(gameID.equals(game.getGameID())){
-                   return game;
-                }
+    public void resign() throws ResponseException, DataAccessException {
+        Collection<GameData> games = gameServices.listGames();
+        for(GameData game: games){
+            if (game.getGameID() == this.gameID){
+                game.getGame().resignGame();
+                gameServices.updateGame(gameID, game);
             }
-        } catch (ResponseException | DataAccessException e) {
-            throw new RuntimeException(e);
         }
-        throw new DataAccessException("Error: Game not found");
+    }
+
+    public boolean isPlayer() throws DataAccessException, ResponseException {
+        if (playerColor == null) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isGameOver() throws ResponseException, DataAccessException {
+        Collection<GameData> games = gameServices.listGames();
+        ChessGame.TeamColor teamColor = null;
+        for (GameData gameData : games) {
+            if (gameData.getGameID() == gameID) {
+                if(playerColor == "WHITE"){
+                    teamColor = ChessGame.TeamColor.WHITE;
+                }
+                else {
+                     teamColor = ChessGame.TeamColor.BLACK;
+                }
+                return gameData.getGame().isGameOver(teamColor);
+            }
+        }
+        return false;
     }
 }

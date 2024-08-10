@@ -134,21 +134,41 @@ public class WSHandler {
         }
     }
 
-    private void resign(Session session, String username, UserGameCommand command) throws BadRequestException, DataAccessException {
+    private void resign(Session session, String username, UserGameCommand command) throws
+                                                                            DataAccessException, ResponseException {
         //Broadcast that a player resigns.
         //Print the board, but don't allow anymore moves to be made.
-        //I think I'll have the client hold a local copy of the game and have it update as we play and push moves to the
-        //database. So here I'll just send a blank game, so they cannot reference it and draw the last board. I don't
-        //like this.
-        String message = String.format("Player %s has resigned the game!", username);
-        ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
-        broadcast(command.getGameID(), serverMessage, null);
 
-        ResignCommand resignCommand = new ResignCommand(command.getGameID());
-        GameData gameData = resignCommand.resignGame();
+        ResignCommand resignCommand = new ResignCommand(command.getGameID(), username);
 
-        HashMap<Integer, Set<Session>> connections = wsSessions.getConnections();
-        connections.remove(command.getGameID());
+        if (resignCommand.isPlayer()){
+            if (resignCommand.isGameOver()){
+                String message = String.format("Game is already over!)");
+                ServerMessage serverMessage = new WSErrorMsg(errorMsg, message);
+                sendMessage(session, serverMessage);
+            }
+            else{
+                resignCommand.resign();
+                if(resignCommand.isGameOver()){
+                    String message = String.format("Player %s has resigned the game!", username);
+                    ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
+                    broadcast(command.getGameID(), serverMessage, null);
+
+                    HashMap<Integer, Set<Session>> connections = wsSessions.getConnections();
+                    connections.remove(command.getGameID());
+                }
+                else{
+                    throw new DataAccessException("Error: Did not resign the game");
+                }
+            }
+
+
+        }
+        else {
+            String message = String.format("Error: Observers cannot resign a game");
+            ServerMessage serverMessage = new WSErrorMsg(errorMsg, message);
+            sendMessage(session, serverMessage);
+        }
     }
 
     private void sendMessage(Session session, ServerMessage message) {

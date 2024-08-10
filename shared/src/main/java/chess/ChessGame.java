@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -13,10 +14,34 @@ public class ChessGame {
     private ChessBoard chessBoard = new ChessBoard();
     private TeamColor teamTurn;
     private ChessPosition kingInCheckPosition;
+    private boolean gameOver;
 
     public ChessGame() {
         chessBoard.resetBoard();
         getTeamTurn();
+    }
+
+    public boolean resignGame(){
+        gameOver = true;
+        return true;
+    }
+
+    public boolean isGameOver(TeamColor teamColor) {
+        if (gameOver) {
+            return true;
+        }
+
+        if (teamTurn == teamColor) {
+            if (isInCheckmate(teamColor)) {
+                gameOver = true;
+                return true;
+            }
+            if (isInStalemate(teamColor)) {
+                gameOver = true;
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -314,5 +339,19 @@ public class ChessGame {
             return null;
         }
         return chessBoard;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessGame chessGame = (ChessGame) o;
+        return gameOver == chessGame.gameOver && Objects.equals(chessBoard, chessGame.chessBoard) &&
+                teamTurn == chessGame.teamTurn && Objects.equals(kingInCheckPosition, chessGame.kingInCheckPosition);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(chessBoard, teamTurn, kingInCheckPosition, gameOver);
     }
 }
