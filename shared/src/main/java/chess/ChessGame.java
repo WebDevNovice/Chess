@@ -23,7 +23,7 @@ public class ChessGame {
 
     public boolean resignGame(){
         gameOver = true;
-        return true;
+        return gameOver;
     }
 
     public boolean isGameOver(TeamColor teamColor) {
@@ -117,7 +117,6 @@ public class ChessGame {
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
-
 
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
@@ -260,6 +259,9 @@ public class ChessGame {
             return false;
         }
         else {
+            if (isKingInCheckmate(teamColor)){
+                gameOver = true;
+            }
             return isKingInCheckmate(teamColor);
         }
     }
@@ -317,6 +319,7 @@ public class ChessGame {
                 }
             }
         }
+        gameOver = true;
         return true;
     }
 

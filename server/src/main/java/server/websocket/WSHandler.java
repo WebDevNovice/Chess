@@ -1,5 +1,6 @@
 package server.websocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.sqlMemory.GameDAOSQL;
@@ -98,11 +99,47 @@ public class WSHandler {
 
     }
 
-    private void makeMove(Session session, String username, UserGameCommand command) {
+    private void makeMove(Session session, String username, UserGameCommand command) throws ResponseException,
+                                                                                            DataAccessException {
         //this allows a player to make a move
         //broadcast to everyone except the player who made the move what the move was
-        //Should this should also return if they are in Check, CheckMate, or Stalemate?
+        //broadcast the status of the game (Check, CheckMate, Stalemate)
+        MakeMoveCommand makeMoveCommand = new MakeMoveCommand(command.getGameID(), username, command.getMove());
+        ResignCommand resignCommand = new ResignCommand(command.getGameID(), username);
 
+        if (!resignCommand.isPlayer()){
+            String message = String.format("Error: Stay out of this you Cosmic Observer");
+            ServerMessage serverMessage = new WSErrorMsg(errorMsg, message);
+            sendMessage(session, serverMessage);
+        }
+        else {
+            if (resignCommand.isGameOver()){
+                String message = String.format("Error: Game is over");
+                ServerMessage serverMessage = new WSErrorMsg(errorMsg, message);
+                sendMessage(session, serverMessage);
+            }
+            else {
+                GameData gameData = makeMoveCommand.makeMove();
+                ServerMessage serverMessage = new WSLoadGameMsg(loadGameMsg, gameData);
+                broadcast(command.getGameID(), serverMessage, null);
+
+                makeMoveMessage(session, username, makeMoveCommand, command);
+                ChessGame chessGame = makeMoveCommand.getGameData().getGame();
+                ChessGame.TeamColor teamColor;
+                ChessGame.TeamColor opponentTeamColor;
+
+                if (makeMoveCommand.getPlayerColor().equals("WHITE")){
+                    teamColor = ChessGame.TeamColor.WHITE;
+                    opponentTeamColor = ChessGame.TeamColor.BLACK;
+                }
+                else{
+                    teamColor = ChessGame.TeamColor.BLACK;
+                    opponentTeamColor = ChessGame.TeamColor.WHITE;
+                }
+
+                checkGameStatus(command.getGameID(), session, username, chessGame, teamColor, opponentTeamColor);
+            }
+        }
     }
 
     private void leaveGame(Session session, String username, UserGameCommand command) throws BadRequestException,
@@ -194,6 +231,45 @@ public class WSHandler {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+
+    }
+
+    private void makeMoveMessage(Session session, String username, MakeMoveCommand makeMoveCommand,
+                                 UserGameCommand command) {
+        StringBuilder stringBuilder = new StringBuilder();
+        String message = String.format("Player %s moved their piece from ", username);
+        stringBuilder.append(message);
+
+        message = command.getMove().getStartPosition().toString() + " to " +
+                  command.getMove().getEndPosition().toString();
+
+        stringBuilder.append(message);
+
+        ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, stringBuilder.toString());
+        broadcast(command.getGameID(), serverMessage, session);
+    }
+
+    private void checkGameStatus(Integer gameID, Session session, String username, ChessGame chessGame,
+                                 ChessGame.TeamColor teamColor, ChessGame.TeamColor opponentColor) {
+        if (chessGame.isInCheckmate(opponentColor)){
+            String message = String.format("%s player is in checkmate!", teamColor.toString());
+            ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
+            broadcast(gameID, serverMessage, session);
+        }
+        else if (chessGame.isInCheck(opponentColor)){
+            String message = String.format("%s player is in check!", opponentColor.toString());
+            ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
+            broadcast(gameID, serverMessage, session);
+        }
+        else if (chessGame.isInStalemate(teamColor)){
+            String message = String.format("%s player is in stalemate!", teamColor.toString());
+            ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
+            broadcast(gameID, serverMessage, session);
+        } else if (chessGame.isInStalemate(opponentColor)) {
+            String message = String.format("%s player is in stalemate!", opponentColor.toString());
+            ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
+            broadcast(gameID, serverMessage, session);
         }
 
     }
