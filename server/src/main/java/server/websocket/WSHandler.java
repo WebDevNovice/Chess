@@ -20,7 +20,7 @@ import websocket.messages.WSLoadGameMsg;
 import websocket.messages.WSNotificationMsg;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Set;
 
 @WebSocket
@@ -70,48 +70,32 @@ public class WSHandler {
     }
 
 
-    private void connect(Session session, String username, UserGameCommand command) {
-        //this will ConnectPlayer the player to a game
-        //Broadcast a message to everyone that a new player joined and the color they are playing as
-        //Broadcast that someone is watching and which team they are rooting for (i.e. watching)
+    private void connect(Session session, String username, UserGameCommand command) throws ResponseException,
+                                                    UnvailableTeamException, BadRequestException, DataAccessException {
+
         AuthData authData = new AuthData(username, command.getAuthString());
-        ConnectCommand connectCommand = new ConnectCommand(authData, command.getGameID(), command.getTeamColor());
-        try{
-            if (command.getTeamColor() == null || command.getTeamColor().isEmpty()) {
-                GameData desiredGame = null;
-                Collection<GameData> games = connectCommand.ConnectObserver();
-                //this is how I'm retrieving the game data
-                for (GameData gameData : games) {
-                    if (gameData.getGameID() == command.getGameID()) {
-                        desiredGame = gameData;
-                    }
-                }
-                if (desiredGame == null) {
-                    throw new BadRequestException("Error: Game not found");
-                }
-                String message = String.format("Hail! Player %s is now watching the game! HooZAH!!",
-                        authData.getUsername());
-                ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
-                broadcast(command.getGameID(), serverMessage, session);
+        ConnectCommand connectCommand = new ConnectCommand(authData, command.getGameID());
+        GameData gameData = connectCommand.connect();
 
-                serverMessage = new WSLoadGameMsg(loadGameMsg, desiredGame);
-                sendMessage(session, serverMessage);
+        if (connectCommand.getTeamColor() == null){
+            String message = String.format("HAIL! %s is a cosmic observer, prove yourself worthy",
+                                                    authData.getUsername());
+            ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
+            broadcast(gameData.gameID, serverMessage, session);
 
-            }
-            else {
-                GameData gameData = connectCommand.ConnectPlayer();
-                String message = String.format("On Guard! Player %s connected to the game under the %s banner! HooZAH!!",
-                        authData.getUsername(), command.getTeamColor());
-
-                ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
-                broadcast(command.getGameID(), serverMessage, null);
-
-                serverMessage = new WSLoadGameMsg(loadGameMsg, gameData);
-                broadcast(command.getGameID(), serverMessage, null);
-            }
-        } catch (ResponseException | UnvailableTeamException | BadRequestException | DataAccessException e) {
-            throw new RuntimeException(e);
+            serverMessage = new WSLoadGameMsg(loadGameMsg, gameData);
+            sendMessage(session, serverMessage);
         }
+        else {
+            String message = String.format("On Guard! %s is commanding the %s forces, HooZAH!",
+                    authData.getUsername(), connectCommand.getTeamColor());
+            ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
+            broadcast(gameData.gameID, serverMessage, session);
+
+            serverMessage = new WSLoadGameMsg(loadGameMsg, gameData);
+            sendMessage(session, serverMessage);
+        }
+
     }
 
     private void makeMove(Session session, String username, UserGameCommand command) {
@@ -121,20 +105,32 @@ public class WSHandler {
 
     }
 
-    private void leaveGame(Session session, String username, UserGameCommand command) throws BadRequestException {
+    private void leaveGame(Session session, String username, UserGameCommand command) throws BadRequestException,
+                                                                            ResponseException, DataAccessException {
         //Broadcast to everyone that a player left
-        LeaveGameCommand leaveGameCommand = new LeaveGameCommand(command.getGameID(), command.getTeamColor(), username);
+        LeaveGameCommand leaveGameCommand = new LeaveGameCommand(command.getGameID(), username);
+        if (leaveGameCommand.getPlayerColor() == null){
+            String message = String.format("Our cosmic observer known as %s is gone... Continue as you were",
+                                                                                                    username);
+            ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
+            broadcast(command.getGameID(), serverMessage, session);
+        }
         leaveGameCommand.leaveGame();
+        if (leaveGameCommand.isLeftGame()){
+            String message = String.format("Player %s left the game! Cowardice!!!", username);
+            ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
+            broadcast(command.getGameID(), serverMessage, null);
 
-        String message = String.format("Player %s left the game! Cowardice!!!", username);
-        ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
-        broadcast(command.getGameID(), serverMessage, session);
+//          message = String.format("You have successfully left the game! Regroup Soldier!");
+//          serverMessage = new WSNotificationMsg(notificationMsg, message);
+//          sendMessage(session, serverMessage);
 
-        message = String.format("You have successfully left the game! Regroup Soldier!");
-        serverMessage = new WSNotificationMsg(notificationMsg, message);
-        sendMessage(session, serverMessage);
-
-        wsSessions.removeSession(command.getGameID(), session);
+            wsSessions.removeSession(command.getGameID(), session);
+        }
+        else {
+            String message = String.format("Error: %s did not leave the game", username);
+            throw new BadRequestException(message);
+        }
     }
 
     private void resign(Session session, String username, UserGameCommand command) throws BadRequestException, DataAccessException {
@@ -150,7 +146,8 @@ public class WSHandler {
         ResignCommand resignCommand = new ResignCommand(command.getGameID());
         GameData gameData = resignCommand.resignGame();
 
-        wsSessions.getSession(command.getGameID()).clear();
+        HashMap<Integer, Set<Session>> connections = wsSessions.getConnections();
+        connections.remove(command.getGameID());
     }
 
     private void sendMessage(Session session, ServerMessage message) {

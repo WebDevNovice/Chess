@@ -70,7 +70,7 @@ public class WebSocketTests {
     @Order(2)
     @DisplayName("Connect Bad GameID")
     public void connectBadGameID() {
-        connectToGame(white, gameID + 1, false, Set.of(), Set.of()); //player ConnectPlayer with an incorrect game id
+        connectToGame(white, gameID + 1, false, Set.of(), Set.of()); //player connect with an incorrect game id
         connectToGame(observer, gameID + 1, false, Set.of(white), Set.of()); //observer incorrect game id
     }
 
@@ -270,9 +270,9 @@ public class WebSocketTests {
     }
 
     private void setupNormalGame() {
-        connectToGame(white, gameID, true, Set.of(), Set.of()); //ConnectPlayer white player
-        connectToGame(black, gameID, true, Set.of(white), Set.of()); //ConnectPlayer black player
-        connectToGame(observer, gameID, true,  Set.of(white, black), Set.of()); //ConnectPlayer observer
+        connectToGame(white, gameID, true, Set.of(), Set.of()); //connect white player
+        connectToGame(black, gameID, true, Set.of(white), Set.of()); //connect black player
+        connectToGame(observer, gameID, true,  Set.of(white, black), Set.of()); //connect observer
     }
 
     private WebsocketUser registerUser(String name, String password, String email) {

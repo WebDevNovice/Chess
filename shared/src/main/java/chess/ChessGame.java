@@ -209,7 +209,7 @@ public class ChessGame {
         return result;
     }
 
-    public boolean isKingInCheck(ChessPosition position,TeamColor teamColor, boolean result) {
+    private boolean isKingInCheck(ChessPosition position,TeamColor teamColor, boolean result) {
     Collection<ChessMove> possibleMoves = chessBoard.getPiece(position).pieceMoves(chessBoard, position);
     for (ChessMove possibleMove : possibleMoves) {
         if (chessBoard.getPiece(possibleMove.getEndPosition()) != null) {

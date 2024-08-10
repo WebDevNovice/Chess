@@ -40,4 +40,8 @@ public class WSSessions {
         }
         return connections.get(gameID);
     }
+
+    public HashMap<Integer, Set<Session>> getConnections() {
+        return connections;
+    }
 }

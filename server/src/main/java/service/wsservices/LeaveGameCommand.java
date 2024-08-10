@@ -4,8 +4,11 @@ import dataaccess.DataAccessException;
 import dataaccess.sqlMemory.GameDAOSQL;
 import dataaccess.sqlMemory.ResponseException;
 import model.AuthData;
+import model.GameData;
 import service.serverservices.GameServices;
 import websocket.commands.UserGameCommand;
+
+import java.util.Collection;
 
 public class LeaveGameCommand {
     Integer gameID;
@@ -14,12 +17,18 @@ public class LeaveGameCommand {
     GameDAOSQL gameDAOSQL;
     String username;
 
-    public LeaveGameCommand(Integer gameID, String playerColor, String username) {
+    public LeaveGameCommand(Integer gameID, String username) {
         this.gameID = gameID;
-        this.playerColor = playerColor;
         this.username = username;
         gameDAOSQL = new GameDAOSQL();
         gameServices = new GameServices(gameDAOSQL);
+
+        PlayerColorHelper playerColorHelper = new PlayerColorHelper();
+        try {
+            this.playerColor = playerColorHelper.setPlayerColor(gameServices, gameID, username);
+        } catch (ResponseException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Integer getGameID() {
@@ -32,9 +41,32 @@ public class LeaveGameCommand {
 
     public void leaveGame() {
         try {
-            gameDAOSQL.updatePlayer(gameID, playerColor, username);
+            if (playerColor == null) {
+                return;
+            }
+            else {
+                gameDAOSQL.updatePlayer(gameID, playerColor, username);
+            }
         } catch (ResponseException | DataAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean isLeftGame() throws ResponseException, DataAccessException {
+        Collection<GameData> games = gameDAOSQL.listGames();
+        for (GameData gameData : games) {
+            if (gameData.getGameID() == gameID){
+                if (playerColor == "WHITE" && gameData.getWhiteUsername().equals(username)) {
+                    return true;
+                }
+                else if (playerColor == "BLACK" && gameData.getBlackUsername().equals(username)) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        return false;
     }
 }

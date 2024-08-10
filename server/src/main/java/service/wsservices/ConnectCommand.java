@@ -12,27 +12,40 @@ import service.serverservices.GameServices;
 import java.util.Collection;
 
 public class ConnectCommand {
+    String playerColor;
     AuthData authData;
     GameServices gameServices;
     Integer gameID;
-    String teamColor;
     GameDAOSQL gameDAOSQL;
 
-    public ConnectCommand(AuthData authData, Integer gameID, String teamColor) {
+
+    public ConnectCommand(AuthData authData, Integer gameID) {
         this.authData = authData;
         this.gameID = gameID;
-        this.teamColor = teamColor;
         gameDAOSQL = new GameDAOSQL();
         this.gameServices = new GameServices(gameDAOSQL);
+
+        PlayerColorHelper playerColorHelper = new PlayerColorHelper();
+        try {
+            this.playerColor = playerColorHelper.setPlayerColor(gameServices, gameID, authData.getUsername());
+        } catch (ResponseException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public GameData ConnectPlayer() throws ResponseException, UnvailableTeamException, BadRequestException, DataAccessException {
-        GameData gameData = gameServices.joinGame(teamColor, gameID, authData);
-        return gameData;
+    public GameData connect() throws ResponseException, UnvailableTeamException, BadRequestException, DataAccessException {
+        GameData gameData;
+            Collection<GameData> games = gameServices.listGames();
+            for (GameData game: games) {
+                if (game.getGameID() == gameID){
+                    gameData = game;
+                    return gameData;
+                }
+            }
+            throw new DataAccessException("Error: Could not connect to game");
     }
 
-    public Collection<GameData> ConnectObserver() throws ResponseException, UnvailableTeamException, BadRequestException, DataAccessException {
-        return gameServices.listGames();
+    public String getTeamColor() {
+        return playerColor;
     }
-
 }

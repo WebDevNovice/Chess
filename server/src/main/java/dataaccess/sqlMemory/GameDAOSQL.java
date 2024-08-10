@@ -83,6 +83,18 @@ public class GameDAOSQL implements GameDA0Interface {
         return game;
     }
 
+    private void setPlayerColor(List<Object> row, String playerColor, AuthData authData, Integer num, Integer gameID)
+            throws UnvailableTeamException, ResponseException, DataAccessException {
+
+        if (row.get(num) == null) {
+            String newPlayerColor = playerColor.toLowerCase() + "_player";
+            var statement = "UPDATE game SET "+ newPlayerColor +" = ? WHERE id = ?";
+            UpdateManager.executeUpdate(statement, authData.getUsername(), gameID);
+        } else {
+            throw new UnvailableTeamException("Error: Player Color is taken. Try using other player color");
+        }
+    }
+
     @Override
     public void clearGamedatabase() throws ResponseException, DataAccessException {
         var statement = "DELETE FROM game";
@@ -136,18 +148,6 @@ public class GameDAOSQL implements GameDA0Interface {
     private ChessGame deserializeGame(List<Object> row) {
         ChessGame game = new Gson().fromJson((String) row.get(4), ChessGame.class);
         return game;
-    }
-
-    private void setPlayerColor(List<Object> row, String playerColor, AuthData authData, Integer num, Integer gameID)
-            throws UnvailableTeamException, ResponseException, DataAccessException {
-
-        if (row.get(num) == null) {
-            String newPlayerColor = playerColor.toLowerCase() + "_player";
-            var statement = "UPDATE game SET "+ newPlayerColor +" = ? WHERE id = ?";
-            UpdateManager.executeUpdate(statement, authData.getUsername(), gameID);
-        } else {
-            throw new UnvailableTeamException("Error: Player Color is taken. Try using other player color");
-        }
     }
     
     private GameData getGameData(List<Object> row) {
