@@ -13,11 +13,15 @@ public class PlayerColorHelper {
         Collection<GameData> games = gameServices.listGames();
         for (GameData game: games) {
             if (game.getGameID() == gameID){
-                if (game.getWhiteUsername().equals(username)){
-                    return "WHITE";
+
+                if (game.getWhiteUsername() == null || game.getBlackUsername() == null){
+                    return null;
                 }
                 if (game.getBlackUsername().equals(username)){
                     return "BLACK";
+                }
+                if (game.getWhiteUsername().equals(username)){
+                    return "WHITE";
                 }
             }
         }

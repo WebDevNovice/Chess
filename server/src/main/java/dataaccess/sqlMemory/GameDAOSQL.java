@@ -134,15 +134,28 @@ public class GameDAOSQL implements GameDA0Interface {
             throw new DataAccessException("Error: Game ID is required.");
         }
         if (playerColor == "WHITE") {
-            var statement = "Update game SET white_player = ? WHERE id = ?";
+            var statement = "UPDATE game SET white_player = ? WHERE id = ?";
             GameData gameData = updatePlayerHelper(statement, updatedUsername, gameID);
             return gameData;
         }
         else {
-            var statement = "Update game SET black_player = ? WHERE id = ?";
+            var statement = "UPDATE game SET black_player = ? WHERE id = ?";
             GameData gameData = updatePlayerHelper(statement, updatedUsername, gameID);
             return gameData;
         }
+    }
+
+    private GameData updatePlayerHelper(String statement, String updatedUsername, Integer gameID) throws DataAccessException, ResponseException {
+        Integer gameId = UpdateManager.executeUpdate(statement, updatedUsername, gameID);
+        getGameDataList(gameId);
+
+        Collection<GameData> games = listGames();
+        for (GameData game : games) {
+            if (game.getGameID() == gameID) {
+                return game;
+            }
+        }
+        throw new DataAccessException("Error: Game was deleted somehow");
     }
 
     private ChessGame deserializeGame(List<Object> row) {
@@ -163,13 +176,6 @@ public class GameDAOSQL implements GameDA0Interface {
         return gameList;
     }
 
-    private GameData updatePlayerHelper(String statement, String updatedUsername, Integer gameID) throws DataAccessException, ResponseException {
-        Integer gameId = UpdateManager.executeUpdate(statement, updatedUsername, gameID);
-        List<List<Object>> gameList = getGameDataList(gameId);
-        if (gameList.isEmpty()) {
-            throw new DataAccessException("Error: Game could not be updated)");
-        }
-        GameData game = getGameData(gameList.get(0));
-        return game;
-    }
+
+
 }

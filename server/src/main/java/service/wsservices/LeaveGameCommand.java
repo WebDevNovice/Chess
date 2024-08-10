@@ -45,7 +45,7 @@ public class LeaveGameCommand {
                 return;
             }
             else {
-                gameDAOSQL.updatePlayer(gameID, playerColor, username);
+                gameDAOSQL.updatePlayer(gameID, playerColor, null);
             }
         } catch (ResponseException | DataAccessException e) {
             throw new RuntimeException(e);
@@ -56,10 +56,10 @@ public class LeaveGameCommand {
         Collection<GameData> games = gameDAOSQL.listGames();
         for (GameData gameData : games) {
             if (gameData.getGameID() == gameID){
-                if (playerColor == "WHITE" && gameData.getWhiteUsername().equals(username)) {
+                if (playerColor == "WHITE" && gameData.getWhiteUsername() == null) {
                     return true;
                 }
-                else if (playerColor == "BLACK" && gameData.getBlackUsername().equals(username)) {
+                else if (playerColor == "BLACK" && gameData.getBlackUsername() == null) {
                     return true;
                 }
                 else {

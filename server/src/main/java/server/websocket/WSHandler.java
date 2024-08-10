@@ -114,16 +114,17 @@ public class WSHandler {
                                                                                                     username);
             ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
             broadcast(command.getGameID(), serverMessage, session);
+
+            wsSessions.removeSession(leaveGameCommand.getGameID(), session);
+            return;
         }
         leaveGameCommand.leaveGame();
         if (leaveGameCommand.isLeftGame()){
+
             String message = String.format("Player %s left the game! Cowardice!!!", username);
             ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
-            broadcast(command.getGameID(), serverMessage, null);
+            broadcast(command.getGameID(), serverMessage, session);
 
-//          message = String.format("You have successfully left the game! Regroup Soldier!");
-//          serverMessage = new WSNotificationMsg(notificationMsg, message);
-//          sendMessage(session, serverMessage);
 
             wsSessions.removeSession(command.getGameID(), session);
         }
