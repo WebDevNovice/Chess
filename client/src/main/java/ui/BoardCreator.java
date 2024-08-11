@@ -15,7 +15,13 @@ public class BoardCreator {
     public BoardCreator(ChessGame chessGame, ChessGame.TeamColor teamColor) {
         this.chessGame = chessGame;
         this.chessBoard = chessGame.getBoard();
-        this.teamColor = teamColor;
+        if (teamColor == null || teamColor.equals("")){
+            this.teamColor = ChessGame.TeamColor.WHITE;
+        }
+        else {
+            this.teamColor = teamColor;
+        }
+
     }
 
     public static void main() {

@@ -7,16 +7,15 @@ import model.UserData;
 import requestobjects.CreateGameRequest;
 import requestobjects.JoinGameRequest;
 import responseobjects.CreateGameResponse;
+import responseobjects.ErrorMessage;
 import responseobjects.ListGamesResponse;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * Spark.delete("/db",this::clear);
@@ -110,9 +109,15 @@ public class ServerFacade {
 
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
-        if (!isSuccessful(status)) {
-            var msg = http.getErrorStream();
-            throw new ResponseException(status, "failure: " + msg);
+        if(!isSuccessful(status)) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(http.getErrorStream()))) {
+                String errorMessageJson = reader.lines().collect(Collectors.joining());
+                Gson gson = new Gson();
+                ErrorMessage errorMsg = gson.fromJson(errorMessageJson, ErrorMessage.class);
+                throw new ResponseException(status, errorMsg.getMessage());
+            } catch (IOException e) {
+                throw new ResponseException(status, "failure: could not read error message");
+            }
         }
     }
 

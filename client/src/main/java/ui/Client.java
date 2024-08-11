@@ -10,7 +10,12 @@ import responseobjects.CreateGameResponse;
 import responseobjects.ListGamesResponse;
 import serverfacade.ResponseException;
 import serverfacade.ServerFacade;
+import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
+import wsfacade.WSFacade;
 
+import javax.websocket.Session;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,6 +23,7 @@ import java.util.Collection;
 public class Client {
     String visitorName;
     ServerFacade serverFacade;
+    WSFacade wsFacade;
     String serverUrl;
     Status status;
     AuthData authData;
@@ -133,13 +139,24 @@ public class Client {
             }
             GameData updatedGame = serverFacade.joinGame(gameId.toString(), params[1], authData);
             drawBoard(updatedGame, params[1]);
+            UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT,
+                    authData.getAuthToken(), updatedGame.getGameID(), null);
+            wsFacade = new WSFacade(serverUrl, command);
+
+            try{
+                wsFacade.sendMessage(wsFacade.getSession(), command);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            status = Status.INGAME;
             return String.format("You are now joining gameID %s as the %s Player", params[0], params[1].toUpperCase());
         }
         throw new ResponseException(400, "Error: We are missing either the game id or the team color you want to join");
     }
 
     public String watchGame(String... params) throws ResponseException {
-        if (params.length == 2) {
+        if (params.length >= 1) {
             ListGamesResponse games = serverFacade.listGames(authData);
             gameDataList = games.getGames();
 
@@ -151,16 +168,19 @@ public class Client {
             for (GameData gameData : gameDataList) {
                 if (index == num){
                     selectedGame = gameData;
-                    drawBoard(gameData, params[1]);
+                    drawBoard(gameData, "");
                 }
                 num++;
             }
             if (selectedGame == null) {
                 return String.format("No games found");
             }
+            wsFacade = new WSFacade(serverUrl, new UserGameCommand(UserGameCommand.CommandType.CONNECT,
+                    authData.getAuthToken(), selectedGame.getGameID(), null));
+            status = Status.INGAME;
             return String.format("You are watching %s", selectedGame.getGameName());
         }
-        throw new ResponseException(400, "We are missing either the game id or the team color you want to watch");
+        throw new ResponseException(400, "We are missing either the game id");
     }
 
     public String clear() throws ResponseException {
@@ -177,17 +197,29 @@ public class Client {
                     - exit
                     - help
                     """;
-        }
-        return """
+        } else if (status == Status.LOGGEDIN) {
+            return """
                 [LOGGED_IN] Please type in one of the following commands:\n
                 - list
                 - create <gameName>
                 - join <gameID> <WHITE/BLACK> ~ denotes team color you will play as
-                - watch <gameID> <WHITE/BLACK> ~ denotes team color you will watch
+                - watch <gameID> 
                 - logout
                 - exit
                 - help
                 """;
+        }
+        else{
+            return """
+                   [In_Game] Please type in one of the following commands:\n
+                   - Make Move / MM (Players Only)
+                   - Highlight Legal Moves / HLM
+                   - Redraw Board / RD
+                   - Leave / L
+                   - Resign (Players Only) / R
+                   - Help 
+                    """;
+        }
     }
 
     private void isSignedIn() throws ResponseException {
