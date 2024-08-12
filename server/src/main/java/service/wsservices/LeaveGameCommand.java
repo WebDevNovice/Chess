@@ -17,6 +17,7 @@ public class LeaveGameCommand {
     GameDAOSQL gameDAOSQL;
     String username;
 
+
     public LeaveGameCommand(Integer gameID, String username) {
         this.gameID = gameID;
         this.username = username;

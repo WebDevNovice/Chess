@@ -43,7 +43,7 @@ public class BoardCreator {
         if (teamColor == ChessGame.TeamColor.BLACK) {
             drawHeaders(reversedHeader, chessBoardBuilder);
             for (int row = 1; row < 9; row++) {
-                doColLoop(row, chessBoardBuilder, reversedVertNumber, bgColors, true);
+                doColLoop(row, chessBoardBuilder, vertNumber, bgColors, true);
                 chessBoardBuilder.append("\n");
             }
         } else {

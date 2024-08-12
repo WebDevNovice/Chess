@@ -18,6 +18,7 @@ public class ResignCommand{
     String playerColor;
     String username;
 
+
     public ResignCommand(Integer gameID, String username) throws ResponseException, DataAccessException {
         gameDAOSQL = new GameDAOSQL();
         this.gameID = gameID;

@@ -57,7 +57,7 @@ public class Client {
                 case "exit" -> "exit";
                 case "make move", "mm" -> makeMove(params);
                 case "highlight legal moves", "hlm" -> highlightLegalMove(params);
-                case "redraw board", "rd" -> redrawBoard();
+                case "redraw board", "rdb" -> redrawBoard(params);
                 case "leave", "l" -> leaveGame();
                 case "resign", "r" -> resignGame();
                 default -> help();
@@ -147,19 +147,20 @@ public class Client {
             }
             this.gameID = gameId;
             GameData updatedGame = serverFacade.joinGame(gameId.toString(), params[1], authData);
+            status = Status.INGAME;
+            String message = String.format("\nYou are now joining gameID %s as the %s Player", params[0], params[1].toUpperCase());
+            System.out.println(message);
 
             connectToWS(updatedGame);
 
-            status = Status.INGAME;
-            String message = String.format("You are now joined the game: %s\n", updatedGame.getGameName());
-            System.out.println(message);
-            return String.format("You are now joining gameID %s as the %s Player", params[0], params[1].toUpperCase());
+            return "";
         }
         throw new ResponseException(400, "Error: We are missing either the game id or the team color you want to join");
     }
 
     public String watchGame(String... params) throws ResponseException {
-        if (params.length >= 1) {
+        if (params.length >= 1 && status == Status.INGAME) {
+
             ListGamesResponse games = serverFacade.listGames(authData);
             gameDataList = games.getGames();
 
@@ -185,47 +186,49 @@ public class Client {
             String message = String.format("You are watching %s \n", selectedGame.getGameName());
             System.out.println(message);
 
-            return String.format("You are watching %s", selectedGame.getGameName());
+            return "";
         }
         throw new ResponseException(400, "We are missing either the game id");
     }
 
     public String makeMove(String... params) throws ResponseException {
     //(Start Position) <row, col> (End Position) <row, col>  <*promotion piece*> ~ ** indicates optional
-        int sRow;
-        String sCol;
-        int eRow;
-        String eCol;
-        String promotionPiece;
-        ChessPiece.PieceType chessPiece = null;
-        try{
-            if (params.length == 4){
-                sRow = Integer.parseInt(params[0]);
-                sCol = params[1];
-                eRow = Integer.parseInt(params[2]);
-                eCol = params[3];
-            } else if (params.length == 5) {
-                sRow = Integer.parseInt(params[0]);
-                sCol = params[1];
-                eRow = Integer.parseInt(params[2]);
-                eCol = params[3];
-                promotionPiece = params[4];
-                chessPiece = parsePieceType(promotionPiece);
+        if(params.length == 4 && status == Status.INGAME){
+            int sRow;
+            String sCol;
+            int eRow;
+            String eCol;
+            String promotionPiece;
+            ChessPiece.PieceType chessPiece = null;
+            try{
+                if (params.length == 4){
+                    sRow = Integer.parseInt(params[0]);
+                    sCol = params[1];
+                    eRow = Integer.parseInt(params[2]);
+                    eCol = params[3];
+                } else if (params.length == 5) {
+                    sRow = Integer.parseInt(params[0]);
+                    sCol = params[1];
+                    eRow = Integer.parseInt(params[2]);
+                    eCol = params[3];
+                    promotionPiece = params[4];
+                    chessPiece = parsePieceType(promotionPiece);
+                }
+                else{
+                    throw new ResponseException(400, "Error: Invalid Move Input");
+                }
+            } catch (NumberFormatException | ResponseException e) {
+                throw new RuntimeException(e);
             }
-            else{
-                throw new ResponseException(400, "Error: Invalid Move Input");
+
+            try{
+                wsFacade.makeMove(gameID, sRow, sCol, eRow, eCol, chessPiece);
+                return "";
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-        } catch (NumberFormatException | ResponseException e) {
-            throw new RuntimeException(e);
         }
-
-        try{
-            wsFacade.makeMove(gameID, sRow, sCol, eRow, eCol, chessPiece);
-            return null;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+        throw new ResponseException(400, "Error: Invalid Move Input");
     }
 
     public String highlightLegalMove(String... params) throws ResponseException {
@@ -233,7 +236,8 @@ public class Client {
         return "";
     }
 
-    public String redrawBoard() throws ResponseException {
+    public String redrawBoard(String... params) throws ResponseException {
+        this.gameID = Integer.parseInt(params[0]);
         for (GameData gameData : gameDataList) {
             if (gameData.getGameID() == gameID){
                 if (gameData.getWhiteUsername().equals(authData.getUsername())){
@@ -354,4 +358,5 @@ public class Client {
                 throw new RuntimeException("Invalid piece type: " + pieceType);
         }
     }
+
 }

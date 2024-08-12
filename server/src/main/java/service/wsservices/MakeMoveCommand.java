@@ -10,6 +10,7 @@ import model.GameData;
 import service.serverservices.GameServices;
 
 import java.util.Collection;
+import java.util.HashMap;
 
 public class MakeMoveCommand {
     Integer gameID;
@@ -20,6 +21,7 @@ public class MakeMoveCommand {
 
     GameDAOSQL gameDAOSQL;
     GameServices gameServices;
+    HashMap<Integer, GameData> gameDatabase;
 
 
     public MakeMoveCommand(Integer gameID, String username, ChessMove move) throws ResponseException, DataAccessException {
@@ -29,8 +31,7 @@ public class MakeMoveCommand {
 
         this.gameDAOSQL = new GameDAOSQL();
         this.gameServices = new GameServices(gameDAOSQL);
-
-        setPlayerColor();
+        this.gameDatabase = gameDAOSQL.getGameDatabase();
         setGameData();
     }
 
@@ -39,10 +40,13 @@ public class MakeMoveCommand {
 
     public GameData makeMove() {
         try{
+            PlayerColorHelper playerColorHelper = new PlayerColorHelper();
+            this.playerColor = playerColorHelper.setPlayerColor(gameServices, gameID, username);
+
             if (move == null){
                 throw new InvalidMoveException("Error: move is null");
             }
-            if (!gameData.getGame().getTeamTurn().toString().equals(playerColor)){
+            if (!gameData.getGame().getTeamTurn().toString().equals(this.playerColor)){
                 throw new InvalidMoveException("Error: Not your turn");
             }
             gameData.getGame().makeMove(move);
@@ -53,10 +57,6 @@ public class MakeMoveCommand {
         }
     }
 
-    private void setPlayerColor() throws ResponseException, DataAccessException {
-        PlayerColorHelper playerColorHelper = new PlayerColorHelper();
-        playerColor = playerColorHelper.setPlayerColor(gameServices, gameID, username);
-    }
 
     public String getPlayerColor() {
         return playerColor;
@@ -77,4 +77,6 @@ public class MakeMoveCommand {
     public GameData getGameData() {
         return gameData;
     }
+
+
 }
