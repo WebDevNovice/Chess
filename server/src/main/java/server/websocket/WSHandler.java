@@ -145,7 +145,6 @@ public class WSHandler {
 
     private void leaveGame(Session session, String username, UserGameCommand command) throws BadRequestException,
                                                                             ResponseException, DataAccessException {
-        //Broadcast to everyone that a player left
         LeaveGameCommand leaveGameCommand = new LeaveGameCommand(command.getGameID(), username);
         if (leaveGameCommand.getPlayerColor() == null){
             String message = String.format("Our cosmic observer known as %s is gone... Continue as you were",

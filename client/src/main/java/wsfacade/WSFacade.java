@@ -47,12 +47,15 @@ public class WSFacade extends Endpoint { ;
                         case LOAD_GAME:
                             WSLoadGameMsg loadGameMsg = new Gson() .fromJson(message, WSLoadGameMsg.class);
                             gameHandler.updateGame(loadGameMsg.getGameData());
+                            break;
                         case NOTIFICATION:
                             WSNotificationMsg notificationMsg = new Gson().fromJson(message, WSNotificationMsg.class);
                             gameHandler.printMessage(notificationMsg.getMessage());
+                            break;
                         case ERROR:
                             WSErrorMsg errorMsg = new Gson().fromJson(message, WSErrorMsg.class);
                             gameHandler.printMessage(errorMsg.getErrorMessage());
+                            break;
                         default:
                             throw new RuntimeException("Error: Unknown ServerMessageType: " +
                                                         serverMessage.getServerMessageType());
@@ -85,12 +88,14 @@ public class WSFacade extends Endpoint { ;
         sendMessage(session, moveCommand);
     }
 
-    private void leaveGame(Session session, UserGameCommand command) throws IOException {
-        sendMessage(session, command);
+    public void leaveGame() throws IOException {
+        UserGameCommand leaveCommand = gameHandler.leaveGame(command);
+        sendMessage(session, leaveCommand);
     }
 
-    private void resignGame(Session session, UserGameCommand command) throws IOException {
-        sendMessage(session, command);
+    public void resignGame() throws IOException {
+        UserGameCommand resignCommand = gameHandler.resignGame(command);
+        sendMessage(session, resignCommand);
     }
 
     private void sendMessage(Session session, UserGameCommand command) throws IOException {

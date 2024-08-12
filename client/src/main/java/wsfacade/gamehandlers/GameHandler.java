@@ -12,6 +12,6 @@ public interface GameHandler {
     void printMessage(String message);
     void loadGame(GameData gameData, UserGameCommand command, String username);
     ChessMove makeMove(Integer sRow, String sColumn, Integer eRow, String eColumn, ChessPiece.PieceType promotionPiece);
-    void leaveGame(Session session, UserGameCommand command);
-    void resignGame(Session session, UserGameCommand command);
+    UserGameCommand leaveGame(UserGameCommand command);
+    UserGameCommand resignGame(UserGameCommand command);
 }

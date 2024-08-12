@@ -69,13 +69,17 @@ public class GameUI implements GameHandler {
     }
 
     @Override
-    public void leaveGame(Session session, UserGameCommand command) {
-
+    public UserGameCommand leaveGame(UserGameCommand command) {
+        UserGameCommand leaveCommand = new UserGameCommand(UserGameCommand.CommandType.LEAVE,
+                command.getAuthString(), command.getGameID(), null);
+        return leaveCommand;
     }
 
     @Override
-    public void resignGame(Session session, UserGameCommand command) {
-
+    public UserGameCommand resignGame(UserGameCommand command) {
+        UserGameCommand resignCommand = new UserGameCommand(UserGameCommand.CommandType.RESIGN, command.getAuthString(),
+                                                            command.getGameID(), null);
+        return resignCommand;
     }
 
     private Integer colConvertor(String column) {

@@ -57,9 +57,9 @@ public class Client {
                 case "exit" -> "exit";
                 case "make move", "mm" -> makeMove(params);
                 case "highlight legal moves", "hlm" -> highlightLegalMove(params);
-                case "redraw board", "rd" -> redrawBoard(params);
-                case "leave", "l" -> leaveGame(params);
-                case "resign", "r" -> resignGame(params);
+                case "redraw board", "rd" -> redrawBoard();
+                case "leave", "l" -> leaveGame();
+                case "resign", "r" -> resignGame();
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -151,6 +151,8 @@ public class Client {
             connectToWS(updatedGame);
 
             status = Status.INGAME;
+            String message = String.format("You are now joined the game: %s\n", updatedGame.getGameName());
+            System.out.println(message);
             return String.format("You are now joining gameID %s as the %s Player", params[0], params[1].toUpperCase());
         }
         throw new ResponseException(400, "Error: We are missing either the game id or the team color you want to join");
@@ -180,6 +182,9 @@ public class Client {
             connectToWS(selectedGame);
 
             status = Status.INGAME;
+            String message = String.format("You are watching %s \n", selectedGame.getGameName());
+            System.out.println(message);
+
             return String.format("You are watching %s", selectedGame.getGameName());
         }
         throw new ResponseException(400, "We are missing either the game id");
@@ -216,20 +221,52 @@ public class Client {
 
         try{
             wsFacade.makeMove(gameID, sRow, sCol, eRow, eCol, chessPiece);
-            return "";
+            return null;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
     }
 
-    public String highlightLegalMove(String... params) throws ResponseException {return null;}
+    public String highlightLegalMove(String... params) throws ResponseException {
+        //- highlight legal moves / hlm: (Start Position) <row, col>}
+        return "";
+    }
 
-    public String redrawBoard(String... params) throws ResponseException {return null;}
+    public String redrawBoard() throws ResponseException {
+        for (GameData gameData : gameDataList) {
+            if (gameData.getGameID() == gameID){
+                if (gameData.getWhiteUsername().equals(authData.getUsername())){
+                    String teamColor = "WHITE";
+                    drawBoard(gameData, teamColor);
+                }
+                else {
+                    String teamColor = "BLACK";
+                    drawBoard(gameData, teamColor);
+                }
+            }
+        }
+        return "";
+    }
 
-    public String leaveGame(String... params) throws ResponseException {return null;}
+    public String leaveGame() throws ResponseException {
+        try {
+            wsFacade.leaveGame();
+            status = Status.LOGGEDIN;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return "";
+    }
 
-    public String resignGame(String... params) throws ResponseException {return null;}
+    public String resignGame() throws ResponseException {
+        try {
+        wsFacade.resignGame();
+        status = Status.LOGGEDIN;
+    } catch (IOException e) {
+        throw new RuntimeException(e);
+    }
+        return "";}
 
     public String clear() throws ResponseException {
         serverFacade.clear();
@@ -261,8 +298,8 @@ public class Client {
             return """
                    [In_Game] Please type in one of the following commands:\n
                    - make move / mm (Players Only): (Start Position) <row, col> (End Position) <row, col>  <*promotion piece*> ~ ** indicates optional
-                   - highlight legal moves / hlm
-                   - redraw board / rb
+                   - highlight legal moves / hlm: (Start Position) <row, col>
+                   - redraw board / rdb
                    - leave / l
                    - resign (Players Only) / r
                    - help 
