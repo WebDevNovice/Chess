@@ -53,6 +53,11 @@ public class Client {
                 case "logout" -> logout();
                 case "clear" -> clear();
                 case "exit" -> "exit";
+                case "make move", "mm" -> makeMove(params);
+                case "highlight legal moves", "hlm" -> highlightLegalMove(params);
+                case "redraw board", "rd" -> redrawBoard(params);
+                case "leave", "l" -> leaveGame(params);
+                case "resign", "r" -> resignGame(params);
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -129,7 +134,7 @@ public class Client {
             isSignedIn();
             int index = Integer.parseInt(params[0]);
             Integer gameId = 0;
-            
+
             for (GameData gameData : gameDataList) {
                 if (index == num){
                     gameId = gameData.getGameID();
@@ -179,6 +184,16 @@ public class Client {
         throw new ResponseException(400, "We are missing either the game id");
     }
 
+    public String makeMove(String... params) throws ResponseException {return null;}
+
+    public String highlightLegalMove(String... params) throws ResponseException {return null;}
+
+    public String redrawBoard(String... params) throws ResponseException {return null;}
+
+    public String leaveGame(String... params) throws ResponseException {return null;}
+
+    public String resignGame(String... params) throws ResponseException {return null;}
+
     public String clear() throws ResponseException {
         serverFacade.clear();
         return "You successfully avoided nuclear war:)";
@@ -208,12 +223,12 @@ public class Client {
         else{
             return """
                    [In_Game] Please type in one of the following commands:\n
-                   - Make Move / MM (Players Only) <row #> <column letter> <*promotion piece*> ~ ** indicates optional
-                   - Highlight Legal Moves / HLM
-                   - Redraw Board / RD
-                   - Leave / L
-                   - Resign (Players Only) / R
-                   - Help 
+                   - make move / mm (Players Only) <row #> <column letter> <*promotion piece*> ~ ** indicates optional
+                   - highlight legal moves / hlm
+                   - redraw board / rb
+                   - leave / l
+                   - resign (Players Only) / r
+                   - help 
                     """;
         }
     }
@@ -238,7 +253,7 @@ public class Client {
     private void connectToWS(GameData gameData) {
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT,
                 authData.getAuthToken(), gameData.getGameID(), null);
-        wsFacade = new WSFacade(serverUrl, command);
+        wsFacade = new WSFacade(serverUrl, command, authData.getUsername());
 
         try{
             wsFacade.connect(wsFacade.getSession(), command);

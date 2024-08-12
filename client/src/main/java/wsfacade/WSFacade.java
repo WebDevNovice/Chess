@@ -1,10 +1,11 @@
 package wsfacade;
 
 import com.google.gson.Gson;
-import model.AuthData;
-import model.GameData;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
+import websocket.messages.WSErrorMsg;
+import websocket.messages.WSLoadGameMsg;
+import websocket.messages.WSNotificationMsg;
 import wsfacade.gamehandlers.GameHandler;
 import wsfacade.gamehandlers.GameUI;
 
@@ -17,15 +18,17 @@ import java.util.Set;
 
 public class WSFacade extends Endpoint { ;
     Session session;
+    String username;
 
     UserGameCommand command;
     GameHandler gameHandler;
     HashMap<Integer, Set<Session>> sessions;
 
-    public WSFacade(String url, UserGameCommand command) {
+    public WSFacade(String url, UserGameCommand command, String username) {
         try {
             this.command = command;
             this.gameHandler = new GameUI(this);
+            this.username = username;
 
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/ws");
@@ -35,17 +38,22 @@ public class WSFacade extends Endpoint { ;
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    ServerMessage.ServerMessageType messageType = new Gson().fromJson(message,
-                            ServerMessage.ServerMessageType.class);
-                    switch (messageType) {
+                    ServerMessage serverMessage = new Gson().fromJson(message,
+                            ServerMessage.class);
+                    switch (serverMessage.getServerMessageType()) {
                         case LOAD_GAME:
-                            break;
+                            //re-deserialize the message into the correct class
+                            WSLoadGameMsg loadGameMsg = new Gson() .fromJson(message, WSLoadGameMsg.class);
+                            gameHandler.updateGame(loadGameMsg.getGameData());
                         case NOTIFICATION:
-                            break;
+                            WSNotificationMsg notificationMsg = new Gson().fromJson(message, WSNotificationMsg.class);
+                            gameHandler.printMessage(notificationMsg.getMessage());
                         case ERROR:
-                            break;
+                            WSErrorMsg errorMsg = new Gson().fromJson(message, WSErrorMsg.class);
+                            gameHandler.printMessage(errorMsg.getErrorMessage());
                         default:
-                            break;
+                            throw new RuntimeException("Error: Unknown ServerMessageType: " +
+                                                        serverMessage.getServerMessageType());
                     }
                 }
             });
