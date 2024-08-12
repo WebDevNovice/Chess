@@ -129,6 +129,7 @@ public class Client {
             isSignedIn();
             int index = Integer.parseInt(params[0]);
             Integer gameId = 0;
+            
             for (GameData gameData : gameDataList) {
                 if (index == num){
                     gameId = gameData.getGameID();
@@ -137,17 +138,11 @@ public class Client {
                     num++;
                 }
             }
+
             GameData updatedGame = serverFacade.joinGame(gameId.toString(), params[1], authData);
             drawBoard(updatedGame, params[1]);
-            UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT,
-                    authData.getAuthToken(), updatedGame.getGameID(), null);
-            wsFacade = new WSFacade(serverUrl, command);
 
-            try{
-                wsFacade.sendMessage(wsFacade.getSession(), command);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            connectToWS(updatedGame);
 
             status = Status.INGAME;
             return String.format("You are now joining gameID %s as the %s Player", params[0], params[1].toUpperCase());
@@ -175,8 +170,9 @@ public class Client {
             if (selectedGame == null) {
                 return String.format("No games found");
             }
-            wsFacade = new WSFacade(serverUrl, new UserGameCommand(UserGameCommand.CommandType.CONNECT,
-                    authData.getAuthToken(), selectedGame.getGameID(), null));
+
+            connectToWS(selectedGame);
+
             status = Status.INGAME;
             return String.format("You are watching %s", selectedGame.getGameName());
         }
@@ -212,7 +208,7 @@ public class Client {
         else{
             return """
                    [In_Game] Please type in one of the following commands:\n
-                   - Make Move / MM (Players Only)
+                   - Make Move / MM (Players Only) <row #> <column letter> <*promotion piece*> ~ ** indicates optional
                    - Highlight Legal Moves / HLM
                    - Redraw Board / RD
                    - Leave / L
@@ -236,6 +232,18 @@ public class Client {
         else{
             BoardCreator boardCreator = new BoardCreator(updatedGame.getGame(), ChessGame.TeamColor.BLACK);
             boardCreator.main();
+        }
+    }
+
+    private void connectToWS(GameData gameData) {
+        UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT,
+                authData.getAuthToken(), gameData.getGameID(), null);
+        wsFacade = new WSFacade(serverUrl, command);
+
+        try{
+            wsFacade.connect(wsFacade.getSession(), command);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

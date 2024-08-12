@@ -3,6 +3,7 @@ package wsfacade.gamehandlers;
 import chess.ChessGame;
 import model.GameData;
 import ui.BoardCreator;
+import websocket.messages.ServerMessage;
 import wsfacade.WSFacade;
 
 public class GameUI implements GameHandler {
@@ -26,12 +27,12 @@ public class GameUI implements GameHandler {
 
     }
 
-    public void loadGame(){}
+    public void loadGame(ServerMessage serverMessage){}
 
-    public void makeMove(){}
+    public void makeMove(ServerMessage serverMessage){}
 
-    public void leaveGame(){}
+    public void leaveGame(ServerMessage serverMessage){}
 
-    public void resignGame(){}
+    public void resignGame(ServerMessage serverMessage){}
 
 }

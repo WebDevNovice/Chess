@@ -62,18 +62,23 @@ public class WSFacade extends Endpoint { ;
         return command.getCommandType();
     }
 
-    private void connect(Session session, UserGameCommand command) throws IOException {
-        String message = new Gson().toJson(command);
-        session.getBasicRemote().sendText(message);
+    public void connect(Session session, UserGameCommand command) throws IOException {
+        sendMessage(session, command);
     }
 
-    private void makeMove(Session session, UserGameCommand command) {}
+    private void makeMove(Session session, UserGameCommand command) throws IOException {
+        sendMessage(session, command);
+    }
 
-    private void leaveGame(Session session, UserGameCommand command) {}
+    private void leaveGame(Session session, UserGameCommand command) throws IOException {
+        sendMessage(session, command);
+    }
 
-    private void resignGame(Session session, UserGameCommand command) {}
+    private void resignGame(Session session, UserGameCommand command) throws IOException {
+        sendMessage(session, command);
+    }
 
-    public void sendMessage(Session session, UserGameCommand command) throws IOException {
+    private void sendMessage(Session session, UserGameCommand command) throws IOException {
         String message = new Gson().toJson(command);
         session.getBasicRemote().sendText(message);
     }
