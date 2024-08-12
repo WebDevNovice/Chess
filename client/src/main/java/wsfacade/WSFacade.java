@@ -1,6 +1,9 @@
 package wsfacade;
 
+import chess.ChessMove;
+import chess.ChessPiece;
 import com.google.gson.Gson;
+import model.GameData;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 import websocket.messages.WSErrorMsg;
@@ -42,7 +45,6 @@ public class WSFacade extends Endpoint { ;
                             ServerMessage.class);
                     switch (serverMessage.getServerMessageType()) {
                         case LOAD_GAME:
-                            //re-deserialize the message into the correct class
                             WSLoadGameMsg loadGameMsg = new Gson() .fromJson(message, WSLoadGameMsg.class);
                             gameHandler.updateGame(loadGameMsg.getGameData());
                         case NOTIFICATION:
@@ -70,12 +72,17 @@ public class WSFacade extends Endpoint { ;
         return command.getCommandType();
     }
 
-    public void connect(Session session, UserGameCommand command) throws IOException {
+    public void connect() throws IOException {
         sendMessage(session, command);
     }
 
-    private void makeMove(Session session, UserGameCommand command) throws IOException {
-        sendMessage(session, command);
+    public void makeMove(Integer gameID, Integer sRow, String sColumn, Integer eRow, String eColumn,
+                                            ChessPiece.PieceType promotionPiece) throws IOException {
+
+        ChessMove move = gameHandler.makeMove(sRow, sColumn, eRow, eColumn, promotionPiece);
+        UserGameCommand moveCommand = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, command.getAuthString(),
+               gameID, move);
+        sendMessage(session, moveCommand);
     }
 
     private void leaveGame(Session session, UserGameCommand command) throws IOException {
@@ -93,6 +100,10 @@ public class WSFacade extends Endpoint { ;
 
     public Session getSession() {
         return session;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
 }

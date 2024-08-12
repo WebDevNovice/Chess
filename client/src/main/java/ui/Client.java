@@ -3,6 +3,7 @@ package ui;
 import static ui.EscapeSequences.*;
 
 import chess.ChessGame;
+import chess.ChessPiece;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -29,6 +30,7 @@ public class Client {
     AuthData authData;
     Collection<GameData> gameDataList;
     Collection<Integer> gameIDList;
+    Integer gameID;
 
     public Client(String serverUrl) {
         this.serverUrl = serverUrl;
@@ -143,9 +145,8 @@ public class Client {
                     num++;
                 }
             }
-
+            this.gameID = gameId;
             GameData updatedGame = serverFacade.joinGame(gameId.toString(), params[1], authData);
-            drawBoard(updatedGame, params[1]);
 
             connectToWS(updatedGame);
 
@@ -175,7 +176,7 @@ public class Client {
             if (selectedGame == null) {
                 return String.format("No games found");
             }
-
+            this.gameID = selectedGame.getGameID();
             connectToWS(selectedGame);
 
             status = Status.INGAME;
@@ -184,7 +185,43 @@ public class Client {
         throw new ResponseException(400, "We are missing either the game id");
     }
 
-    public String makeMove(String... params) throws ResponseException {return null;}
+    public String makeMove(String... params) throws ResponseException {
+    //(Start Position) <row, col> (End Position) <row, col>  <*promotion piece*> ~ ** indicates optional
+        int sRow;
+        String sCol;
+        int eRow;
+        String eCol;
+        String promotionPiece;
+        ChessPiece.PieceType chessPiece = null;
+        try{
+            if (params.length == 4){
+                sRow = Integer.parseInt(params[0]);
+                sCol = params[1];
+                eRow = Integer.parseInt(params[2]);
+                eCol = params[3];
+            } else if (params.length == 5) {
+                sRow = Integer.parseInt(params[0]);
+                sCol = params[1];
+                eRow = Integer.parseInt(params[2]);
+                eCol = params[3];
+                promotionPiece = params[4];
+                chessPiece = parsePieceType(promotionPiece);
+            }
+            else{
+                throw new ResponseException(400, "Error: Invalid Move Input");
+            }
+        } catch (NumberFormatException | ResponseException e) {
+            throw new RuntimeException(e);
+        }
+
+        try{
+            wsFacade.makeMove(gameID, sRow, sCol, eRow, eCol, chessPiece);
+            return "";
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 
     public String highlightLegalMove(String... params) throws ResponseException {return null;}
 
@@ -223,7 +260,7 @@ public class Client {
         else{
             return """
                    [In_Game] Please type in one of the following commands:\n
-                   - make move / mm (Players Only) <row #> <column letter> <*promotion piece*> ~ ** indicates optional
+                   - make move / mm (Players Only): (Start Position) <row, col> (End Position) <row, col>  <*promotion piece*> ~ ** indicates optional
                    - highlight legal moves / hlm
                    - redraw board / rb
                    - leave / l
@@ -256,9 +293,28 @@ public class Client {
         wsFacade = new WSFacade(serverUrl, command, authData.getUsername());
 
         try{
-            wsFacade.connect(wsFacade.getSession(), command);
+            wsFacade.connect();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private ChessPiece.PieceType parsePieceType(String pieceType) {
+        switch (pieceType) {
+            case "King", "K", "k":
+                return ChessPiece.PieceType.KING;
+            case "Queen", "Q", "q":
+                return ChessPiece.PieceType.QUEEN;
+            case "Knight", "N", "n":
+                return ChessPiece.PieceType.KNIGHT;
+            case "Bishop", "B", "b":
+                return ChessPiece.PieceType.BISHOP;
+            case "Rook", "R", "r":
+                return ChessPiece.PieceType.ROOK;
+            case "Pawn", "P", "p":
+                return ChessPiece.PieceType.PAWN;
+            default:
+                throw new RuntimeException("Invalid piece type: " + pieceType);
         }
     }
 }
