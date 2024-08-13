@@ -21,7 +21,9 @@ import websocket.messages.WSLoadGameMsg;
 import websocket.messages.WSNotificationMsg;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 @WebSocket
@@ -138,7 +140,9 @@ public class WSHandler {
                     opponentTeamColor = ChessGame.TeamColor.WHITE;
                 }
 
-                checkGameStatus(command.getGameID(), session, username, chessGame, teamColor, opponentTeamColor);
+                String opponentName = setOpponentUsername(teamColor);
+
+                checkGameStatus(command.getGameID(), opponentName, username, chessGame, teamColor, opponentTeamColor);
             }
         }
     }
@@ -250,27 +254,59 @@ public class WSHandler {
         broadcast(command.getGameID(), serverMessage, session);
     }
 
-    private void checkGameStatus(Integer gameID, Session session, String username, ChessGame chessGame,
+    private void checkGameStatus(Integer gameID, String opponentName, String username, ChessGame chessGame,
                                  ChessGame.TeamColor teamColor, ChessGame.TeamColor opponentColor) {
         if (chessGame.isInCheckmate(opponentColor)){
-            String message = String.format("%s player is in checkmate!", teamColor.toString());
+            String message = String.format("%s player is in checkmate!", opponentName);
             ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
             broadcast(gameID, serverMessage, null);
         }
         else if (chessGame.isInCheck(opponentColor)){
-            String message = String.format("%s player is in check!", opponentColor.toString());
+            String message = String.format("%s player is in check!", opponentName);
             ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
             broadcast(gameID, serverMessage, null);
         }
         else if (chessGame.isInStalemate(teamColor)){
-            String message = String.format("%s player is in stalemate!", teamColor.toString());
+            String message = String.format("%s player is in stalemate!", username);
             ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
             broadcast(gameID, serverMessage, null);
+
         } else if (chessGame.isInStalemate(opponentColor)) {
-            String message = String.format("%s player is in stalemate!", opponentColor.toString());
+            String message = String.format("%s player is in stalemate!", opponentName);
             ServerMessage serverMessage = new WSNotificationMsg(notificationMsg, message);
             broadcast(gameID, serverMessage, null);
         }
+    }
 
+    private String setOpponentUsername(ChessGame.TeamColor teamColor) {
+        try{
+            Collection<GameData> games = gameServices.listGames();
+            if (games.size() > 0){
+                return findOpponentName(games, teamColor);
+            }
+            else{
+                throw new BadRequestException("Error: No Games found. How did we get this far?");
+            }
+        } catch (ResponseException | DataAccessException | BadRequestException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String findOpponentName(Collection<GameData> games, ChessGame.TeamColor teamColor){
+        String opponentName;
+        try{
+            for (GameData gameData : games){
+                if (teamColor.equals(ChessGame.TeamColor.WHITE)){
+                    opponentName = gameData.getBlackUsername();
+                }
+                else{
+                    opponentName = gameData.getWhiteUsername();
+                }
+                return opponentName;
+            }
+            throw new BadRequestException("Error: No opponent found!");
+        } catch (BadRequestException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
