@@ -123,7 +123,7 @@ public class ChessGame {
         Collection<ChessMove> badMoves = new ArrayList<>();
 
         if (chessBoard.getPiece(startPosition) == null){
-            return null;
+            return validMoves;
         }
         //I should implement to see if a move would result in a check for that color's own team
         validMoves = chessBoard.getPiece(startPosition).pieceMoves(chessBoard, startPosition);
@@ -261,8 +261,9 @@ public class ChessGame {
         else {
             if (isKingInCheckmate(teamColor)){
                 gameOver = true;
+                return true;
             }
-            return isKingInCheckmate(teamColor);
+            return false;
         }
     }
 
