@@ -6,10 +6,13 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 import model.GameData;
 import ui.BoardCreator;
+import websocket.Misc.ColConvertor;
 import websocket.commands.UserGameCommand;
 import wsfacade.WSFacade;
 
 import javax.websocket.Session;
+
+import java.util.ArrayList;
 
 import static ui.EscapeSequences.*;
 
@@ -59,8 +62,9 @@ public class GameUI implements GameHandler {
 
     @Override
     public ChessMove makeMove(Integer sRow, String sColumn, Integer eRow, String eColumn, ChessPiece.PieceType promotionPiece) {
-        Integer sCol = colConvertor(sColumn);
-        Integer eCol = colConvertor(eColumn);
+        ColConvertor colConvertor = new ColConvertor();
+        Integer sCol = colConvertor.convertor(sColumn);
+        Integer eCol = colConvertor.convertor(eColumn);
 
         ChessPosition sPosition = new ChessPosition(sRow, sCol);
         ChessPosition ePosition = new ChessPosition(eRow, eCol);
@@ -82,27 +86,6 @@ public class GameUI implements GameHandler {
         return resignCommand;
     }
 
-    private Integer colConvertor(String column) {
-        switch (column) {
-            case "A","a":
-                return 1;
-            case "B","b":
-                return 2;
-            case "C", "c":
-                return 3;
-            case "D", "d":
-                return 4;
-            case "E", "e":
-                return 5;
-            case "F","f":
-                return 6;
-            case "G","g":
-                return 7;
-            case "H","h":
-                return 8;
-            default:
-                throw new IllegalArgumentException("Invalid column: " + column);
-        }
-    }
+
 
 }

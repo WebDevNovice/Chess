@@ -3,7 +3,9 @@ package ui;
 import static ui.EscapeSequences.*;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import chess.ChessPiece;
+import chess.ChessPosition;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -11,6 +13,7 @@ import responseobjects.CreateGameResponse;
 import responseobjects.ListGamesResponse;
 import serverfacade.ResponseException;
 import serverfacade.ServerFacade;
+import websocket.Misc.ColConvertor;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 import wsfacade.WSFacade;
@@ -159,7 +162,7 @@ public class Client {
     }
 
     public String watchGame(String... params) throws ResponseException {
-        if (params.length >= 1 && status == Status.INGAME) {
+        if (params.length == 1 && status == Status.LOGGEDIN) {
 
             ListGamesResponse games = serverFacade.listGames(authData);
             gameDataList = games.getGames();
@@ -233,6 +236,26 @@ public class Client {
 
     public String highlightLegalMove(String... params) throws ResponseException {
         //- highlight legal moves / hlm: (Start Position) <row, col>}
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        Collection<ChessPosition> endPositions = new ArrayList<>();
+        ColConvertor colConvertor = new ColConvertor();
+        if (params.length == 3 && status == Status.INGAME) {
+            Integer index = Integer.parseInt(params[0]);
+            Integer row  = Integer.parseInt(params[1]);
+            String col  = params[2];
+            ChessPosition pos = new ChessPosition(row, colConvertor.convertor(col));
+
+            for (GameData game : gameDataList) {
+                if (index == game.getGameID()){
+                    validMoves = game.getGame().validMoves(pos);
+                    for (ChessMove move : validMoves) {
+                        endPositions.add(move.getEndPosition());
+
+                    }
+                }
+            }
+
+        }
         return "";
     }
 
